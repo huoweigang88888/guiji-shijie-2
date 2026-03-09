@@ -20,6 +20,7 @@ from message_aggregator import MessageAggregator, MessagePlatform
 from heartbeat import HeartbeatSystem
 from auto_executor import AutoExecutor
 from self_improver import SelfImprover
+from vector_search import VectorSearch
 
 # 配置日志
 logging.basicConfig(
@@ -49,6 +50,9 @@ class GuijiWorld2:
         self.heartbeat = HeartbeatSystem(agents_dir.parent)
         self.executor = AutoExecutor(agents_dir.parent)
         self.improver = SelfImprover(agents_dir.parent)
+        
+        # Phase 3 组件
+        self.vector_search = VectorSearch(agents_dir.parent / "vector-db")
         
         logger.info("系统初始化完成")
     
@@ -159,11 +163,41 @@ class GuijiWorld2:
             'improvements': [imp.to_dict() for imp in improvements[:5]]
         }
     
+    def vector_add(self, content: str, doc_type: str = "general", metadata: dict = None) -> dict:
+        """
+        添加文档到向量库
+        
+        Returns:
+            添加结果
+        """
+        table_name = f"{doc_type}s"
+        doc_id = self.vector_search.add_document(table_name, content, metadata or {})
+        return {
+            'success': doc_id is not None,
+            'doc_id': doc_id,
+            'table': table_name
+        }
+    
+    def vector_search_query(self, query: str, doc_type: str = "general", limit: int = 5) -> dict:
+        """
+        向量搜索
+        
+        Returns:
+            搜索结果
+        """
+        table_name = f"{doc_type}s"
+        results = self.vector_search.search(table_name, query, limit=limit)
+        return {
+            'query': query,
+            'count': len(results),
+            'results': results
+        }
+    
     def get_status(self) -> dict:
         """获取系统状态"""
         return {
             'system': '硅基世界 2',
-            'version': '2.0.0',
+            'version': '3.0.0',
             'timestamp': datetime.now().isoformat(),
             'components': {
                 # Phase 1
@@ -180,7 +214,9 @@ class GuijiWorld2:
                     'errors': len(self.improver.errors),
                     'lessons': len(self.improver.lessons),
                     'improvements': len(self.improver.improvements)
-                }
+                },
+                # Phase 3
+                'vector_search': self.vector_search.get_stats()
             }
         }
     
@@ -200,6 +236,10 @@ class GuijiWorld2:
         print("    goal <标题> <描述>       - 添加目标")
         print("    exec-tasks [数量]        - 执行待处理任务")
         print("    improvements             - 查看改进建议")
+        print("")
+        print("  Phase 3 - 增强功能")
+        print("    v-add <类型> <内容>      - 添加向量文档")
+        print("    v-search <类型> <查询>   - 向量搜索")
         print("")
         print("  通用")
         print("    status                   - 显示系统状态")
@@ -230,6 +270,10 @@ class GuijiWorld2:
                     print("    goal <标题> <描述>       - 添加目标")
                     print("    exec-tasks [数量]        - 执行待处理任务")
                     print("    improvements             - 查看改进建议")
+                    print("")
+                    print("  Phase 3 - 增强功能")
+                    print("    v-add <类型> <内容>      - 添加向量文档")
+                    print("    v-search <类型> <查询>   - 向量搜索")
                     print("")
                     print("  通用")
                     print("    status                   - 显示系统状态")
@@ -271,6 +315,32 @@ class GuijiWorld2:
                     if result['failed'] > 0:
                         print(f"失败：{result['failed']}")
                     print()
+                    continue
+                
+                if user_input.lower().startswith('v-add '):
+                    parts = user_input[6:].strip().split(' ', 1)
+                    if len(parts) >= 2:
+                        doc_type, content = parts
+                        result = self.vector_add(content, doc_type)
+                        if result['success']:
+                            print(f"\n文档已添加：{result['table']}/{result['doc_id']}\n")
+                        else:
+                            print("\n添加失败\n")
+                    else:
+                        print("用法：v-add <类型> <内容>\n")
+                    continue
+                
+                if user_input.lower().startswith('v-search '):
+                    parts = user_input[9:].strip().split(' ', 1)
+                    if len(parts) >= 2:
+                        doc_type, query = parts
+                        result = self.vector_search_query(query, doc_type)
+                        print(f"\n搜索结果 ({result['count']} 条):")
+                        for i, r in enumerate(result['results'], 1):
+                            print(f"  {i}. [{r.get('score', 0):.2f}] {r.get('content', '')[:80]}...")
+                        print()
+                    else:
+                        print("用法：v-search <类型> <查询>\n")
                     continue
                 
                 if user_input.lower().startswith('goal '):
