@@ -4,7 +4,7 @@
       "agent_id": "orchestrator",
       "agent_type": "orchestrator",
       "status": "active",
-      "last_seen": "2026-03-09T16:43:48.697545",
+      "last_seen": "2026-03-09T17:55:39.715126",
       "metadata": {},
       "capabilities": [
         {
@@ -27,7 +27,7 @@
       "agent_id": "coordinator",
       "agent_type": "coordinator",
       "status": "active",
-      "last_seen": "2026-03-09T16:43:48.698475",
+      "last_seen": "2026-03-09T17:55:39.716594",
       "metadata": {},
       "capabilities": [
         {
@@ -43,7 +43,7 @@
       "agent_id": "researcher",
       "agent_type": "researcher",
       "status": "active",
-      "last_seen": "2026-03-09T16:43:48.699256",
+      "last_seen": "2026-03-09T17:55:39.717869",
       "metadata": {},
       "capabilities": [
         {
@@ -59,7 +59,7 @@
       "agent_id": "messenger",
       "agent_type": "messenger",
       "status": "active",
-      "last_seen": "2026-03-09T16:43:48.700056",
+      "last_seen": "2026-03-09T17:55:39.719144",
       "metadata": {},
       "capabilities": [
         {
@@ -75,7 +75,7 @@
       "agent_id": "executor",
       "agent_type": "executor",
       "status": "active",
-      "last_seen": "2026-03-09T16:43:48.700840",
+      "last_seen": "2026-03-09T17:55:39.720417",
       "metadata": {},
       "capabilities": [
         {
@@ -91,7 +91,7 @@
       "agent_id": "analyst",
       "agent_type": "analyst",
       "status": "active",
-      "last_seen": "2026-03-09T16:43:48.701600",
+      "last_seen": "2026-03-09T17:55:39.721819",
       "metadata": {},
       "capabilities": [
         {
@@ -104,5 +104,5 @@
       ]
     }
   },
-  "last_updated": "2026-03-09T16:43:48.701608"
+  "last_updated": "2026-03-09T17:55:39.721838"
 }
