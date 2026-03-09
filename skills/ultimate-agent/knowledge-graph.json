@@ -1,0 +1,108 @@
+{
+  "nodes": {
+    "node_20260309151410_5569": {
+      "id": "node_20260309151410_5569",
+      "title": "Python",
+      "description": "A high-level programming language",
+      "category": "language",
+      "tags": [
+        "programming",
+        "scripting"
+      ],
+      "created_at": "2026-03-09T15:14:10.362480",
+      "updated_at": "2026-03-09T15:14:10.362480",
+      "metadata": {}
+    },
+    "node_20260309151410_1403": {
+      "id": "node_20260309151410_1403",
+      "title": "Machine Learning",
+      "description": "AI branch for learning from data",
+      "category": "ai",
+      "tags": [
+        "ai",
+        "data"
+      ],
+      "created_at": "2026-03-09T15:14:10.687519",
+      "updated_at": "2026-03-09T15:14:10.687519",
+      "metadata": {}
+    },
+    "node_20260309151410_1123": {
+      "id": "node_20260309151410_1123",
+      "title": "Deep Learning",
+      "description": "ML using neural networks",
+      "category": "ai",
+      "tags": [
+        "ai",
+        "neural"
+      ],
+      "created_at": "2026-03-09T15:14:10.973494",
+      "updated_at": "2026-03-09T15:14:10.973494",
+      "metadata": {}
+    },
+    "node_20260309151411_9839": {
+      "id": "node_20260309151411_9839",
+      "title": "Neural Network",
+      "description": "Computing system inspired by brain",
+      "category": "ai",
+      "tags": [
+        "ai",
+        "biology"
+      ],
+      "created_at": "2026-03-09T15:14:11.308539",
+      "updated_at": "2026-03-09T15:14:11.308539",
+      "metadata": {}
+    },
+    "node_20260309151411_697": {
+      "id": "node_20260309151411_697",
+      "title": "Data Science",
+      "description": "Extract insights from data",
+      "category": "science",
+      "tags": [
+        "data",
+        "analysis"
+      ],
+      "created_at": "2026-03-09T15:14:11.601733",
+      "updated_at": "2026-03-09T15:14:11.601733",
+      "metadata": {}
+    }
+  },
+  "relations": {
+    "rel_20260309151411_9296": {
+      "id": "rel_20260309151411_9296",
+      "from_node": "node_20260309151410_5569",
+      "to_node": "node_20260309151410_1403",
+      "relation_type": "used_for",
+      "description": "Python used in ML",
+      "created_at": "2026-03-09T15:14:11.897688",
+      "metadata": {}
+    },
+    "rel_20260309151412_4666": {
+      "id": "rel_20260309151412_4666",
+      "from_node": "node_20260309151410_1403",
+      "to_node": "node_20260309151410_1123",
+      "relation_type": "is_a",
+      "description": "DL is a type of ML",
+      "created_at": "2026-03-09T15:14:12.165066",
+      "metadata": {}
+    },
+    "rel_20260309151412_7742": {
+      "id": "rel_20260309151412_7742",
+      "from_node": "node_20260309151410_1123",
+      "to_node": "node_20260309151411_9839",
+      "relation_type": "used_for",
+      "description": "DL uses neural networks",
+      "created_at": "2026-03-09T15:14:12.420851",
+      "metadata": {}
+    },
+    "rel_20260309151412_1993": {
+      "id": "rel_20260309151412_1993",
+      "from_node": "node_20260309151410_1403",
+      "to_node": "node_20260309151411_697",
+      "relation_type": "related_to",
+      "description": "ML related to data science",
+      "created_at": "2026-03-09T15:14:12.670047",
+      "metadata": {}
+    }
+  },
+  "last_updated": "2026-03-09T15:14:12.670097"
+}
