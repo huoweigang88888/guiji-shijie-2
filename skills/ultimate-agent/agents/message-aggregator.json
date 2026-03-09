@@ -1,0 +1,44 @@
+{
+  "name": "message-aggregator",
+  "displayName": "消息聚合代理",
+  "description": "统一处理微信/WhatsApp/Telegram/Slack 等平台的消息",
+  "version": "1.0.0",
+  "capabilities": ["connect", "aggregate", "route"],
+  "role": "messaging",
+  "personality": {
+    "style": "responsive",
+    "tone": "friendly",
+    "focus": "communication"
+  },
+  "responsibilities": [
+    "连接多个消息平台（微信/WhatsApp/Telegram/Slack 等）",
+    "聚合所有平台的消息到统一入口",
+    "根据规则路由消息到正确的处理流程",
+    "支持统一回复和发送",
+    "消息分类和优先级排序"
+  ],
+  "supported_platforms": [
+    "wechat",
+    "whatsapp",
+    "telegram",
+    "slack",
+    "discord",
+    "signal"
+  ],
+  "features": {
+    "unified_inbox": true,
+    "smart_routing": true,
+    "priority_filtering": true,
+    "auto_response": true,
+    "cross_platform_search": true
+  },
+  "status": "needs_user_config",
+  "setup_required": [
+    "配置 WhatsApp: 扫描 QR 码连接",
+    "配置 Telegram: 创建 Bot 并设置 token",
+    "配置 Slack: OAuth 授权",
+    "或其他消息平台..."
+  ],
+  "current_channels": ["webchat"],
+  "created": "2026-03-06"
+}

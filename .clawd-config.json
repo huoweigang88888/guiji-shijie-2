@@ -1,0 +1,22 @@
+{
+  "provider": "ollama",
+  "pipeline": {
+    "layer2": {
+      "enabled": false,
+      "model": "",
+      "baseUrl": "http://localhost:11434/v1",
+      "provider": "ollama"
+    },
+    "layer3": {
+      "enabled": false,
+      "model": "",
+      "baseUrl": "http://localhost:11434/v1",
+      "computerUse": false,
+      "provider": "ollama"
+    }
+  },
+  "providerKeys": {
+    "openai": "(set via env)"
+  },
+  "diagnosedAt": "2026-03-04T09:01:56.939Z"
+}

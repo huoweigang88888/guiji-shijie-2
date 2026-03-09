@@ -1,0 +1,93 @@
+{
+  "version": "1.0.0",
+  "active_projects": [
+    {
+      "name": "AI 分身集群",
+      "description": "多个 specialized agents 协作完成复杂任务",
+      "tags": [
+        "multi-agent",
+        "collaboration",
+        "orchestration"
+      ],
+      "status": "planning",
+      "priority": "high"
+    },
+    {
+      "name": "全平台消息聚合",
+      "description": "一个入口管所有聊天（微信/WhatsApp/Telegram/Slack）",
+      "tags": [
+        "messaging",
+        "integration",
+        "unified-interface"
+      ],
+      "status": "planning",
+      "priority": "high"
+    },
+    {
+      "name": "自动研究助手",
+      "description": "自动搜索、整理、总结某个主题的最新进展",
+      "tags": [
+        "research",
+        "automation",
+        "summarization"
+      ],
+      "status": "planning",
+      "priority": "high"
+    }
+  ],
+  "learned_lessons": [],
+  "created_agents": [
+    {
+      "name": "agent-coordinator",
+      "status": "active",
+      "created": "2026-03-06",
+      "config_file": "agents/agent-coordinator.json"
+    },
+    {
+      "name": "message-aggregator",
+      "status": "pending_setup",
+      "created": "2026-03-06",
+      "config_file": "agents/message-aggregator.json"
+    },
+    {
+      "name": "research-assistant",
+      "status": "active",
+      "created": "2026-03-06",
+      "config_file": "agents/research-assistant.json"
+    }
+  ],
+  "last_heartbeat": {
+    "timestamp": "2026-03-06T10:34:56.973382",
+    "active_projects": 3,
+    "created_agents": 3,
+    "agents": [
+      {
+        "name": "agent-coordinator",
+        "display_name": "多代理协调器",
+        "status": "active",
+        "description": "管理和调度多个 specialized agents 协作完成复杂任务"
+      },
+      {
+        "name": "message-aggregator",
+        "display_name": "消息聚合代理",
+        "status": "needs_user_config",
+        "description": "统一处理微信/WhatsApp/Telegram/Slack 等平台的消息"
+      },
+      {
+        "name": "research-assistant",
+        "display_name": "自动研究助手",
+        "status": "active",
+        "description": "自动搜索、整理、总结某个主题的最新进展"
+      }
+    ],
+    "issues": [
+      {
+        "type": "agent_pending",
+        "agent": "message-aggregator",
+        "message": "消息聚合代理 需要用户配置"
+      }
+    ]
+  },
+  "performance_metrics": {},
+  "last_updated": 1772764496.973405
+}
