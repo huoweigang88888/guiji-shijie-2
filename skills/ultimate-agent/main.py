@@ -17,6 +17,9 @@ sys.path.insert(0, str(agents_dir))
 from coordinator import AgentCoordinator
 from researcher import ResearchAssistant
 from message_aggregator import MessageAggregator, MessagePlatform
+from heartbeat import HeartbeatSystem
+from auto_executor import AutoExecutor
+from self_improver import SelfImprover
 
 # 配置日志
 logging.basicConfig(
@@ -37,9 +40,15 @@ class GuijiWorld2:
         """初始化系统"""
         logger.info("初始化硅基世界 2 系统...")
         
+        # Phase 1 组件
         self.coordinator = AgentCoordinator(agents_dir)
         self.researcher = ResearchAssistant()
         self.messenger = MessageAggregator(agents_dir)
+        
+        # Phase 2 组件
+        self.heartbeat = HeartbeatSystem(agents_dir.parent)
+        self.executor = AutoExecutor(agents_dir.parent)
+        self.improver = SelfImprover(agents_dir.parent)
         
         logger.info("系统初始化完成")
     
@@ -89,31 +98,113 @@ class GuijiWorld2:
             logger.error(f"不支持的平台：{platform}")
             return False
     
+    def run_heartbeat(self) -> dict:
+        """
+        运行心跳检查
+        
+        Returns:
+            心跳报告
+        """
+        logger.info("运行心跳检查...")
+        report = self.heartbeat.run_check()
+        return {
+            'summary': report.summary,
+            'issues_found': report.issues_found,
+            'checks_performed': report.checks_performed,
+            'recommended_actions': report.recommended_actions
+        }
+    
+    def add_goal(self, title: str, description: str, tasks: list = None) -> dict:
+        """
+        添加目标
+        
+        Args:
+            title: 目标标题
+            description: 目标描述
+            tasks: 任务列表
+            
+        Returns:
+            目标信息
+        """
+        goal = self.executor.add_goal(title, description)
+        
+        if tasks:
+            self.executor.generate_tasks(goal.id, tasks)
+        
+        return {
+            'goal_id': goal.id,
+            'title': goal.title,
+            'status': goal.status
+        }
+    
+    def execute_tasks(self, limit: int = None) -> dict:
+        """
+        执行待处理任务
+        
+        Returns:
+            执行结果
+        """
+        return self.executor.execute_pending_tasks(limit)
+    
+    def get_improvements(self) -> dict:
+        """
+        获取改进建议
+        
+        Returns:
+            改进建议列表
+        """
+        improvements = self.improver.get_high_priority_improvements()
+        return {
+            'count': len(improvements),
+            'improvements': [imp.to_dict() for imp in improvements[:5]]
+        }
+    
     def get_status(self) -> dict:
         """获取系统状态"""
         return {
             'system': '硅基世界 2',
-            'version': '1.0.0',
+            'version': '2.0.0',
             'timestamp': datetime.now().isoformat(),
             'components': {
+                # Phase 1
                 'coordinator': self.coordinator.get_status(),
                 'researcher': self.researcher.get_status(),
-                'messenger': self.messenger.get_status()
+                'messenger': self.messenger.get_status(),
+                # Phase 2
+                'heartbeat': {
+                    'last_check': self.heartbeat.last_check,
+                    'status': 'active'
+                },
+                'executor': self.executor.get_progress(),
+                'improver': {
+                    'errors': len(self.improver.errors),
+                    'lessons': len(self.improver.lessons),
+                    'improvements': len(self.improver.improvements)
+                }
             }
         }
     
     def interactive_mode(self):
         """交互模式"""
         print("\n" + "="*60)
-        print("🤖 硅基世界 2 - AI 代理系统")
+        print("🤖 硅基世界 2 - AI 代理系统 (Phase 2)")
         print("="*60)
         print("\n可用命令:")
-        print("  task <描述>     - 执行任务")
-        print("  research <主题> - 研究主题")
-        print("  send <平台> <接收者> <内容> - 发送消息")
-        print("  status          - 显示系统状态")
-        print("  help            - 显示帮助")
-        print("  quit            - 退出")
+        print("  Phase 1 - 核心功能")
+        print("    task <描述>              - 执行任务")
+        print("    research <主题>          - 研究主题")
+        print("    send <平台> <接收者> <内容> - 发送消息")
+        print("")
+        print("  Phase 2 - 自动化系统")
+        print("    heartbeat                - 运行心跳检查")
+        print("    goal <标题> <描述>       - 添加目标")
+        print("    exec-tasks [数量]        - 执行待处理任务")
+        print("    improvements             - 查看改进建议")
+        print("")
+        print("  通用")
+        print("    status                   - 显示系统状态")
+        print("    help                     - 显示帮助")
+        print("    quit                     - 退出")
         print("="*60 + "\n")
         
         while True:
@@ -129,17 +220,67 @@ class GuijiWorld2:
                 
                 if user_input.lower() == 'help':
                     print("\n可用命令:")
-                    print("  task <描述>     - 执行任务")
-                    print("  research <主题> - 研究主题")
-                    print("  send <平台> <接收者> <内容> - 发送消息")
-                    print("  status          - 显示系统状态")
-                    print("  help            - 显示帮助")
-                    print("  quit            - 退出\n")
+                    print("  Phase 1 - 核心功能")
+                    print("    task <描述>              - 执行任务")
+                    print("    research <主题>          - 研究主题")
+                    print("    send <平台> <接收者> <内容> - 发送消息")
+                    print("")
+                    print("  Phase 2 - 自动化系统")
+                    print("    heartbeat                - 运行心跳检查")
+                    print("    goal <标题> <描述>       - 添加目标")
+                    print("    exec-tasks [数量]        - 执行待处理任务")
+                    print("    improvements             - 查看改进建议")
+                    print("")
+                    print("  通用")
+                    print("    status                   - 显示系统状态")
+                    print("    help                     - 显示帮助")
+                    print("    quit                     - 退出\n")
                     continue
                 
                 if user_input.lower() == 'status':
                     status = self.get_status()
                     print(json.dumps(status, indent=2, ensure_ascii=False))
+                    continue
+                
+                if user_input.lower() == 'heartbeat':
+                    result = self.run_heartbeat()
+                    print(f"\n{result['summary']}")
+                    if result['recommended_actions']:
+                        print("\n建议行动:")
+                        for action in result['recommended_actions']:
+                            print(f"  - [{action['severity']}] {action['action']}")
+                    print()
+                    continue
+                
+                if user_input.lower() == 'improvements':
+                    result = self.get_improvements()
+                    if result['count'] == 0:
+                        print("\n暂无改进建议 ✅\n")
+                    else:
+                        print(f"\n发现 {result['count']} 个改进建议:")
+                        for imp in result['improvements']:
+                            print(f"  - {imp['title']} (价值:{imp['estimated_value']}/努力:{imp['estimated_effort']})")
+                    print()
+                    continue
+                
+                if user_input.lower().startswith('exec-tasks'):
+                    parts = user_input.split()
+                    limit = int(parts[1]) if len(parts) > 1 else None
+                    result = self.execute_tasks(limit)
+                    print(f"\n执行完成：{result['completed']}/{result['total']}")
+                    if result['failed'] > 0:
+                        print(f"失败：{result['failed']}")
+                    print()
+                    continue
+                
+                if user_input.lower().startswith('goal '):
+                    parts = user_input[5:].strip().split(' ', 1)
+                    if len(parts) >= 2:
+                        title, description = parts
+                        result = self.add_goal(title, description)
+                        print(f"\n目标已创建：{result['title']} (ID: {result['goal_id']})\n")
+                    else:
+                        print("用法：goal <标题> <描述>\n")
                     continue
                 
                 if user_input.lower().startswith('task '):
@@ -196,6 +337,23 @@ def main():
             status = system.get_status()
             print(json.dumps(status, indent=2, ensure_ascii=False))
         
+        elif command == 'heartbeat':
+            result = system.run_heartbeat()
+            print(f"\n{result['summary']}\n")
+            if result['recommended_actions']:
+                print("建议行动:")
+                for action in result['recommended_actions']:
+                    print(f"  - [{action['severity']}] {action['action']}")
+        
+        elif command == 'improvements':
+            result = system.get_improvements()
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+        
+        elif command == 'exec-tasks':
+            limit = int(sys.argv[2]) if len(sys.argv) > 2 else None
+            result = system.execute_tasks(limit)
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+        
         elif command == 'interactive':
             system.interactive_mode()
         
@@ -204,6 +362,9 @@ def main():
             print("  python main.py task <任务描述>")
             print("  python main.py research <研究主题>")
             print("  python main.py status")
+            print("  python main.py heartbeat")
+            print("  python main.py improvements")
+            print("  python main.py exec-tasks [数量]")
             print("  python main.py interactive")
     else:
         # 默认交互模式

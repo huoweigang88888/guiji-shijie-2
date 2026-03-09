@@ -142,17 +142,17 @@ aggregator.send_message("你好！", MessagePlatform.WHATSAPP, "张三")
 
 详见 [PROJECT_PLAN.md](PROJECT_PLAN.md)
 
-### Phase 1: 核心功能完善 (本周)
+### Phase 1: 核心功能完善 ✅
 - [x] 代理协调器实现
 - [x] 研究助手实现
 - [x] 消息聚合器实现
 - [ ] 集成真实 web_search API
 - [ ] 连接真实消息平台
 
-### Phase 2: 自动化系统 (下周)
-- [ ] 心跳检查系统
-- [ ] 自动任务执行
-- [ ] 自我改进模块
+### Phase 2: 自动化系统 ✅
+- [x] 心跳检查系统
+- [x] 自动任务执行
+- [x] 自我改进模块
 
 ### Phase 3: 增强功能 (第 3 周)
 - [ ] 向量搜索 (LanceDB)
