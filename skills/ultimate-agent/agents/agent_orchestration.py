@@ -14,6 +14,7 @@ from enum import Enum
 import uuid
 
 from agent_communication import AgentCommunication, Performative, ACLMessage
+from workflow_persistence import WorkflowPersistence
 
 # 配置日志
 logging.basicConfig(
@@ -90,20 +91,26 @@ class AgentOrchestration:
     - 结果聚合
     """
     
-    def __init__(self, communication: Optional[AgentCommunication] = None):
+    def __init__(self, communication: Optional[AgentCommunication] = None, 
+                 persistence: Optional[WorkflowPersistence] = None):
         """
         初始化编排系统
         
         Args:
             communication: 代理通信系统实例
+            persistence: 持久化系统实例
         """
         self.comm = communication or AgentCommunication()
+        self.persistence = persistence or WorkflowPersistence()
         
         # 工作流存储
         self.workflows: Dict[str, Workflow] = {}
         
         # 任务处理器
         self.task_handlers: Dict[str, Callable[[SubTask], Any]] = {}
+        
+        # 从持久化恢复工作流
+        self._restore_workflows()
         
         # 注册系统代理
         self._register_system_agents()
@@ -131,6 +138,83 @@ class AgentOrchestration:
             ])
         
         logger.info(f"已注册 {len(pre_defined_agents) + 1} 个系统代理")
+    
+    def _restore_workflows(self) -> None:
+        """从持久化恢复工作流"""
+        try:
+            saved_workflows = self.persistence.list_workflows(limit=100)
+            for wf_data in saved_workflows:
+                # 只恢复未完成的工作流
+                if wf_data['state'] in ['running', 'waiting', 'not_started']:
+                    workflow = Workflow(
+                        id=wf_data['id'],
+                        name=wf_data['name'],
+                        description=wf_data.get('description', ''),
+                        state=WorkflowState(wf_data['state']),
+                        context=wf_data.get('context', {}),
+                        created_at=wf_data['created_at'],
+                        started_at=wf_data.get('started_at'),
+                        completed_at=wf_data.get('completed_at')
+                    )
+                    
+                    # 恢复任务
+                    tasks_data = self.persistence.get_workflow_tasks(wf_data['id'])
+                    for task_data in tasks_data:
+                        task = SubTask(
+                            id=task_data['id'],
+                            title=task_data['title'],
+                            description=task_data.get('description', ''),
+                            assigned_to=task_data.get('assigned_to', 'executor'),
+                            status=TaskStatus(task_data['status']),
+                            result=task_data.get('result'),
+                            error=task_data.get('error'),
+                            created_at=task_data['created_at'],
+                            started_at=task_data.get('started_at'),
+                            completed_at=task_data.get('completed_at')
+                        )
+                        workflow.tasks.append(task)
+                    
+                    self.workflows[workflow.id] = workflow
+            
+            if saved_workflows:
+                logger.info(f"已恢复 {len(self.workflows)} 个工作流")
+        except Exception as e:
+            logger.error(f"恢复工作流失败：{e}")
+    
+    def _save_workflow(self, workflow: Workflow) -> None:
+        """保存工作流到持久化"""
+        try:
+            wf_data = {
+                'id': workflow.id,
+                'name': workflow.name,
+                'description': workflow.description,
+                'state': workflow.state.value,
+                'context': workflow.context,
+                'created_at': workflow.created_at,
+                'started_at': workflow.started_at,
+                'completed_at': workflow.completed_at,
+                'updated_at': datetime.now().isoformat()
+            }
+            self.persistence.save_workflow(wf_data)
+            
+            # 保存任务
+            for task in workflow.tasks:
+                task_data = {
+                    'id': task.id,
+                    'workflow_id': workflow.id,
+                    'title': task.title,
+                    'description': task.description,
+                    'assigned_to': task.assigned_to,
+                    'status': task.status.value,
+                    'result': task.result,
+                    'error': task.error,
+                    'created_at': task.created_at,
+                    'started_at': task.started_at,
+                    'completed_at': task.completed_at
+                }
+                self.persistence.save_task(task_data)
+        except Exception as e:
+            logger.error(f"保存工作流失败：{e}")
     
     def register_task_handler(
         self,
@@ -355,6 +439,9 @@ class AgentOrchestration:
             workflow.completed_at = datetime.now().isoformat()
         else:
             workflow.state = WorkflowState.WAITING
+        
+        # 保存到持久化
+        self._save_workflow(workflow)
         
         return {
             'workflow_id': workflow.id,
