@@ -82,7 +82,11 @@ class Improvement:
             self.related_lessons = []
     
     def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
+        d = asdict(self)
+        d['improvement_type'] = self.improvement_type.value
+        d['confidence'] = self.confidence.value
+        d['risk'] = self.risk.value
+        return d
 
 
 @dataclass

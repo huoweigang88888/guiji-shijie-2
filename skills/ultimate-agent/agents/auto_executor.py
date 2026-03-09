@@ -53,7 +53,10 @@ class Task:
     parent_goal: Optional[str] = None
     
     def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
+        d = asdict(self)
+        d['priority'] = self.priority.value
+        d['status'] = self.status.value
+        return d
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Task':

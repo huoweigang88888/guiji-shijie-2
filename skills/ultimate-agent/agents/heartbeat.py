@@ -48,6 +48,18 @@ class CheckResult:
     timestamp: str
     details: Optional[Dict[str, Any]] = None
     recommended_action: Optional[str] = None
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """转换为字典（JSON 可序列化）"""
+        return {
+            'check_type': self.check_type.value,
+            'status': self.status,
+            'message': self.message,
+            'severity': self.severity.value,
+            'timestamp': self.timestamp,
+            'details': self.details,
+            'recommended_action': self.recommended_action
+        }
 
 
 @dataclass
@@ -477,10 +489,21 @@ class HeartbeatSystem:
         if len(self.history) > 50:
             self.history = self.history[-50:]
         
-        # 保存
+        # 保存（手动序列化以避免枚举问题）
+        reports_data = []
+        for r in self.history:
+            reports_data.append({
+                'timestamp': r.timestamp,
+                'checks_performed': r.checks_performed,
+                'issues_found': r.issues_found,
+                'results': [result.to_dict() for result in r.results],
+                'recommended_actions': r.recommended_actions,
+                'summary': r.summary
+            })
+        
         with open(self.history_file, 'w', encoding='utf-8') as f:
             json.dump({
-                'reports': [asdict(r) for r in self.history],
+                'reports': reports_data,
                 'last_updated': datetime.now().isoformat()
             }, f, indent=2, ensure_ascii=False)
     

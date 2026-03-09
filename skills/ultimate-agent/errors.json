@@ -1,0 +1,23 @@
+{
+  "errors": [
+    {
+      "id": "err_20260309111737_0",
+      "error_type": "TestError",
+      "error_message": "This is a test error",
+      "context": {},
+      "timestamp": "2026-03-09T11:17:37.437601",
+      "resolved": false,
+      "resolution": null
+    },
+    {
+      "id": "err_20260309111937_1",
+      "error_type": "TestError",
+      "error_message": "This is a test error",
+      "context": {},
+      "timestamp": "2026-03-09T11:19:37.925823",
+      "resolved": false,
+      "resolution": null
+    }
+  ],
+  "last_updated": "2026-03-09T11:19:37.931482"
+}

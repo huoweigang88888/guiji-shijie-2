@@ -1,0 +1,25 @@
+{
+  "lessons": {
+    "lesson_20260309111737_0": {
+      "id": "lesson_20260309111737_0",
+      "title": "处理 TestError 类型错误",
+      "description": "错误信息：This is a test error。需要添加适当的异常处理逻辑。",
+      "category": "general",
+      "source": "error:err_20260309111737_0",
+      "learned_at": "2026-03-09T11:17:37.440139",
+      "applied": false,
+      "applied_at": null
+    },
+    "lesson_20260309111937_1": {
+      "id": "lesson_20260309111937_1",
+      "title": "处理 TestError 类型错误",
+      "description": "错误信息：This is a test error。需要添加适当的异常处理逻辑。",
+      "category": "general",
+      "source": "error:err_20260309111937_1",
+      "learned_at": "2026-03-09T11:19:37.929015",
+      "applied": false,
+      "applied_at": null
+    }
+  },
+  "last_updated": "2026-03-09T11:19:37.932054"
+}

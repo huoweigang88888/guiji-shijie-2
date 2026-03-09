@@ -1,0 +1,27 @@
+{
+  "goals": {
+    "goal_20260309111737_0": {
+      "id": "goal_20260309111737_0",
+      "title": "Test Goal",
+      "description": "This is a test goal",
+      "status": "active",
+      "created_at": "2026-03-09T11:17:37.427766",
+      "completed_at": null,
+      "tasks": [
+        "task_20260309111737_0"
+      ]
+    },
+    "goal_20260309111937_1": {
+      "id": "goal_20260309111937_1",
+      "title": "Test Goal",
+      "description": "This is a test goal",
+      "status": "active",
+      "created_at": "2026-03-09T11:19:37.913949",
+      "completed_at": null,
+      "tasks": [
+        "task_20260309111937_0"
+      ]
+    }
+  },
+  "last_updated": "2026-03-09T11:19:37.915893"
+}

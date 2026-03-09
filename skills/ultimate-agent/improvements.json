@@ -1,0 +1,21 @@
+{
+  "improvements": {
+    "imp_20260309111937_0": {
+      "id": "imp_20260309111937_0",
+      "title": "改进：处理 TestError 类型错误",
+      "description": "错误信息：This is a test error。需要添加适当的异常处理逻辑。",
+      "improvement_type": "refactor",
+      "confidence": "medium",
+      "risk": "low",
+      "estimated_value": 5,
+      "estimated_effort": 3,
+      "created_at": "2026-03-09T11:19:37.931086",
+      "status": "pending",
+      "implemented_at": null,
+      "related_lessons": [
+        "lesson_20260309111937_1"
+      ]
+    }
+  },
+  "last_updated": "2026-03-09T11:19:37.932647"
+}
