@@ -1,15 +1,38 @@
 {
   "agents": {
-    "coordinator": {
-      "agent_id": "coordinator",
+    "orchestrator": {
+      "agent_id": "orchestrator",
       "agent_type": "orchestrator",
       "status": "active",
-      "last_seen": "2026-03-09T16:41:17.079009",
+      "last_seen": "2026-03-09T16:43:48.697545",
       "metadata": {},
       "capabilities": [
         {
-          "name": "delegate_task",
+          "name": "create_workflow",
+          "description": "Create and manage workflows",
+          "input_schema": {},
+          "output_schema": {},
+          "enabled": true
+        },
+        {
+          "name": "delegate_tasks",
           "description": "Delegate tasks to agents",
+          "input_schema": {},
+          "output_schema": {},
+          "enabled": true
+        }
+      ]
+    },
+    "coordinator": {
+      "agent_id": "coordinator",
+      "agent_type": "coordinator",
+      "status": "active",
+      "last_seen": "2026-03-09T16:43:48.698475",
+      "metadata": {},
+      "capabilities": [
+        {
+          "name": "coordinator",
+          "description": "Coordinate multi-agent tasks",
           "input_schema": {},
           "output_schema": {},
           "enabled": true
@@ -20,12 +43,12 @@
       "agent_id": "researcher",
       "agent_type": "researcher",
       "status": "active",
-      "last_seen": "2026-03-09T16:41:17.089692",
+      "last_seen": "2026-03-09T16:43:48.699256",
       "metadata": {},
       "capabilities": [
         {
-          "name": "search",
-          "description": "Search information",
+          "name": "researcher",
+          "description": "Research and analyze information",
           "input_schema": {},
           "output_schema": {},
           "enabled": true
@@ -36,12 +59,44 @@
       "agent_id": "messenger",
       "agent_type": "messenger",
       "status": "active",
-      "last_seen": "2026-03-09T16:41:17.090551",
+      "last_seen": "2026-03-09T16:43:48.700056",
       "metadata": {},
       "capabilities": [
         {
-          "name": "send_message",
-          "description": "Send messages",
+          "name": "messenger",
+          "description": "Send and receive messages",
+          "input_schema": {},
+          "output_schema": {},
+          "enabled": true
+        }
+      ]
+    },
+    "executor": {
+      "agent_id": "executor",
+      "agent_type": "executor",
+      "status": "active",
+      "last_seen": "2026-03-09T16:43:48.700840",
+      "metadata": {},
+      "capabilities": [
+        {
+          "name": "executor",
+          "description": "Execute tasks and actions",
+          "input_schema": {},
+          "output_schema": {},
+          "enabled": true
+        }
+      ]
+    },
+    "analyst": {
+      "agent_id": "analyst",
+      "agent_type": "analyst",
+      "status": "active",
+      "last_seen": "2026-03-09T16:43:48.701600",
+      "metadata": {},
+      "capabilities": [
+        {
+          "name": "analyst",
+          "description": "Analyze data and generate reports",
           "input_schema": {},
           "output_schema": {},
           "enabled": true
@@ -49,5 +104,5 @@
       ]
     }
   },
-  "last_updated": "2026-03-09T16:41:17.090558"
+  "last_updated": "2026-03-09T16:43:48.701608"
 }
