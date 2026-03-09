@@ -1,0 +1,53 @@
+{
+  "agents": {
+    "coordinator": {
+      "agent_id": "coordinator",
+      "agent_type": "orchestrator",
+      "status": "active",
+      "last_seen": "2026-03-09T16:41:17.079009",
+      "metadata": {},
+      "capabilities": [
+        {
+          "name": "delegate_task",
+          "description": "Delegate tasks to agents",
+          "input_schema": {},
+          "output_schema": {},
+          "enabled": true
+        }
+      ]
+    },
+    "researcher": {
+      "agent_id": "researcher",
+      "agent_type": "researcher",
+      "status": "active",
+      "last_seen": "2026-03-09T16:41:17.089692",
+      "metadata": {},
+      "capabilities": [
+        {
+          "name": "search",
+          "description": "Search information",
+          "input_schema": {},
+          "output_schema": {},
+          "enabled": true
+        }
+      ]
+    },
+    "messenger": {
+      "agent_id": "messenger",
+      "agent_type": "messenger",
+      "status": "active",
+      "last_seen": "2026-03-09T16:41:17.090551",
+      "metadata": {},
+      "capabilities": [
+        {
+          "name": "send_message",
+          "description": "Send messages",
+          "input_schema": {},
+          "output_schema": {},
+          "enabled": true
+        }
+      ]
+    }
+  },
+  "last_updated": "2026-03-09T16:41:17.090558"
+}
