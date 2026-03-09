@@ -22,6 +22,8 @@ from auto_executor import AutoExecutor
 from self_improver import SelfImprover
 from vector_search import VectorSearch
 from knowledge_graph import KnowledgeGraph, RelationType
+from agent_communication import AgentCommunication, Performative
+from agent_orchestration import AgentOrchestration
 
 # 配置日志
 logging.basicConfig(
@@ -55,6 +57,10 @@ class GuijiWorld2:
         # Phase 3 组件
         self.vector_search = VectorSearch(agents_dir.parent / "vector-db")
         self.knowledge_graph = KnowledgeGraph(agents_dir.parent)
+        
+        # Phase 4 组件
+        self.agent_comm = AgentCommunication(agents_dir)
+        self.orchestration = AgentOrchestration(self.agent_comm)
         
         logger.info("系统初始化完成")
     
@@ -165,6 +171,54 @@ class GuijiWorld2:
             'improvements': [imp.to_dict() for imp in improvements[:5]]
         }
     
+    def create_workflow(self, name: str, description: str, tasks: list = None) -> dict:
+        """
+        创建工作流
+        
+        Returns:
+            工作流信息
+        """
+        workflow = self.orchestration.create_workflow(name, description)
+        
+        if tasks:
+            self.orchestration.decompose_task(workflow, description, tasks)
+        
+        return {
+            'workflow_id': workflow.id,
+            'name': workflow.name,
+            'state': workflow.state.value
+        }
+    
+    def execute_workflow(self, workflow_id: str) -> dict:
+        """
+        执行工作流
+        
+        Returns:
+            执行结果
+        """
+        return self.orchestration.execute_workflow(workflow_id)
+    
+    def agent_comm_send(self, sender: str, receiver: str, performative: str, content: str) -> dict:
+        """
+        发送代理间消息
+        
+        Returns:
+            发送结果
+        """
+        try:
+            perf = Performative(performative)
+            msg = self.agent_comm.send_message(sender, [receiver], perf, content)
+            return {
+                'success': True,
+                'message_id': msg.message_id,
+                'conversation_id': msg.conversation_id
+            }
+        except Exception as e:
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
     def vector_add(self, content: str, doc_type: str = "general", metadata: dict = None) -> dict:
         """
         添加文档到向量库
@@ -270,7 +324,10 @@ class GuijiWorld2:
                 },
                 # Phase 3
                 'vector_search': self.vector_search.get_stats(),
-                'knowledge_graph': self.knowledge_graph.get_stats()
+                'knowledge_graph': self.knowledge_graph.get_stats(),
+                # Phase 4
+                'agent_communication': self.agent_comm.get_system_stats(),
+                'orchestration': self.orchestration.get_system_stats()
             }
         }
     
