@@ -142,7 +142,7 @@ aggregator.send_message("你好！", MessagePlatform.WHATSAPP, "张三")
 
 详见 [PROJECT_PLAN.md](PROJECT_PLAN.md)
 
-### Phase 1: 核心功能完善 ✅
+### Phase 1: 核心代理系统 ✅
 - [x] 代理协调器实现
 - [x] 研究助手实现
 - [x] 消息聚合器实现
@@ -154,10 +154,20 @@ aggregator.send_message("你好！", MessagePlatform.WHATSAPP, "张三")
 - [x] 自动任务执行
 - [x] 自我改进模块
 
-### Phase 3: 增强功能 (第 3 周)
-- [ ] 向量搜索 (LanceDB)
-- [ ] 知识图谱 (Git-Notes)
-- [ ] 用户界面
+### Phase 3: 增强功能 ✅
+- [x] 向量搜索 (简化版 + LanceDB 可选)
+- [x] 知识图谱 (Git-Notes 集成)
+- [x] Web 控制面板
+
+### Phase 4: 多代理协作 ✅
+- [x] 代理通信模块 (FIPA ACL 风格)
+- [x] 协作编排模块 (工作流管理)
+- [x] 集成到主入口 CLI
+
+### Pending (可选)
+- [ ] 集成真实 web_search API
+- [ ] 连接真实消息平台
+- [ ] 持久化存储优化
 
 ---
 
