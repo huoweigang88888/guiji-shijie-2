@@ -492,11 +492,19 @@ class HeartbeatSystem:
         # 保存（手动序列化以避免枚举问题）
         reports_data = []
         for r in self.history:
+            # 处理 results 可能是 dict 列表或 CheckResult 对象列表的情况
+            results_data = []
+            for result in r.results:
+                if isinstance(result, dict):
+                    results_data.append(result)
+                else:
+                    results_data.append(result.to_dict())
+            
             reports_data.append({
                 'timestamp': r.timestamp,
                 'checks_performed': r.checks_performed,
                 'issues_found': r.issues_found,
-                'results': [result.to_dict() for result in r.results],
+                'results': results_data,
                 'recommended_actions': r.recommended_actions,
                 'summary': r.summary
             })

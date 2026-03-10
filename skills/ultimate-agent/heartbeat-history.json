@@ -83,7 +83,175 @@
         }
       ],
       "summary": "⚠️ 发现 1 个需要注意的问题"
+    },
+    {
+      "timestamp": "2026-03-10T10:08:33.944052",
+      "checks_performed": 6,
+      "issues_found": 1,
+      "results": [
+        {
+          "check_type": "system",
+          "status": "ok",
+          "message": "系统运行正常",
+          "severity": "info",
+          "timestamp": "2026-03-10T10:08:33.871166",
+          "details": {
+            "workspace": "C:\\Users\\97RPZ8T\\.openclaw\\workspace\\skills",
+            "disk_ok": true
+          },
+          "recommended_action": null
+        },
+        {
+          "check_type": "memory",
+          "status": "warning",
+          "message": "MEMORY.md 不存在",
+          "severity": "warning",
+          "timestamp": "2026-03-10T10:08:33.871361",
+          "details": {
+            "memory_file": "C:\\Users\\97RPZ8T\\.openclaw\\workspace\\skills\\MEMORY.md",
+            "exists": false,
+            "daily_logs": 0
+          },
+          "recommended_action": "创建 MEMORY.md 文件"
+        },
+        {
+          "check_type": "tasks",
+          "status": "info",
+          "message": "未发现任务文件",
+          "severity": "info",
+          "timestamp": "2026-03-10T10:08:33.871452",
+          "details": {
+            "pending_tasks": 0
+          },
+          "recommended_action": null
+        },
+        {
+          "check_type": "messages",
+          "status": "info",
+          "message": "消息聚合器未配置",
+          "severity": "info",
+          "timestamp": "2026-03-10T10:08:33.871534",
+          "details": {
+            "config_file": "C:\\Users\\97RPZ8T\\.openclaw\\workspace\\skills\\ultimate-agent\\agents\\agents\\message-aggregator.json"
+          },
+          "recommended_action": null
+        },
+        {
+          "check_type": "security",
+          "status": "ok",
+          "message": "未发现明显的安全风险",
+          "severity": "info",
+          "timestamp": "2026-03-10T10:08:33.933244",
+          "details": {
+            "sensitive_files": []
+          },
+          "recommended_action": null
+        },
+        {
+          "check_type": "performance",
+          "status": "ok",
+          "message": "系统性能正常",
+          "severity": "info",
+          "timestamp": "2026-03-10T10:08:33.944025",
+          "details": {
+            "large_logs": []
+          },
+          "recommended_action": null
+        }
+      ],
+      "recommended_actions": [
+        {
+          "type": "memory",
+          "action": "创建 MEMORY.md 文件",
+          "severity": "warning"
+        }
+      ],
+      "summary": "⚠️ 发现 1 个需要注意的问题"
+    },
+    {
+      "timestamp": "2026-03-10T10:08:59.673753",
+      "checks_performed": 6,
+      "issues_found": 1,
+      "results": [
+        {
+          "check_type": "system",
+          "status": "ok",
+          "message": "系统运行正常",
+          "severity": "info",
+          "timestamp": "2026-03-10T10:08:59.478082",
+          "details": {
+            "workspace": "C:\\Users\\97RPZ8T\\.openclaw\\workspace\\skills",
+            "disk_ok": true
+          },
+          "recommended_action": null
+        },
+        {
+          "check_type": "memory",
+          "status": "warning",
+          "message": "MEMORY.md 不存在",
+          "severity": "warning",
+          "timestamp": "2026-03-10T10:08:59.478512",
+          "details": {
+            "memory_file": "C:\\Users\\97RPZ8T\\.openclaw\\workspace\\skills\\MEMORY.md",
+            "exists": false,
+            "daily_logs": 0
+          },
+          "recommended_action": "创建 MEMORY.md 文件"
+        },
+        {
+          "check_type": "tasks",
+          "status": "info",
+          "message": "未发现任务文件",
+          "severity": "info",
+          "timestamp": "2026-03-10T10:08:59.478724",
+          "details": {
+            "pending_tasks": 0
+          },
+          "recommended_action": null
+        },
+        {
+          "check_type": "messages",
+          "status": "info",
+          "message": "消息聚合器未配置",
+          "severity": "info",
+          "timestamp": "2026-03-10T10:08:59.478917",
+          "details": {
+            "config_file": "C:\\Users\\97RPZ8T\\.openclaw\\workspace\\skills\\ultimate-agent\\agents\\agents\\message-aggregator.json"
+          },
+          "recommended_action": null
+        },
+        {
+          "check_type": "security",
+          "status": "ok",
+          "message": "未发现明显的安全风险",
+          "severity": "info",
+          "timestamp": "2026-03-10T10:08:59.646524",
+          "details": {
+            "sensitive_files": []
+          },
+          "recommended_action": null
+        },
+        {
+          "check_type": "performance",
+          "status": "ok",
+          "message": "系统性能正常",
+          "severity": "info",
+          "timestamp": "2026-03-10T10:08:59.673710",
+          "details": {
+            "large_logs": []
+          },
+          "recommended_action": null
+        }
+      ],
+      "recommended_actions": [
+        {
+          "type": "memory",
+          "action": "创建 MEMORY.md 文件",
+          "severity": "warning"
+        }
+      ],
+      "summary": "⚠️ 发现 1 个需要注意的问题"
     }
   ],
-  "last_updated": "2026-03-09T11:19:37.904857"
+  "last_updated": "2026-03-10T10:08:59.677215"
 }

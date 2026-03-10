@@ -10,6 +10,11 @@ import logging
 from pathlib import Path
 from datetime import datetime
 
+# Windows 编码支持
+if sys.platform == 'win32':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+
 # 添加 agents 目录到路径
 agents_dir = Path(__file__).parent / "agents"
 sys.path.insert(0, str(agents_dir))
@@ -24,6 +29,12 @@ from vector_search import VectorSearch
 from knowledge_graph import KnowledgeGraph, RelationType
 from agent_communication import AgentCommunication, Performative
 from agent_orchestration import AgentOrchestration
+from enhanced_researcher import EnhancedResearcher
+from enhanced_executor import EnhancedExecutor, TaskType
+from analyst_agent import AnalystAgent
+from scheduler import Scheduler, TaskFrequency
+from system_monitor import SystemMonitor
+from workflow_persistence import WorkflowPersistence
 
 # 配置日志
 logging.basicConfig(
