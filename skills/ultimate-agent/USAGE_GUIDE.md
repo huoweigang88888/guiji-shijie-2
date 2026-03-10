@@ -294,6 +294,118 @@ print(f"Memory: {metrics.memory_percent}%")
 print(monitor.get_summary())
 ```
 
+---
+
+## Phase 5: 高级功能 (v3.1.0+)
+
+### 通知代理 (Notification Agent)
+
+支持多渠道通知推送，包括控制台、系统通知、Webhook 和邮件。
+
+```python
+from notification_agent import NotificationAgent, NotificationChannel, NotificationPriority
+
+notifier = NotificationAgent(data_dir=Path('./notifications'))
+
+# 发送通知
+notifier.send(
+    title="系统警告",
+    message="CPU 使用率超过 80%",
+    channel=NotificationChannel.CONSOLE,
+    priority=NotificationPriority.HIGH
+)
+
+# 配置邮件通知
+notifier.configure(
+    smtp_server="smtp.example.com",
+    smtp_port=587,
+    smtp_user="user@example.com",
+    smtp_password="password",
+    email_from="alerts@example.com",
+    email_to=["admin@example.com"]
+)
+
+# 发送到所有启用的渠道
+notifier.send(
+    title="重要通知",
+    message="系统维护即将开始",
+    channel=NotificationChannel.ALL,
+    priority=NotificationPriority.URGENT
+)
+
+# 查看统计
+stats = notifier.get_stats()
+print(stats)
+```
+
+**命令行用法**:
+
+```bash
+# 发送通知
+python main.py notify "标题" "消息内容" console normal
+python main.py notify "警告" "CPU 过高" console high
+
+# 查看通知统计
+python main.py notify-stats
+
+# 渠道选项：console, system, webhook, email, all
+# 优先级选项：low, normal, high, urgent
+```
+
+### 报告生成器 (Report Generator)
+
+支持多种格式的报告导出：Markdown、HTML、PDF、JSON、纯文本。
+
+```python
+from report_generator import ReportGenerator, ReportFormat, Report, ReportSection
+
+generator = ReportGenerator(output_dir=Path('./reports'))
+
+# 创建自定义报告
+report = Report(
+    title="项目进度报告",
+    sections=[
+        ReportSection(title="概述", content="项目进展顺利。", level=2),
+        ReportSection(title="完成情况", content="已完成 80% 的功能。", level=2),
+        ReportSection(title="下一步计划", content="继续开发剩余功能。", level=3)
+    ]
+)
+
+# 生成 Markdown 报告
+md_path = generator.generate(report, ReportFormat.MARKDOWN)
+
+# 生成 HTML 报告
+html_path = generator.generate(report, ReportFormat.HTML)
+
+# 生成 PDF 报告（需要 pdfkit）
+pdf_path = generator.generate(report, ReportFormat.PDF)
+
+# 生成研究报告
+research_report = generator.create_research_report(
+    topic="AI 技术趋势",
+    summary="2026 年 AI 技术发展迅速...",
+    findings=[
+        {"title": "大模型", "snippet": "...", "url": "..."}
+    ]
+)
+```
+
+**命令行用法**:
+
+```bash
+# 生成简单报告
+python main.py report "报告标题" markdown
+python main.py report "报告标题" html my-report
+
+# 生成研究报告
+python main.py research-report "AI 技术趋势" markdown
+
+# 列出所有报告
+python main.py reports
+
+# 格式选项：markdown, html, pdf, json, text
+```
+
 ### 工作流持久化
 
 ```python
@@ -339,6 +451,8 @@ persistence.restore_from_backup(backup_file)
 | `Scheduler` | 定时任务 | `schedule_task()`, `start()` |
 | `SystemMonitor` | 系统监控 | `get_current_metrics()`, `start_monitoring()` |
 | `WorkflowPersistence` | 持久化 | `save_workflow()`, `backup_all()` |
+| `NotificationAgent` | 通知代理 | `send()`, `configure()`, `get_stats()` |
+| `ReportGenerator` | 报告生成 | `generate()`, `create_research_report()`, `list_reports()` |
 
 ---
 
