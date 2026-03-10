@@ -35,6 +35,8 @@ from analyst_agent import AnalystAgent
 from scheduler import Scheduler, TaskFrequency
 from system_monitor import SystemMonitor
 from workflow_persistence import WorkflowPersistence
+from notification_agent import NotificationAgent, NotificationChannel, NotificationPriority
+from report_generator import ReportGenerator, ReportFormat
 
 # 配置日志
 logging.basicConfig(
@@ -72,6 +74,10 @@ class GuijiWorld2:
         # Phase 4 组件
         self.agent_comm = AgentCommunication(agents_dir)
         self.orchestration = AgentOrchestration(self.agent_comm)
+        
+        # Phase 5 组件 (新增)
+        self.notifier = NotificationAgent(agents_dir.parent / "notifications")
+        self.reporter = ReportGenerator(agents_dir.parent / "reports")
         
         logger.info("系统初始化完成")
     
@@ -311,11 +317,159 @@ class GuijiWorld2:
             ]
         }
     
+    # ========== Phase 5: 通知和报告 ==========
+    
+    def send_notification(
+        self,
+        title: str,
+        message: str,
+        channel: str = "console",
+        priority: str = "normal"
+    ) -> dict:
+        """
+        发送通知
+        
+        Args:
+            title: 标题
+            message: 消息内容
+            channel: 渠道 (console/system/webhook/email/all)
+            priority: 优先级 (low/normal/high/urgent)
+            
+        Returns:
+            发送结果
+        """
+        try:
+            ch = NotificationChannel(channel)
+            prio = NotificationPriority(priority)
+            success = self.notifier.send(title, message, ch, prio)
+            return {
+                'success': success,
+                'title': title,
+                'channel': channel,
+                'priority': priority
+            }
+        except Exception as e:
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    def get_notification_stats(self) -> dict:
+        """获取通知统计"""
+        return self.notifier.get_stats()
+    
+    def generate_report(
+        self,
+        title: str,
+        sections: list,
+        format: str = "markdown",
+        filename: str = None
+    ) -> dict:
+        """
+        生成报告
+        
+        Args:
+            title: 报告标题
+            sections: 章节列表 [{'title': ..., 'content': ..., 'level': 2}]
+            format: 格式 (markdown/html/pdf/json/text)
+            filename: 文件名
+            
+        Returns:
+            生成结果
+        """
+        try:
+            from report_generator import Report, ReportSection
+            
+            report = Report(
+                title=title,
+                sections=[
+                    ReportSection(
+                        title=s.get('title', 'Untitled'),
+                        content=s.get('content', ''),
+                        level=s.get('level', 2)
+                    )
+                    for s in sections
+                ]
+            )
+            
+            fmt = ReportFormat(format)
+            filepath = self.reporter.generate(report, fmt, filename)
+            
+            return {
+                'success': True,
+                'filepath': str(filepath),
+                'format': format
+            }
+        except Exception as e:
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    def generate_research_report(
+        self,
+        topic: str,
+        summary: str = "",
+        format: str = "markdown"
+    ) -> dict:
+        """
+        生成研究报告
+        
+        Args:
+            topic: 研究主题
+            summary: 摘要
+            format: 格式
+            
+        Returns:
+            生成结果
+        """
+        try:
+            # 使用研究员获取研究发现
+            research_result = self.researcher.research(topic, count=5)
+            
+            # 创建报告
+            report = self.reporter.create_research_report(
+                topic=topic,
+                findings=[],  # 简化处理
+                summary=summary or f"关于 {topic} 的研究报告"
+            )
+            
+            fmt = ReportFormat(format)
+            filepath = self.reporter.generate(report, fmt)
+            
+            return {
+                'success': True,
+                'filepath': str(filepath),
+                'topic': topic
+            }
+        except Exception as e:
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    def list_reports(self) -> dict:
+        """列出所有报告"""
+        reports = self.reporter.list_reports()
+        return {
+            'count': len(reports),
+            'reports': [
+                {
+                    'filename': p.name,
+                    'size': p.stat().st_size,
+                    'modified': datetime.fromtimestamp(p.stat().st_mtime).isoformat()
+                }
+                for p in reports[:20]  # 限制返回 20 个
+            ]
+        }
+    
+    # ========== 系统状态 ==========
+    
     def get_status(self) -> dict:
         """获取系统状态"""
         return {
             'system': '硅基世界 2',
-            'version': '3.0.0',
+            'version': '3.1.0',  # 升级到 3.1.0
             'timestamp': datetime.now().isoformat(),
             'components': {
                 # Phase 1
@@ -338,7 +492,13 @@ class GuijiWorld2:
                 'knowledge_graph': self.knowledge_graph.get_stats(),
                 # Phase 4
                 'agent_communication': self.agent_comm.get_system_stats(),
-                'orchestration': self.orchestration.get_system_stats()
+                'orchestration': self.orchestration.get_system_stats(),
+                # Phase 5
+                'notification': self.notifier.get_stats(),
+                'reporter': {
+                    'output_dir': str(self.reporter.output_dir),
+                    'reports_count': len(self.reporter.list_reports())
+                }
             }
         }
     
@@ -583,6 +743,52 @@ def main():
             result = system.execute_tasks(limit)
             print(json.dumps(result, indent=2, ensure_ascii=False))
         
+        # Phase 5: 通知和报告
+        elif command == 'notify' and len(sys.argv) > 2:
+            # 用法：notify <标题> <消息> [渠道] [优先级]
+            title = sys.argv[2]
+            message = sys.argv[3] if len(sys.argv) > 3 else "通知消息"
+            channel = sys.argv[4] if len(sys.argv) > 4 else "console"
+            priority = sys.argv[5] if len(sys.argv) > 5 else "normal"
+            
+            result = system.send_notification(title, message, channel, priority)
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+        
+        elif command == 'notify-stats':
+            result = system.get_notification_stats()
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+        
+        elif command == 'report' and len(sys.argv) > 2:
+            # 用法：report <标题> <格式> [文件名]
+            title = sys.argv[2]
+            format = sys.argv[3] if len(sys.argv) > 3 else "markdown"
+            filename = sys.argv[4] if len(sys.argv) > 4 else None
+            
+            # 创建简单报告
+            sections = [
+                {'title': '简介', 'content': f'这是关于 {title} 的报告。', 'level': 2},
+                {'title': '内容', 'content': '详细内容待补充。', 'level': 2},
+                {'title': '总结', 'content': '报告完成。', 'level': 2}
+            ]
+            
+            result = system.generate_report(title, sections, format, filename)
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+        
+        elif command == 'research-report' and len(sys.argv) > 2:
+            # 用法：research-report <主题> [格式]
+            topic = sys.argv[2]
+            format = sys.argv[3] if len(sys.argv) > 3 else "markdown"
+            
+            result = system.generate_research_report(topic, format=format)
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+        
+        elif command == 'reports':
+            result = system.list_reports()
+            print(f"\n报告列表 ({result['count']} 个):\n")
+            for r in result['reports']:
+                print(f"  📄 {r['filename']} ({r['size']} bytes) - {r['modified'][:10]}")
+            print()
+        
         elif command == 'interactive':
             system.interactive_mode()
         
@@ -594,6 +800,11 @@ def main():
             print("  python main.py heartbeat")
             print("  python main.py improvements")
             print("  python main.py exec-tasks [数量]")
+            print("  python main.py notify <标题> <消息> [渠道] [优先级]")
+            print("  python main.py notify-stats")
+            print("  python main.py report <标题> <格式> [文件名]")
+            print("  python main.py research-report <主题> [格式]")
+            print("  python main.py reports")
             print("  python main.py interactive")
     else:
         # 默认交互模式

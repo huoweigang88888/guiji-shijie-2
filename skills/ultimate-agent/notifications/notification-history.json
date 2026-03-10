@@ -1,0 +1,25 @@
+{
+  "notifications": [
+    {
+      "title": "测试通知",
+      "message": "这是 Phase 5 的新功能",
+      "channel": "console",
+      "priority": "normal",
+      "created_at": "2026-03-10T20:06:37.363818",
+      "sent_at": "2026-03-10T20:06:37.364184",
+      "status": "sent",
+      "metadata": {}
+    },
+    {
+      "title": "高优先级警告",
+      "message": "系统资源使用率超过阈值",
+      "channel": "console",
+      "priority": "high",
+      "created_at": "2026-03-10T20:07:09.985266",
+      "sent_at": "2026-03-10T20:07:09.985307",
+      "status": "sent",
+      "metadata": {}
+    }
+  ],
+  "last_updated": "2026-03-10T20:07:09.985748"
+}
