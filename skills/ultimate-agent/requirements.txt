@@ -1,0 +1,27 @@
+# 硅基世界 2 (Ultimate Agent System) - 依赖包
+
+# 核心依赖
+requests>=2.28.0          # API 集成框架
+
+# Web UI 依赖（Phase 6）
+flask>=2.3.0              # Web 框架
+flask-socketio>=5.3.0     # WebSocket 实时推送（Phase 6.1）
+
+# 可选依赖（增强功能）
+psutil>=5.9.0             # 系统监控（CPU、内存等）
+lancedb>=0.2.0            # 向量搜索（高级功能）
+
+# 报告生成（PDF 支持）
+# pdfkit>=1.0.0           # HTML to PDF（需要 wkhtmltopdf）
+# weasyprint>=59.0        # 替代方案：纯 Python PDF 生成
+
+# 开发依赖
+# pytest>=7.0.0           # 单元测试
+# pytest-asyncio>=0.21.0  # 异步测试
+# black>=23.0.0           # 代码格式化
+# flake8>=6.0.0           # 代码检查
+
+# 说明：
+# 1. 基础功能只需要 requests
+# 2. psutil 和 lancedb 是可选的，没有会使用简化版
+# 3. PDF 生成需要额外安装 wkhtmltopdf 或使用 WeasyPrint

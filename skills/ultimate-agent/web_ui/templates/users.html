@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#667eea">
+    <title>用户管理 - 硅基世界 2</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <link rel="stylesheet" href="/static/mobile.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        h1 { color: #667eea; font-size: 28px; }
+        .nav { margin-top: 15px; }
+        .nav a {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #f3f4f6;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+        .nav a:hover, .nav a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .user-list {
+            list-style: none;
+        }
+        .user-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        .user-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .user-item.admin { border-left-color: #ef4444; }
+        .user-item.active { border-left-color: #10b981; }
+        .user-item.inactive { border-left-color: #f59e0b; opacity: 0.7; }
+        .user-info {
+            flex: 1;
+        }
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            font-weight: 700;
+        }
+        .user-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+        .user-email {
+            color: #666;
+            font-size: 13px;
+            margin-top: 3px;
+        }
+        .user-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .role-admin { background: #fecaca; color: #991b1b; }
+        .role-user { background: #dbeafe; color: #1e40af; }
+        .role-guest { background: #e5e7eb; color: #374151; }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .status-active { background: #d1fae5; color: #065f46; }
+        .status-inactive { background: #fef3c7; color: #92400e; }
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-secondary { background: #e5e7eb; color: #333; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-warning { background: #f59e0b; color: white; }
+        .btn:hover { transform: translateY(-1px); }
+        
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        .loading { text-align: center; padding: 40px; color: white; }
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        #ws-indicator { font-size: 12px; color: #f59e0b; }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1001;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.success { background: #10b981; }
+        .toast.error { background: #ef4444; }
+        .toast.warning { background: #f59e0b; }
+        
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+        }
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 { color: #333; font-size: 18px; }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        .modal-body { padding: 20px; }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>👥 用户管理</h1>
+                <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                    WebSocket: <span id="ws-indicator" style="color: #f59e0b;">⚪ 未连接</span>
+                    <span id="user-info" style="margin-left: 15px;"></span>
+                </div>
+            </div>
+            <div class="nav">
+                <a href="index.html">📊 仪表板</a>
+                <a href="agents.html">🤖 代理管理</a>
+                <a href="config.html">⚙️ 代理配置</a>
+                <a href="tasks.html">📋 任务队列</a>
+                <a href="graph.html">🕸️ 知识图谱</a>
+                <a href="logs.html">📜 系统日志</a>
+                <a href="notifications.html">🔔 通知中心</a>
+                <a href="reports.html">📝 报告预览</a>
+                <a href="audit.html">🔍 审计日志</a>
+                <a href="users.html" class="active">👥 用户管理</a>
+            </div>
+        </header>
+        
+        <div class="card">
+            <div class="header-actions">
+                <h2 style="color: #333;">用户列表</h2>
+                <button class="btn btn-primary" onclick="showCreateUser()">➕ 创建用户</button>
+            </div>
+            
+            <div id="content">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    正在加载用户...
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 创建用户模态框 -->
+    <div class="modal" id="create-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ 创建用户</h3>
+                <button class="close-btn" onclick="closeCreate()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="new-username" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="new-password" placeholder="请输入密码">
+                </div>
+                <div class="form-group">
+                    <label>邮箱</label>
+                    <input type="email" id="new-email" placeholder="请输入邮箱">
+                </div>
+                <div class="form-group">
+                    <label>角色</label>
+                    <select id="new-role">
+                        <option value="user">用户 (User)</option>
+                        <option value="admin">管理员 (Admin)</option>
+                        <option value="guest">访客 (Guest)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCreate()">取消</button>
+                <button class="btn btn-primary" onclick="createUser()">创建</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        let users = [];
+        let socket = null;
+        let currentUser = null;
+        
+        // 检查登录状态
+        async function checkAuth() {
+            const token = localStorage.getItem('auth_token');
+            const userInfo = localStorage.getItem('user_info');
+            
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+            
+            try {
+                const res = await fetch('/api/auth/verify', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                if (!data.valid) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+                
+                currentUser = data;
+                document.getElementById('user-info').textContent = `👤 ${data.username} (${data.role})`;
+                
+                // 检查权限
+                if (data.role !== 'admin') {
+                    document.getElementById('content').innerHTML = `
+                        <div class="empty-state">
+                            <h3>🚫 权限不足</h3>
+                            <p>用户管理仅限管理员访问</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+            } catch (error) {
+                window.location.href = '/login.html';
+            }
+        }
+        
+        // 初始化 WebSocket
+        function initWebSocket() {
+            const indicator = document.getElementById('ws-indicator');
+            
+            if (typeof io === 'undefined') {
+                indicator.textContent = '⚠️ Socket.IO 不可用';
+                indicator.style.color = '#f59e0b';
+                return;
+            }
+            
+            socket = io();
+            
+            socket.on('connect', () => {
+                indicator.textContent = '🟢 已连接';
+                indicator.style.color = '#22c55e';
+            });
+            
+            socket.on('disconnect', () => {
+                indicator.textContent = '🔴 已断开';
+                indicator.style.color = '#ef4444';
+            });
+        }
+        
+        // 加载用户列表
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/users');
+                users = await response.json();
+                renderUsers();
+            } catch (error) {
+                showToast('加载失败：' + error.message, 'error');
+            }
+        }
+        
+        // 渲染用户列表
+        function renderUsers() {
+            const content = document.getElementById('content');
+            
+            if (users.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <h3>📭 暂无用户</h3>
+                        <p>点击"创建用户"添加第一个用户</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            content.innerHTML = `
+                <ul class="user-list">
+                    ${users.map(u => renderUserItem(u)).join('')}
+                </ul>
+            `;
+        }
+        
+        // 渲染单个用户
+        function renderUserItem(u) {
+            const roleClass = `role-${u.role}`;
+            const statusClass = u.is_active ? 'active' : 'inactive';
+            const statusText = u.is_active ? '✅ 活跃' : '⏸️ 禁用';
+            const avatar = u.username.charAt(0).toUpperCase();
+            const lastLogin = u.last_login ? new Date(u.last_login).toLocaleString('zh-CN') : '从未登录';
+            
+            return `
+                <li class="user-item ${u.role === 'admin' ? 'admin' : ''} ${statusClass}">
+                    <div class="user-info">
+                        <div class="user-header">
+                            <div class="user-avatar">${avatar}</div>
+                            <div>
+                                <div class="user-name">${u.username} <span class="role-badge ${roleClass}">${u.role}</span></div>
+                                <div class="user-email">${u.email || '未设置邮箱'}</div>
+                            </div>
+                        </div>
+                        <div class="user-meta">
+                            <span>🕐 注册时间：${new Date(u.created_at).toLocaleString('zh-CN')}</span>
+                            <span>📅 最后登录：${lastLogin}</span>
+                            <span>${statusClass === 'active' ? '✅' : '⏸️'} ${statusText}</span>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        ${u.username !== 'admin' ? `
+                            <button class="btn btn-warning" onclick="toggleUserStatus('${u.username}', ${u.is_active})">${u.is_active ? '⏸️ 禁用' : '▶️ 启用'}</button>
+                            <button class="btn btn-danger" onclick="deleteUser('${u.username}')">🗑️ 删除</button>
+                        ` : '<span style="color: #666; font-size: 12px;">🔒 默认管理员</span>'}
+                    </div>
+                </li>
+            `;
+        }
+        
+        // 显示创建用户模态框
+        function showCreateUser() {
+            document.getElementById('create-modal').classList.add('active');
+        }
+        
+        // 关闭创建模态框
+        function closeCreate() {
+            document.getElementById('create-modal').classList.remove('active');
+            document.getElementById('new-username').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('new-email').value = '';
+            document.getElementById('new-role').value = 'user';
+        }
+        
+        // 创建用户
+        async function createUser() {
+            const username = document.getElementById('new-username').value;
+            const password = document.getElementById('new-password').value;
+            const email = document.getElementById('new-email').value;
+            const role = document.getElementById('new-role').value;
+            
+            if (!username || !password) {
+                showToast('❌ 用户名和密码必填', 'warning');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, email, role })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showToast('✅ 用户创建成功', 'success');
+                    closeCreate();
+                    loadUsers();
+                } else {
+                    showToast('创建失败：' + result.message, 'error');
+                }
+            } catch (error) {
+                showToast('创建失败：' + error.message, 'error');
+            }
+        }
+        
+        // 切换用户状态
+        async function toggleUserStatus(username, isActive) {
+            try {
+                const response = await fetch(`/api/users/${username}/status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_active: !isActive })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showToast(`✅ 用户已${!isActive ? '启用' : '禁用'}`, 'success');
+                    loadUsers();
+                } else {
+                    showToast('操作失败：' + result.message, 'error');
+                }
+            } catch (error) {
+                showToast('操作失败：' + error.message, 'error');
+            }
+        }
+        
+        // 删除用户
+        async function deleteUser(username) {
+            if (!confirm(`确定要删除用户 "${username}" 吗？此操作不可恢复！`)) return;
+            
+            try {
+                const response = await fetch(`/api/users/${username}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showToast('🗑️ 用户已删除', 'success');
+                    loadUsers();
+                } else {
+                    showToast('删除失败：' + result.message, 'error');
+                }
+            } catch (error) {
+                showToast('删除失败：' + error.message, 'error');
+            }
+        }
+        
+        // 显示提示
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // 页面加载
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            initWebSocket();
+            loadUsers();
+        });
+    </script>
+</body>
+</html>

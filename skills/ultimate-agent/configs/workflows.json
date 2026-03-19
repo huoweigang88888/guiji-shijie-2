@@ -1,0 +1,70 @@
+{
+  "default_mode": "parallel",
+  "workflows": {
+    "software_development": {
+      "name": "软件开发全流程",
+      "mode": "serial",
+      "description": "从需求到代码的完整开发流程",
+      "stages": [
+        {
+          "name": "需求分析",
+          "agent": "product-manager",
+          "input": "用户需求",
+          "output": "PRD 文档",
+          "output_path": "workspaces/product-manager/prd/",
+          "require_confirm": true,
+          "timeout_minutes": 30
+        },
+        {
+          "name": "视觉设计",
+          "agent": "ui-designer",
+          "input": ["PRD 文档"],
+          "output": "设计稿",
+          "output_path": "workspaces/ui-designer/design/",
+          "require_confirm": true,
+          "timeout_minutes": 60
+        },
+        {
+          "name": "架构设计",
+          "agent": "architect",
+          "input": ["PRD 文档", "设计稿"],
+          "output": "技术方案",
+          "output_path": "workspaces/architect/tech-design/",
+          "require_confirm": true,
+          "timeout_minutes": 45
+        },
+        {
+          "name": "编码实现",
+          "agent": "senior-dev",
+          "input": ["技术方案", "设计稿"],
+          "output": "源代码",
+          "output_path": "workspaces/senior-dev/src/",
+          "require_confirm": true,
+          "timeout_minutes": 120
+        }
+      ]
+    },
+    "research_report": {
+      "name": "研究报告",
+      "mode": "parallel",
+      "description": "并行执行研究、分析、报告生成",
+      "tasks": [
+        {
+          "name": "信息收集",
+          "agent": "researcher",
+          "timeout_minutes": 15
+        },
+        {
+          "name": "数据分析",
+          "agent": "analyst",
+          "timeout_minutes": 10
+        },
+        {
+          "name": "报告生成",
+          "agent": "report_generator",
+          "timeout_minutes": 10
+        }
+      ]
+    }
+  }
+}

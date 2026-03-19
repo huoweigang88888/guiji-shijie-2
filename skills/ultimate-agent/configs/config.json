@@ -1,0 +1,37 @@
+{
+  "system.debug": false,
+  
+  "subagent": {
+    "enabled": true,
+    "default_runtime": "subagent",
+    "default_mode": "session",
+    "timeout_seconds": 300,
+    "max_concurrent": 5,
+    "auto_cleanup_hours": 24,
+    "available_subagents": [
+      "research-assistant",
+      "message-aggregator",
+      "agent-coordinator",
+      "analyst",
+      "executor",
+      "notification_agent",
+      "report_generator"
+    ],
+    "available_acp_agents": [
+      "codex",
+      "claude-code",
+      "pi"
+    ],
+    "preferred_agents": {
+      "research": "research-assistant",
+      "coding": "codex",
+      "message": "message-aggregator",
+      "analysis": "analyst",
+      "coordination": "agent-coordinator"
+    },
+    "discord": {
+      "default_thread": true,
+      "thread_auto_archive_minutes": 1440
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "id": "task_001",
+  "title": "研究 2026 年 AI 发展趋势",
+  "description": "收集并分析 2026 年人工智能领域的最新发展趋势",
+  "created_at": "2026-03-11T17:57:00",
+  "status": "sample",
+  
+  "subtasks": [
+    {
+      "id": "st_001",
+      "title": "网络搜索",
+      "assigned_to": "researcher",
+      "description": "搜索最新的 AI 技术文章和报告",
+      "status": "pending",
+      "parameters": {
+        "query": "AI trends 2026",
+        "count": 10
+      }
+    },
+    {
+      "id": "st_002",
+      "title": "数据分析",
+      "assigned_to": "analyst",
+      "description": "分析搜索结果，提取关键趋势",
+      "status": "pending",
+      "parameters": {}
+    },
+    {
+      "id": "st_003",
+      "title": "报告生成",
+      "assigned_to": "reporter",
+      "description": "生成 Markdown 格式的研究报告",
+      "status": "pending",
+      "parameters": {
+        "format": "markdown"
+      }
+    },
+    {
+      "id": "st_004",
+      "title": "通知推送",
+      "assigned_to": "notifier",
+      "description": "完成后通知用户",
+      "status": "pending",
+      "parameters": {
+        "channel": "console",
+        "priority": "normal"
+      }
+    }
+  ],
+  
+  "output": {
+    "format": "markdown",
+    "path": "./outputs/research-YYYYMMDD_HHMMSS.md"
+  }
+}

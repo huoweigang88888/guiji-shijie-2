@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#667eea">
+    <title>双因素认证 - 硅基世界 2</title>
+    <link rel="stylesheet" href="/static/mobile.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        h1 { color: #667eea; font-size: 28px; }
+        .nav { margin-top: 15px; }
+        .nav a {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #f3f4f6;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+        .nav a:hover, .nav a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .status-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .status-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+        .status-text {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .status-subtext {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .status-enabled { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .status-disabled { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        
+        .section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .section:last-child { border-bottom: none; }
+        .section h2 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .qr-container {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .qr-code {
+            max-width: 200px;
+            margin: 0 auto 15px;
+        }
+        .qr-code img {
+            width: 100%;
+            height: auto;
+        }
+        .secret-key {
+            font-family: 'Courier New', monospace;
+            background: #e5e7eb;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+            letter-spacing: 5px;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-secondary { background: #e5e7eb; color: #333; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-warning { background: #f59e0b; color: white; }
+        .btn:hover { transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        .backup-codes {
+            background: #fef3c7;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        .backup-codes h4 {
+            color: #92400e;
+            margin-bottom: 10px;
+        }
+        .codes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .code-item {
+            background: white;
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .step {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-content h3 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        .step-content p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        #ws-indicator { font-size: 12px; color: #f59e0b; }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1001;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.success { background: #10b981; }
+        .toast.error { background: #ef4444; }
+        .toast.warning { background: #f59e0b; }
+        
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>🔐 双因素认证</h1>
+                <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                    WebSocket: <span id="ws-indicator" style="color: #f59e0b;">⚪ 未连接</span>
+                </div>
+            </div>
+            <div class="nav">
+                <a href="index.html">📊 仪表板</a>
+                <a href="agents.html">🤖 代理管理</a>
+                <a href="config.html">⚙️ 代理配置</a>
+                <a href="tasks.html">📋 任务队列</a>
+                <a href="graph.html">🕸️ 知识图谱</a>
+                <a href="logs.html">📜 系统日志</a>
+                <a href="notifications.html">🔔 通知中心</a>
+                <a href="reports.html">📝 报告预览</a>
+                <a href="audit.html">🔍 审计日志</a>
+                <a href="users.html">👥 用户管理</a>
+                <a href="settings.html">👤 账户设置</a>
+                <a href="2fa.html" class="active">🔐 双因素认证</a>
+            </div>
+        </header>
+        
+        <!-- 状态卡片 -->
+        <div class="status-card status-disabled" id="status-card">
+            <div class="status-icon">🔓</div>
+            <div class="status-text" id="status-text">2FA 未启用</div>
+            <div class="status-subtext" id="status-subtext">启用双因素认证以增强账户安全</div>
+        </div>
+        
+        <div class="card">
+            <!-- 未启用时显示设置流程 -->
+            <div id="setup-section" class="hidden">
+                <h2>📱 设置双因素认证</h2>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>下载认证器应用</h3>
+                        <p>在手机上下载并安装 Google Authenticator、Microsoft Authenticator 或 Authy 等认证器应用。</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>扫描二维码</h3>
+                        <p>打开认证器应用，扫描下方二维码。如果无法扫描，可以手动输入密钥。</p>
+                    </div>
+                </div>
+                
+                <div class="qr-container">
+                    <div class="qr-code" id="qr-code">
+                        <div class="loading">正在生成 QR 码...</div>
+                    </div>
+                    <div>
+                        <strong>密钥（手动输入）:</strong>
+                        <div class="secret-key" id="secret-key">加载中...</div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>输入验证码</h3>
+                        <p>在认证器应用中查看 6 位验证码，输入下方验证框以完成设置。</p>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>6 位验证码</label>
+                    <input type="text" id="verify-code" maxlength="6" placeholder="000000" pattern="[0-9]*">
+                </div>
+                
+                <button class="btn btn-success" onclick="enable2FA()" id="enable-btn">✅ 启用 2FA</button>
+            </div>
+            
+            <!-- 已启用时显示管理选项 -->
+            <div id="manage-section" class="hidden">
+                <div class="section">
+                    <h2>📱 备份码</h2>
+                    <p style="color: #666; margin-bottom: 15px;">
+                        备份码可用于无法使用认证器时登录账户。每个备份码只能使用一次。
+                    </p>
+                    
+                    <div class="backup-codes" id="backup-codes-container">
+                        <h4>⚠️ 请安全保存这些代码</h4>
+                        <div class="codes-grid" id="backup-codes"></div>
+                    </div>
+                    
+                    <button class="btn btn-warning" onclick="regenerateBackupCodes()" style="margin-top: 10px;">
+                        🔄 重新生成备份码
+                    </button>
+                </div>
+                
+                <div class="section">
+                    <h2>🔓 禁用 2FA</h2>
+                    <p style="color: #666; margin-bottom: 15px;">
+                        禁用后，登录时将不再需要验证码。建议仅在必要时禁用。
+                    </p>
+                    
+                    <button class="btn btn-danger" onclick="showDisableConfirm()">🔓 禁用 2FA</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        let twoFAStatus = null;
+        
+        // 检查登录状态和 2FA 状态
+        async function checkAuth() {
+            const token = localStorage.getItem('auth_token');
+            
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+            
+            try {
+                const res = await fetch('/api/auth/verify', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                if (!data.valid) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+                
+                await load2FAStatus();
+            } catch (error) {
+                window.location.href = '/login.html';
+            }
+        }
+        
+        // 加载 2FA 状态
+        async function load2FAStatus() {
+            try {
+                const res = await fetch('/api/2fa/status', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+                });
+                twoFAStatus = await res.json();
+                
+                updateUI();
+            } catch (error) {
+                console.error('加载 2FA 状态失败:', error);
+                showToast('加载失败：' + error.message, 'error');
+            }
+        }
+        
+        // 更新界面
+        function updateUI() {
+            const statusCard = document.getElementById('status-card');
+            const statusText = document.getElementById('status-text');
+            const statusSubtext = document.getElementById('status-subtext');
+            const setupSection = document.getElementById('setup-section');
+            const manageSection = document.getElementById('manage-section');
+            
+            if (twoFAStatus.enabled) {
+                // 已启用
+                statusCard.className = 'status-card status-enabled';
+                statusCard.querySelector('.status-icon').textContent = '🔐';
+                statusText.textContent = '2FA 已启用';
+                statusSubtext.textContent = `启用时间：${new Date(twoFAStatus.enabled_at).toLocaleString('zh-CN')}`;
+                setupSection.classList.add('hidden');
+                manageSection.classList.remove('hidden');
+            } else {
+                // 未启用
+                statusCard.className = 'status-card status-disabled';
+                statusCard.querySelector('.status-icon').textContent = '🔓';
+                statusText.textContent = '2FA 未启用';
+                statusSubtext.textContent = '启用双因素认证以增强账户安全';
+                setupSection.classList.remove('hidden');
+                manageSection.classList.add('hidden');
+            }
+        }
+        
+        // 设置 2FA
+        async function setup2FA() {
+            try {
+                const res = await fetch('/api/2fa/setup', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+                });
+                const data = await res.json();
+                
+                if (data.qr_code) {
+                    document.getElementById('qr-code').innerHTML = 
+                        `<img src="data:image/png;base64,${data.qr_code}" alt="QR Code">`;
+                } else {
+                    document.getElementById('qr-code').innerHTML = 
+                        '<p style="color: #666;">QR 码生成失败，请手动输入密钥</p>';
+                }
+                
+                document.getElementById('secret-key').textContent = data.secret;
+                
+                // 存储备份码（临时）
+                window.tempBackupCodes = data.backup_codes;
+                
+            } catch (error) {
+                showToast('设置失败：' + error.message, 'error');
+            }
+        }
+        
+        // 启用 2FA
+        async function enable2FA() {
+            const code = document.getElementById('verify-code').value;
+            
+            if (!code || code.length !== 6) {
+                showToast('请输入 6 位验证码', 'warning');
+                return;
+            }
+            
+            const btn = document.getElementById('enable-btn');
+            btn.disabled = true;
+            btn.textContent = '验证中...';
+            
+            try {
+                const res = await fetch('/api/2fa/verify-setup', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    showToast('✅ 2FA 启用成功！请保存备份码。', 'success');
+                    await load2FAStatus();
+                    
+                    // 显示备份码
+                    if (window.tempBackupCodes) {
+                        displayBackupCodes(window.tempBackupCodes);
+                    }
+                } else {
+                    showToast('❌ ' + data.message, 'error');
+                    btn.disabled = false;
+                    btn.textContent = '✅ 启用 2FA';
+                }
+            } catch (error) {
+                showToast('验证失败：' + error.message, 'error');
+                btn.disabled = false;
+                btn.textContent = '✅ 启用 2FA';
+            }
+        }
+        
+        // 显示备份码
+        function displayBackupCodes(codes) {
+            const container = document.getElementById('backup-codes');
+            container.innerHTML = codes.map(code => 
+                `<div class="code-item">${code}</div>`
+            ).join('');
+        }
+        
+        // 重新生成备份码
+        async function regenerateBackupCodes() {
+            if (!confirm('确定要重新生成备份码吗？旧的备份码将失效。')) return;
+            
+            try {
+                const res = await fetch('/api/2fa/backup-codes', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    showToast('✅ 备份码已重新生成', 'success');
+                    displayBackupCodes(data.backup_codes);
+                } else {
+                    showToast('❌ ' + data.message, 'error');
+                }
+            } catch (error) {
+                showToast('生成失败：' + error.message, 'error');
+            }
+        }
+        
+        // 显示禁用确认
+        function showDisableConfirm() {
+            const password = prompt('⚠️ 危险操作！\n\n请输入您的密码以确认禁用 2FA：');
+            if (!password) return;
+            
+            disable2FA(password);
+        }
+        
+        // 禁用 2FA
+        async function disable2FA(password) {
+            try {
+                const res = await fetch('/api/2fa/disable', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    showToast('🔓 2FA 已禁用', 'success');
+                    setTimeout(() => load2FAStatus(), 1000);
+                } else {
+                    showToast('❌ ' + data.message, 'error');
+                }
+            } catch (error) {
+                showToast('禁用失败：' + error.message, 'error');
+            }
+        }
+        
+        // 显示提示
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // 页面加载
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            
+            // 如果未启用，自动开始设置
+            if (!twoFAStatus || !twoFAStatus.enabled) {
+                setup2FA();
+            }
+        });
+    </script>
+</body>
+</html>

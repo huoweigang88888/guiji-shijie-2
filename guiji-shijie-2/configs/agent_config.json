@@ -1,0 +1,66 @@
+{
+  "version": "1.0.0",
+  "created": "2026-03-11",
+  "project": "硅基世界 2",
+  
+  "coordinator": {
+    "enabled": true,
+    "auto_decompose": true,
+    "max_subtasks": 10,
+    "parallel_execution": true
+  },
+  
+  "researcher": {
+    "enabled": true,
+    "default_count": 5,
+    "generate_summary": true,
+    "save_reports": true
+  },
+  
+  "analyst": {
+    "enabled": true,
+    "default_format": "json",
+    "include_charts": false
+  },
+  
+  "notifier": {
+    "enabled": true,
+    "channels": ["console", "system"],
+    "default_priority": "normal",
+    "email": {
+      "enabled": false,
+      "smtp_server": "",
+      "smtp_port": 587,
+      "smtp_user": "",
+      "from": "",
+      "to": []
+    }
+  },
+  
+  "scheduler": {
+    "enabled": true,
+    "timezone": "Asia/Shanghai",
+    "default_frequency": "daily"
+  },
+  
+  "reporter": {
+    "enabled": true,
+    "default_format": "markdown",
+    "output_dir": "../outputs",
+    "formats": ["markdown", "html", "json"]
+  },
+  
+  "memory": {
+    "enabled": true,
+    "persist_tasks": true,
+    "persist_results": true,
+    "max_history": 100
+  },
+  
+  "logging": {
+    "level": "INFO",
+    "file": "../logs/guiji-world-2.log",
+    "max_size_mb": 10,
+    "backup_count": 5
+  }
+}

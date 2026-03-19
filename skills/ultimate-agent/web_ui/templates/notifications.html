@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#667eea">
+    <title>通知中心 - 硅基世界 2</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <link rel="stylesheet" href="/static/mobile.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        h1 { color: #667eea; font-size: 28px; }
+        .nav { margin-top: 15px; }
+        .nav a {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #f3f4f6;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+        .nav a:hover, .nav a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .notification-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+        .stat-value { font-size: 32px; font-weight: 700; }
+        .stat-label { font-size: 13px; opacity: 0.9; margin-top: 5px; }
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover { border-color: #667eea; }
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 8px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .notification-list {
+            list-style: none;
+        }
+        .notification-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            transition: all 0.2s;
+        }
+        .notification-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .notification-item.priority-urgent { border-left-color: #ef4444; background: #fef2f2; }
+        .notification-item.priority-high { border-left-color: #f59e0b; background: #fffbeb; }
+        .notification-item.priority-normal { border-left-color: #3b82f6; }
+        .notification-item.priority-low { border-left-color: #10b981; }
+        .notification-item.unread {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .notification-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+        .notification-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+        .notification-body {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-secondary { background: #e5e7eb; color: #333; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn:hover { transform: translateY(-1px); }
+        
+        .priority-badge {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .priority-urgent-badge { background: #fecaca; color: #991b1b; }
+        .priority-high-badge { background: #fed7aa; color: #9a3412; }
+        .priority-normal-badge { background: #dbeafe; color: #1e40af; }
+        .priority-low-badge { background: #d1fae5; color: #065f46; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        .empty-state h3 { font-size: 20px; margin-bottom: 10px; }
+        .loading { text-align: center; padding: 40px; color: white; }
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        #ws-indicator {
+            font-size: 12px;
+            color: #f59e0b;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1001;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.success { background: #10b981; }
+        .toast.error { background: #ef4444; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>🔔 通知中心</h1>
+                <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                    WebSocket: <span id="ws-indicator" style="color: #f59e0b;">⚪ 未连接</span>
+                </div>
+            </div>
+            <div class="nav">
+                <a href="index.html">📊 仪表板</a>
+                <a href="agents.html">🤖 代理管理</a>
+                <a href="config.html">⚙️ 代理配置</a>
+                <a href="tasks.html">📋 任务队列</a>
+                <a href="graph.html">🕸️ 知识图谱</a>
+                <a href="logs.html">📜 系统日志</a>
+                <a href="notifications.html" class="active">🔔 通知中心</a>
+            </div>
+        </header>
+        
+        <div class="card">
+            <div class="notification-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-total">0</div>
+                    <div class="stat-label">📬 总通知</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                    <div class="stat-value" id="stat-unread">0</div>
+                    <div class="stat-label">📭 未读</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                    <div class="stat-value" id="stat-urgent">0</div>
+                    <div class="stat-label">🚨 紧急</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                    <div class="stat-value" id="stat-high">0</div>
+                    <div class="stat-label">⚠️ 高优先级</div>
+                </div>
+            </div>
+            
+            <div class="filter-bar">
+                <button class="filter-btn active" data-filter="all">全部</button>
+                <button class="filter-btn" data-filter="unread">未读</button>
+                <button class="filter-btn" data-filter="urgent">紧急</button>
+                <button class="filter-btn" data-filter="high">高优先级</button>
+                <input type="text" class="search-input" id="search-input" placeholder="🔍 搜索通知...">
+                <div style="margin-left: auto; display: flex; gap: 10px;">
+                    <button class="btn btn-secondary" onclick="markAllRead()">✅ 全部已读</button>
+                    <button class="btn btn-danger" onclick="clearAll()">🗑️ 清空全部</button>
+                </div>
+            </div>
+            
+            <div id="content">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    正在加载通知...
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        let socket = null;
+        let notifications = [];
+        let currentFilter = 'all';
+        let searchTerm = '';
+        
+        // 初始化 WebSocket
+        function initWebSocket() {
+            const indicator = document.getElementById('ws-indicator');
+            
+            if (typeof io === 'undefined') {
+                indicator.textContent = '⚠️ Socket.IO 不可用';
+                indicator.style.color = '#f59e0b';
+                return;
+            }
+            
+            socket = io();
+            
+            socket.on('connect', () => {
+                wsConnected = true;
+                indicator.textContent = '🟢 已连接';
+                indicator.style.color = '#22c55e';
+                socket.emit('subscribe', { topic: 'notifications' });
+            });
+            
+            socket.on('disconnect', () => {
+                indicator.textContent = '🔴 已断开';
+                indicator.style.color = '#ef4444';
+            });
+            
+            socket.on('notification', (data) => {
+                console.log('🔔 收到新通知:', data);
+                notifications.unshift({
+                    id: Date.now(),
+                    ...data,
+                    read: false,
+                    timestamp: new Date().toISOString()
+                });
+                updateStats();
+                renderNotifications();
+                showToast('🔔 新通知', 'success');
+            });
+        }
+        
+        // 加载通知
+        async function loadNotifications() {
+            try {
+                const response = await fetch('/api/notifications');
+                const data = await response.json();
+                notifications = data.map(n => ({ ...n, read: n.read || false }));
+                updateStats();
+                renderNotifications();
+            } catch (error) {
+                // 使用模拟数据
+                notifications = generateSampleNotifications();
+                updateStats();
+                renderNotifications();
+            }
+        }
+        
+        // 生成模拟通知
+        function generateSampleNotifications() {
+            const now = Date.now();
+            return [
+                {
+                    id: 1,
+                    title: '系统启动成功',
+                    message: '硅基世界 2 系统已成功启动，所有代理运行正常。',
+                    priority: 'normal',
+                    channel: 'console',
+                    timestamp: new Date(now - 1000 * 60 * 5).toISOString(),
+                    read: false
+                },
+                {
+                    id: 2,
+                    title: '任务完成',
+                    message: '任务 "研究 AI 发展趋势" 已完成，生成报告 report_001.md',
+                    priority: 'low',
+                    channel: 'console',
+                    timestamp: new Date(now - 1000 * 60 * 30).toISOString(),
+                    read: true
+                },
+                {
+                    id: 3,
+                    title: '⚠️ API 请求失败',
+                    message: '调用外部 API 时发生错误：连接超时，已自动重试 3 次。',
+                    priority: 'high',
+                    channel: 'console',
+                    timestamp: new Date(now - 1000 * 60 * 60).toISOString(),
+                    read: false
+                },
+                {
+                    id: 4,
+                    title: '🚨 磁盘空间不足',
+                    message: '系统磁盘空间剩余不足 10%，请及时清理。',
+                    priority: 'urgent',
+                    channel: 'console',
+                    timestamp: new Date(now - 1000 * 60 * 120).toISOString(),
+                    read: false
+                },
+                {
+                    id: 5,
+                    title: '配置已更新',
+                    message: '系统配置已保存并应用。',
+                    priority: 'low',
+                    channel: 'console',
+                    timestamp: new Date(now - 1000 * 60 * 180).toISOString(),
+                    read: true
+                }
+            ];
+        }
+        
+        // 更新统计
+        function updateStats() {
+            document.getElementById('stat-total').textContent = notifications.length;
+            document.getElementById('stat-unread').textContent = notifications.filter(n => !n.read).length;
+            document.getElementById('stat-urgent').textContent = notifications.filter(n => n.priority === 'urgent').length;
+            document.getElementById('stat-high').textContent = notifications.filter(n => n.priority === 'high').length;
+        }
+        
+        // 渲染通知列表
+        function renderNotifications() {
+            const content = document.getElementById('content');
+            
+            let filtered = notifications;
+            
+            // 应用筛选
+            if (currentFilter === 'unread') filtered = filtered.filter(n => !n.read);
+            if (currentFilter === 'urgent') filtered = filtered.filter(n => n.priority === 'urgent');
+            if (currentFilter === 'high') filtered = filtered.filter(n => n.priority === 'high');
+            
+            // 应用搜索
+            if (searchTerm) {
+                filtered = filtered.filter(n => 
+                    n.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    n.message.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            }
+            
+            if (filtered.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <h3>📭 暂无通知</h3>
+                        <p>没有符合条件的通知</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            content.innerHTML = `
+                <ul class="notification-list">
+                    ${filtered.map(n => renderNotificationItem(n)).join('')}
+                </ul>
+            `;
+        }
+        
+        // 渲染单个通知
+        function renderNotificationItem(n) {
+            const priorityLabels = {
+                'urgent': { text: '🚨 紧急', class: 'priority-urgent-badge' },
+                'high': { text: '⚠️ 高', class: 'priority-high-badge' },
+                'normal': { text: '📋 普通', class: 'priority-normal-badge' },
+                'low': { text: '🍃 低', class: 'priority-low-badge' }
+            };
+            
+            const priority = priorityLabels[n.priority] || priorityLabels.normal;
+            const time = new Date(n.timestamp).toLocaleString('zh-CN');
+            
+            return `
+                <li class="notification-item priority-${n.priority} ${n.read ? '' : 'unread'}" data-id="${n.id}">
+                    <div class="notification-header">
+                        <div>
+                            <span class="notification-title">${n.title}</span>
+                            <span class="priority-badge ${priority.class}" style="margin-left: 10px;">${priority.text}</span>
+                        </div>
+                        <div class="notification-meta">
+                            <span>🕐 ${time}</span>
+                            <span>📱 ${n.channel || '系统'}</span>
+                            ${!n.read ? '<span>🔵 未读</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="notification-body">${n.message}</div>
+                    <div class="notification-actions">
+                        ${!n.read ? `<button class="btn btn-success" onclick="markRead(${n.id})">✅ 标记已读</button>` : ''}
+                        <button class="btn btn-danger" onclick="deleteNotification(${n.id})">🗑️ 删除</button>
+                    </div>
+                </li>
+            `;
+        }
+        
+        // 标记已读
+        async function markRead(id) {
+            const notification = notifications.find(n => n.id === id);
+            if (notification) {
+                notification.read = true;
+                updateStats();
+                renderNotifications();
+                
+                // 调用 API
+                try {
+                    await fetch(`/api/notifications/${id}/read`, { method: 'POST' });
+                } catch (e) {}
+            }
+        }
+        
+        // 全部已读
+        async function markAllRead() {
+            notifications.forEach(n => n.read = true);
+            updateStats();
+            renderNotifications();
+            showToast('✅ 全部标记为已读', 'success');
+        }
+        
+        // 删除通知
+        async function deleteNotification(id) {
+            notifications = notifications.filter(n => n.id !== id);
+            updateStats();
+            renderNotifications();
+            showToast('🗑️ 通知已删除', 'success');
+        }
+        
+        // 清空全部
+        async function clearAll() {
+            if (confirm('确定要清空所有通知吗？')) {
+                notifications = [];
+                updateStats();
+                renderNotifications();
+                showToast('🗑️ 已清空所有通知', 'success');
+            }
+        }
+        
+        // 筛选处理
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                renderNotifications();
+            });
+        });
+        
+        // 搜索处理
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            renderNotifications();
+        });
+        
+        // 显示提示
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // 页面加载
+        document.addEventListener('DOMContentLoaded', () => {
+            loadNotifications();
+            initWebSocket();
+            
+            // 每 30 秒刷新一次
+            setInterval(loadNotifications, 30000);
+        });
+    </script>
+</body>
+</html>

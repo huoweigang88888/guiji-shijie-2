@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#667eea">
+    <title>账户设置 - 硅基世界 2</title>
+    <link rel="stylesheet" href="/static/mobile.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        h1 { color: #667eea; font-size: 28px; }
+        .nav { margin-top: 15px; }
+        .nav a {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #f3f4f6;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+        .nav a:hover, .nav a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .section:last-child {
+            border-bottom: none;
+        }
+        .section h2 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .password-strength {
+            margin-top: 8px;
+            font-size: 12px;
+        }
+        .strength-bar {
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .strength-fill {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s, background 0.3s;
+        }
+        .strength-weak { background: #ef4444; width: 25%; }
+        .strength-fair { background: #f59e0b; width: 50%; }
+        .strength-good { background: #3b82f6; width: 75%; }
+        .strength-strong { background: #10b981; width: 100%; }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-secondary { background: #e5e7eb; color: #333; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn:hover { transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            font-weight: 700;
+        }
+        .user-details {
+            flex: 1;
+        }
+        .user-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        .user-role {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        .role-admin { background: #fecaca; color: #991b1b; }
+        .role-user { background: #dbeafe; color: #1e40af; }
+        .user-meta {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        #ws-indicator { font-size: 12px; color: #f59e0b; }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1001;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.success { background: #10b981; }
+        .toast.error { background: #ef4444; }
+        .toast.warning { background: #f59e0b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>⚙️ 账户设置</h1>
+                <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                    WebSocket: <span id="ws-indicator" style="color: #f59e0b;">⚪ 未连接</span>
+                </div>
+            </div>
+            <div class="nav">
+                <a href="index.html">📊 仪表板</a>
+                <a href="agents.html">🤖 代理管理</a>
+                <a href="config.html">⚙️ 代理配置</a>
+                <a href="tasks.html">📋 任务队列</a>
+                <a href="graph.html">🕸️ 知识图谱</a>
+                <a href="logs.html">📜 系统日志</a>
+                <a href="notifications.html">🔔 通知中心</a>
+                <a href="reports.html">📝 报告预览</a>
+                <a href="audit.html">🔍 审计日志</a>
+                <a href="users.html">👥 用户管理</a>
+                <a href="settings.html" class="active">👤 账户设置</a>
+            </div>
+        </header>
+        
+        <div class="card">
+            <div class="user-info">
+                <div class="user-avatar" id="user-avatar">A</div>
+                <div class="user-details">
+                    <div class="user-name" id="user-name">加载中...</div>
+                    <div class="user-role" id="user-role">user</div>
+                    <div class="user-meta">
+                        <span>📧 邮箱：<span id="user-email">未设置</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="section">
+                <h2>🔑 修改密码</h2>
+                <form id="password-form">
+                    <div class="form-group">
+                        <label>原密码</label>
+                        <input type="password" id="old-password" required placeholder="请输入原密码">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>新密码</label>
+                        <input type="password" id="new-password" required placeholder="请输入新密码" minlength="8">
+                        <div class="password-strength">
+                            <div>密码强度：<span id="strength-text">未输入</span></div>
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="strength-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>确认新密码</label>
+                        <input type="password" id="confirm-password" required placeholder="请再次输入新密码">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="submit-btn">💾 保存修改</button>
+                </form>
+            </div>
+            
+            <div class="section">
+                <h2>🚪 会话管理</h2>
+                <p style="color: #666; margin-bottom: 15px;">管理您的登录会话和设备</p>
+                <button class="btn btn-secondary" onclick="refreshToken()">🔄 刷新 Token</button>
+                <button class="btn btn-danger" onclick="logout()" style="margin-left: 10px;">🚪 退出登录</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        let currentUser = null;
+        
+        // 检查登录状态
+        async function checkAuth() {
+            const token = localStorage.getItem('auth_token');
+            const userInfo = localStorage.getItem('user_info');
+            
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+            
+            try {
+                const res = await fetch('/api/auth/verify', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                if (!data.valid) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+                
+                currentUser = data;
+                updateUserInfo();
+            } catch (error) {
+                window.location.href = '/login.html';
+            }
+        }
+        
+        // 更新用户信息
+        function updateUserInfo() {
+            document.getElementById('user-name').textContent = currentUser.username;
+            document.getElementById('user-role').textContent = currentUser.role;
+            document.getElementById('user-role').className = `user-role role-${currentUser.role}`;
+            document.getElementById('user-avatar').textContent = currentUser.username.charAt(0).toUpperCase();
+        }
+        
+        // 密码强度检查
+        document.getElementById('new-password').addEventListener('input', async (e) => {
+            const password = e.target.value;
+            const strengthText = document.getElementById('strength-text');
+            const strengthBar = document.getElementById('strength-bar');
+            
+            if (!password) {
+                strengthText.textContent = '未输入';
+                strengthBar.className = 'strength-fill';
+                return;
+            }
+            
+            try {
+                const res = await fetch('/api/password-strength', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+                const data = await res.json();
+                
+                if (data.valid) {
+                    strengthText.textContent = '强度：强 ✅';
+                    strengthText.style.color = '#10b981';
+                    strengthBar.className = 'strength-fill strength-strong';
+                } else {
+                    strengthText.textContent = `强度：弱 ❌ (${data.message})`;
+                    strengthText.style.color = '#ef4444';
+                    
+                    // 估算强度
+                    if (password.length < 6) {
+                        strengthBar.className = 'strength-fill strength-weak';
+                    } else if (password.length < 8) {
+                        strengthBar.className = 'strength-fill strength-fair';
+                    } else {
+                        strengthBar.className = 'strength-fill strength-good';
+                    }
+                }
+            } catch (error) {
+                console.error('密码强度检查失败:', error);
+            }
+        });
+        
+        // 修改密码
+        document.getElementById('password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const oldPassword = document.getElementById('old-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const btn = document.getElementById('submit-btn');
+            
+            if (newPassword !== confirmPassword) {
+                showToast('❌ 两次输入的新密码不一致', 'error');
+                return;
+            }
+            
+            // 检查密码强度
+            const strengthRes = await fetch('/api/password-strength', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: newPassword })
+            });
+            const strengthData = await strengthRes.json();
+            
+            if (!strengthData.valid) {
+                showToast(`❌ 密码强度不足：${strengthData.message}`, 'error');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.textContent = '修改中...';
+            
+            try {
+                const response = await fetch('/api/auth/change-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                    },
+                    body: JSON.stringify({
+                        old_password: oldPassword,
+                        new_password: newPassword
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showToast('✅ 密码修改成功，请重新登录', 'success');
+                    setTimeout(() => {
+                        localStorage.removeItem('auth_token');
+                        localStorage.removeItem('user_info');
+                        window.location.href = '/login.html';
+                    }, 2000);
+                } else {
+                    showToast(`❌ ${result.message}`, 'error');
+                    btn.disabled = false;
+                    btn.textContent = '💾 保存修改';
+                }
+            } catch (error) {
+                showToast('❌ 修改失败：' + error.message, 'error');
+                btn.disabled = false;
+                btn.textContent = '💾 保存修改';
+            }
+        });
+        
+        // 刷新 Token
+        async function refreshToken() {
+            try {
+                const response = await fetch('/api/auth/refresh', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    localStorage.setItem('auth_token', result.token);
+                    showToast('✅ Token 已刷新', 'success');
+                } else {
+                    showToast(`❌ ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showToast('❌ 刷新失败：' + error.message, 'error');
+            }
+        }
+        
+        // 退出登录
+        async function logout() {
+            if (!confirm('确定要退出登录吗？')) return;
+            
+            try {
+                await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                    }
+                });
+            } catch (error) {}
+            
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_info');
+            showToast('👋 已退出登录', 'success');
+            setTimeout(() => {
+                window.location.href = '/login.html';
+            }, 1000);
+        }
+        
+        // 显示提示
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // 页面加载
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+{
+  "subagents": [
+    {
+      "id": "sa_20260317101844_f1310efc",
+      "name": "Research Agent",
+      "runtime": "subagent",
+      "agent_id": "research-assistant",
+      "mode": "session",
+      "task": "研究最新的 AI 技术进展",
+      "thread": false,
+      "timeout_seconds": null,
+      "label": "Research Agent",
+      "created_at": "2026-03-17T10:18:44.241757",
+      "status": "pending",
+      "result": null,
+      "error": null,
+      "session_key": null
+    },
+    {
+      "id": "sa_20260317101919_3c29044d",
+      "name": "Research Agent",
+      "runtime": "subagent",
+      "agent_id": "research-assistant",
+      "mode": "session",
+      "task": "研究最新的 AI 技术进展",
+      "thread": false,
+      "timeout_seconds": null,
+      "label": "Research Agent",
+      "created_at": "2026-03-17T10:19:19.687923",
+      "status": "completed",
+      "result": {
+        "status": "completed",
+        "subagent_id": "sa_20260317101919_3c29044d",
+        "session_key": "agent:research-assistant:sa_20260317101919_3c29044d",
+        "result": "模拟结果：研究最新的 AI 技术进展",
+        "runtime": "subagent",
+        "mode": "session",
+        "completed_at": "2026-03-17T10:19:19.792688"
+      },
+      "error": null,
+      "session_key": null
+    },
+    {
+      "id": "sa_20260317101919_1a70d20e",
+      "name": "Coding Agent",
+      "runtime": "acp",
+      "agent_id": "codex",
+      "mode": "session",
+      "task": "编写一个 Python 脚本",
+      "thread": true,
+      "timeout_seconds": null,
+      "label": "Coding Agent",
+      "created_at": "2026-03-17T10:19:19.689204",
+      "status": "completed",
+      "result": {
+        "status": "completed",
+        "subagent_id": "sa_20260317101919_1a70d20e",
+        "session_key": "agent:codex:sa_20260317101919_1a70d20e",
+        "result": "模拟结果：编写一个 Python 脚本",
+        "runtime": "acp",
+        "mode": "session",
+        "completed_at": "2026-03-17T10:19:19.895602"
+      },
+      "error": null,
+      "session_key": null
+    },
+    {
+      "id": "sa_20260317101919_0aba2818",
+      "name": "Analysis Agent",
+      "runtime": "subagent",
+      "agent_id": "analyst",
+      "mode": "run",
+      "task": "分析项目状态",
+      "thread": false,
+      "timeout_seconds": null,
+      "label": "Analysis Agent",
+      "created_at": "2026-03-17T10:19:19.690262",
+      "status": "completed",
+      "result": {
+        "status": "completed",
+        "subagent_id": "sa_20260317101919_0aba2818",
+        "session_key": "agent:analyst:sa_20260317101919_0aba2818",
+        "result": "模拟结果：分析项目状态",
+        "runtime": "subagent",
+        "mode": "run",
+        "completed_at": "2026-03-17T14:27:02.138563"
+      },
+      "error": null,
+      "session_key": null
+    },
+    {
+      "id": "sa_20260317102006_59d1dab5",
+      "name": "Subagent 5",
+      "runtime": "subagent",
+      "agent_id": "research-assistant",
+      "mode": "session",
+      "task": "测试创建一个新的研究子代理 --runtime subagent --agent-id research-assistant --label Test Research Subagent",
+      "thread": false,
+      "timeout_seconds": null,
+      "label": null,
+      "created_at": "2026-03-17T10:20:06.057120",
+      "status": "pending",
+      "result": null,
+      "error": null,
+      "session_key": null
+    },
+    {
+      "id": "sa_20260317102023_07709e5b",
+      "name": "Test Research Subagent",
+      "runtime": "subagent",
+      "agent_id": "research-assistant",
+      "mode": "session",
+      "task": "测试创建一个新的研究子代理",
+      "thread": false,
+      "timeout_seconds": null,
+      "label": "Test Research Subagent",
+      "created_at": "2026-03-17T10:20:23.268393",
+      "status": "pending",
+      "result": null,
+      "error": null,
+      "session_key": null
+    },
+    {
+      "id": "sa_20260317102029_f4e9d5b2",
+      "name": "Flask App Dev",
+      "runtime": "acp",
+      "agent_id": "codex",
+      "mode": "session",
+      "task": "编写一个简单的 Python Flask 应用",
+      "thread": false,
+      "timeout_seconds": null,
+      "label": "Flask App Dev",
+      "created_at": "2026-03-17T10:20:29.420753",
+      "status": "completed",
+      "result": {
+        "status": "completed",
+        "subagent_id": "sa_20260317102029_f4e9d5b2",
+        "session_key": "agent:codex:sa_20260317102029_f4e9d5b2",
+        "result": "模拟结果：编写一个简单的 Python Flask 应用",
+        "runtime": "acp",
+        "mode": "session",
+        "completed_at": "2026-03-17T14:26:49.914877"
+      },
+      "error": null,
+      "session_key": null
+    },
+    {
+      "id": "sa_20260317110623_b3b00542",
+      "name": "AI 医疗研究 2026",
+      "runtime": "subagent",
+      "agent_id": "research-assistant",
+      "mode": "session",
+      "task": "研究 2026 年人工智能在医疗领域的最新应用",
+      "thread": false,
+      "timeout_seconds": null,
+      "label": "AI 医疗研究 2026",
+      "created_at": "2026-03-17T11:06:23.561665",
+      "status": "completed",
+      "result": {
+        "status": "completed",
+        "subagent_id": "sa_20260317110623_b3b00542",
+        "session_key": "agent:research-assistant:sa_20260317110623_b3b00542",
+        "result": "模拟结果：研究 2026 年人工智能在医疗领域的最新应用",
+        "runtime": "subagent",
+        "mode": "session",
+        "completed_at": "2026-03-17T14:26:42.450127"
+      },
+      "error": null,
+      "session_key": null
+    }
+  ],
+  "history": [
+    {
+      "subagent_id": "sa_20260317101919_3c29044d",
+      "task": "研究最新的 AI 技术进展",
+      "status": "completed",
+      "completed_at": "2026-03-17T10:19:19.792801",
+      "result": {
+        "status": "completed",
+        "subagent_id": "sa_20260317101919_3c29044d",
+        "session_key": "agent:research-assistant:sa_20260317101919_3c29044d",
+        "result": "模拟结果：研究最新的 AI 技术进展",
+        "runtime": "subagent",
+        "mode": "session",
+        "completed_at": "2026-03-17T10:19:19.792688"
+      }
+    },
+    {
+      "subagent_id": "sa_20260317101919_1a70d20e",
+      "task": "编写一个 Python 脚本",
+      "status": "completed",
+      "completed_at": "2026-03-17T10:19:19.895629",
+      "result": {
+        "status": "completed",
+        "subagent_id": "sa_20260317101919_1a70d20e",
+        "session_key": "agent:codex:sa_20260317101919_1a70d20e",
+        "result": "模拟结果：编写一个 Python 脚本",
+        "runtime": "acp",
+        "mode": "session",
+        "completed_at": "2026-03-17T10:19:19.895602"
+      }
+    },
+    {
+      "subagent_id": "sa_20260317110623_b3b00542",
+      "task": "研究 2026 年人工智能在医疗领域的最新应用",
+      "status": "completed",
+      "completed_at": "2026-03-17T14:26:42.450148",
+      "result": {
+        "status": "completed",
+        "subagent_id": "sa_20260317110623_b3b00542",
+        "session_key": "agent:research-assistant:sa_20260317110623_b3b00542",
+        "result": "模拟结果：研究 2026 年人工智能在医疗领域的最新应用",
+        "runtime": "subagent",
+        "mode": "session",
+        "completed_at": "2026-03-17T14:26:42.450127"
+      }
+    },
+    {
+      "subagent_id": "sa_20260317102029_f4e9d5b2",
+      "task": "编写一个简单的 Python Flask 应用",
+      "status": "completed",
+      "completed_at": "2026-03-17T14:26:49.914900",
+      "result": {
+        "status": "completed",
+        "subagent_id": "sa_20260317102029_f4e9d5b2",
+        "session_key": "agent:codex:sa_20260317102029_f4e9d5b2",
+        "result": "模拟结果：编写一个简单的 Python Flask 应用",
+        "runtime": "acp",
+        "mode": "session",
+        "completed_at": "2026-03-17T14:26:49.914877"
+      }
+    },
+    {
+      "subagent_id": "sa_20260317101919_0aba2818",
+      "task": "分析项目状态",
+      "status": "completed",
+      "completed_at": "2026-03-17T14:27:02.138584",
+      "result": {
+        "status": "completed",
+        "subagent_id": "sa_20260317101919_0aba2818",
+        "session_key": "agent:analyst:sa_20260317101919_0aba2818",
+        "result": "模拟结果：分析项目状态",
+        "runtime": "subagent",
+        "mode": "run",
+        "completed_at": "2026-03-17T14:27:02.138563"
+      }
+    }
+  ],
+  "updated_at": "2026-03-17T14:27:02.139027"
+}

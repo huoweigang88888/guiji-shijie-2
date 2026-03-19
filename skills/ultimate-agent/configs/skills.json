@@ -1,0 +1,53 @@
+{
+  "built_in": {
+    "enabled": [
+      "researcher",
+      "analyst",
+      "report_generator",
+      "coordinator",
+      "message_aggregator",
+      "executor",
+      "notification_agent",
+      "scheduler",
+      "subagent_manager",
+      "knowledge_graph",
+      "self_improver",
+      "heartbeat",
+      "config_manager"
+    ],
+    "disabled": []
+  },
+  "clawhub": {
+    "approved": [
+      {
+        "name": "proactive-agent",
+        "version": "3.1.0",
+        "checked_date": "2026-03-17",
+        "risk_level": "low",
+        "description": "主动思考、自我改进"
+      },
+      {
+        "name": "find-skills",
+        "version": "latest",
+        "checked_date": "2026-03-17",
+        "risk_level": "low",
+        "description": "技能搜索和安装"
+      }
+    ],
+    "blocked": [],
+    "pending_review": []
+  },
+  "security": {
+    "risk_factors": [
+      "curl",
+      "wget",
+      "eval",
+      "exec",
+      "INFERENCE_API_KEY",
+      "os.system",
+      "subprocess"
+    ],
+    "require_review": true,
+    "auto_block_high_risk": true
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "tasks": [
+    {
+      "priority": 1,
+      "task_id": "task_20260311_180911_0",
+      "title": "任务 1",
+      "description": "",
+      "status": "completed",
+      "handler": "sample",
+      "params": {
+        "id": 1
+      },
+      "dependencies": [],
+      "dependency_type": "none",
+      "retry_count": 0,
+      "max_retries": 3,
+      "created_at": "2026-03-11T18:09:11.192951",
+      "started_at": "2026-03-11T18:09:11.197834",
+      "completed_at": "2026-03-11T18:09:12.198396",
+      "error": null,
+      "result": {
+        "status": "success"
+      }
+    },
+    {
+      "priority": 2,
+      "task_id": "task_20260311_180911_1",
+      "title": "任务 2",
+      "description": "",
+      "status": "completed",
+      "handler": "sample",
+      "params": {
+        "id": 2
+      },
+      "dependencies": [],
+      "dependency_type": "none",
+      "retry_count": 0,
+      "max_retries": 3,
+      "created_at": "2026-03-11T18:09:11.192976",
+      "started_at": "2026-03-11T18:09:11.198614",
+      "completed_at": "2026-03-11T18:09:12.199031",
+      "error": null,
+      "result": {
+        "status": "success"
+      }
+    },
+    {
+      "priority": 1,
+      "task_id": "task_20260311_180911_2",
+      "title": "任务 3",
+      "description": "",
+      "status": "queued",
+      "handler": "sample",
+      "params": {
+        "id": 3
+      },
+      "dependencies": [
+        null
+      ],
+      "dependency_type": "none",
+      "retry_count": 0,
+      "max_retries": 3,
+      "created_at": "2026-03-11T18:09:11.192980",
+      "started_at": null,
+      "completed_at": null,
+      "error": null,
+      "result": null
+    }
+  ],
+  "stats": {
+    "total_submitted": 3,
+    "total_completed": 2,
+    "total_failed": 0,
+    "total_retried": 0
+  },
+  "saved_at": "2026-03-11T18:09:12.199247"
+}

@@ -1,0 +1,361 @@
+/**
+ * 移动端优化样式 - Phase 6.2
+ * 
+ * 响应式设计，适配手机和平板设备
+ */
+
+/* ========== 基础响应式 ========== */
+
+@media screen and (max-width: 768px) {
+    /* 调整页面边距 */
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        max-width: 100%;
+    }
+    
+    /* Header 优化 */
+    header {
+        padding: 15px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    header h1 {
+        font-size: 22px;
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    /* 导航栏优化 - 横向滚动 */
+    .nav {
+        display: flex;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+        padding-bottom: 5px;
+    }
+    
+    .nav::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
+    }
+    
+    .nav a {
+        white-space: nowrap;
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+    
+    /* 卡片布局优化 */
+    .dashboard,
+    .config-grid,
+    .agent-grid,
+    .stats-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    /* 统计卡片优化 */
+    .stat-card,
+    .stat-item {
+        padding: 15px;
+    }
+    
+    .stat-value {
+        font-size: 28px;
+    }
+    
+    /* 按钮优化 - 更大点击区域 */
+    .btn {
+        padding: 12px 20px;
+        font-size: 14px;
+        min-height: 44px; /* iOS 最小点击区域 */
+    }
+    
+    /* 输入框优化 */
+    .config-input,
+    .search-input {
+        font-size: 16px; /* 防止 iOS 自动缩放 */
+        padding: 12px;
+    }
+    
+    /* 通知列表优化 */
+    .notification-item {
+        padding: 15px;
+    }
+    
+    .notification-header {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .notification-meta {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    /* 任务列表优化 */
+    .task-item {
+        padding: 15px;
+    }
+    
+    .task-header {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .task-meta {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    /* 日志优化 */
+    .log-container {
+        height: 400px;
+        font-size: 11px;
+    }
+    
+    .log-entry {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .log-time,
+    .log-level {
+        min-width: auto;
+    }
+    
+    /* 筛选栏优化 */
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-btn {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .search-input {
+        width: 100%;
+    }
+    
+    /* 保存栏优化 */
+    .save-bar {
+        left: 10px;
+        right: 10px;
+        width: auto;
+        transform: none;
+        bottom: 10px;
+        padding: 12px 20px;
+        flex-direction: column;
+        gap: 10px;
+        border-radius: 15px;
+    }
+    
+    .save-bar-text {
+        text-align: center;
+    }
+    
+    .save-bar-buttons {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Toast 优化 */
+    .toast {
+        left: 10px;
+        right: 10px;
+        width: auto;
+        text-align: center;
+    }
+    
+    /* 加载动画优化 */
+    .spinner {
+        width: 30px;
+        height: 30px;
+    }
+    
+    /* 代理卡片优化 */
+    .agent-card {
+        padding: 15px;
+    }
+    
+    .agent-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .agent-actions {
+        flex-direction: column;
+    }
+    
+    .agent-actions .btn {
+        width: 100%;
+    }
+    
+    /* 配置项优化 */
+    .config-item {
+        padding: 15px;
+    }
+    
+    .config-actions {
+        flex-direction: column;
+    }
+    
+    .config-actions .btn {
+        width: 100%;
+    }
+    
+    /* 暗黑模式适配 */
+    body.dark-mode .nav a {
+        background: #374151;
+        color: #e5e7eb;
+    }
+    
+    body.dark-mode .nav a:hover,
+    body.dark-mode .nav a.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+}
+
+/* ========== 平板优化 (768px - 1024px) ========== */
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .dashboard,
+    .config-grid,
+    .agent-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ========== 触摸设备优化 ========== */
+
+@media (hover: none) and (pointer: coarse) {
+    /* 移除悬停效果 */
+    .btn:hover,
+    .nav a:hover,
+    .theme-toggle:hover {
+        transform: none;
+    }
+    
+    /* 增加点击区域 */
+    .btn {
+        min-height: 48px;
+    }
+    
+    .nav a {
+        min-height: 40px;
+    }
+    
+    /* 优化滚动 */
+    .log-container,
+    .notification-list,
+    .task-list {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* ========== 横屏优化 ========== */
+
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    header {
+        padding: 10px 15px;
+        margin-bottom: 10px;
+    }
+    
+    header h1 {
+        font-size: 18px;
+    }
+    
+    .subtitle {
+        display: none;
+    }
+    
+    .card {
+        padding: 15px;
+    }
+    
+    .log-container {
+        height: 250px;
+    }
+}
+
+/* ========== 深色模式支持 ========== */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark light;
+    }
+}
+
+/* ========== 打印优化 ========== */
+
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+    
+    header,
+    .nav,
+    .btn,
+    .filter-bar,
+    .save-bar,
+    .toast {
+        display: none !important;
+    }
+    
+    .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}
+
+/* ========== 辅助功能 ========== */
+
+/* 减少动画 */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+    .btn {
+        border: 2px solid currentColor;
+    }
+    
+    .card {
+        border: 2px solid #ddd;
+    }
+}
+
+/* ========== 安全区域适配 (iPhone X+) ========== */
+
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(20px, env(safe-area-inset-left));
+        padding-right: max(20px, env(safe-area-inset-right));
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
+    
+    header {
+        padding-left: max(30px, env(safe-area-inset-left));
+        padding-right: max(30px, env(safe-area-inset-right));
+    }
+}

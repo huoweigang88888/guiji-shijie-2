@@ -1,0 +1,30 @@
+{
+  "enabled": true,
+  "global": {
+    "every": "30m",
+    "activeHours": "08:00-24:00",
+    "timeout": "10s"
+  },
+  "roles": {
+    "main": {
+      "every": "15m",
+      "tasks": ["check_agents", "check_progress"]
+    },
+    "product-manager": {
+      "every": "30m",
+      "tasks": ["check_prd"]
+    },
+    "ui-designer": {
+      "every": "60m",
+      "tasks": ["check_design"]
+    },
+    "architect": {
+      "every": "30m",
+      "tasks": ["check_tech"]
+    },
+    "senior-dev": {
+      "every": "30m",
+      "tasks": ["check_code", "run_tests"]
+    }
+  }
+}

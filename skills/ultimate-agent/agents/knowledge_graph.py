@@ -125,12 +125,14 @@ class KnowledgeGraph:
     def _check_git_notes(self) -> bool:
         """检查 Git Notes 是否可用"""
         try:
+            # 使用 'git notes list' 而不是 '--help'（--help 会打开 HTML 文档）
             result = subprocess.run(
-                ['git', 'notes', '--help'],
+                ['git', 'notes', 'list'],
                 capture_output=True,
                 timeout=5,
                 cwd=str(self.repo_path)
             )
+            # returncode == 0 表示 Git Notes 可用
             return result.returncode == 0
         except:
             logger.warning("Git Notes 不可用，使用本地存储")

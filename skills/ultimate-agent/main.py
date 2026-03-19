@@ -9,6 +9,7 @@ import json
 import logging
 from pathlib import Path
 from datetime import datetime
+from typing import Optional
 
 # Windows 编码支持
 if sys.platform == 'win32':
@@ -37,6 +38,15 @@ from system_monitor import SystemMonitor
 from workflow_persistence import WorkflowPersistence
 from notification_agent import NotificationAgent, NotificationChannel, NotificationPriority
 from report_generator import ReportGenerator, ReportFormat
+from api_integration import ApiIntegration, setup_default_apis
+from task_queue import TaskQueue, TaskPriority, create_task
+from config_manager import ConfigManager, SYSTEM_SCHEMAS
+from subagent_manager import SubagentManager
+from workflow_engine import WorkflowEngine
+from business_roles.product_manager import ProductManagerAgent
+from business_roles.ui_designer import UIDesignerAgent
+from business_roles.architect import ArchitectAgent
+from business_roles.senior_dev import SeniorDevAgent
 
 # 配置日志
 logging.basicConfig(
@@ -78,6 +88,25 @@ class GuijiWorld2:
         # Phase 5 组件 (新增)
         self.notifier = NotificationAgent(agents_dir.parent / "notifications")
         self.reporter = ReportGenerator(agents_dir.parent / "reports")
+        self.api_integration = ApiIntegration(agents_dir.parent / "api-configs")
+        self.task_queue = TaskQueue(max_concurrent=5, persist_dir=agents_dir.parent / "task-queue")
+        self.config_manager = ConfigManager(agents_dir.parent / "configs")
+        
+        # Phase 7: 子代理管理
+        self.subagent_manager = SubagentManager(agents_dir.parent / "configs" / "config.json")
+        
+        # Phase 8: 业务代理
+        self.workflow_engine = WorkflowEngine(agents_dir.parent / "configs" / "workflows.json")
+        self.product_manager = ProductManagerAgent()
+        self.ui_designer = UIDesignerAgent()
+        self.architect = ArchitectAgent()
+        self.senior_dev = SeniorDevAgent()
+        
+        # 设置默认 API
+        setup_default_apis(self.api_integration)
+        
+        # 注册系统配置模式
+        self.config_manager.register_schemas(SYSTEM_SCHEMAS)
         
         logger.info("系统初始化完成")
     
@@ -463,6 +492,168 @@ class GuijiWorld2:
             ]
         }
     
+    # ========== 子代理管理 ==========
+    
+    def spawn_subagent(
+        self,
+        task: str,
+        runtime: str = "subagent",
+        agent_id: Optional[str] = None,
+        mode: str = "session",
+        thread: bool = False,
+        timeout_seconds: Optional[int] = None,
+        label: Optional[str] = None
+    ) -> dict:
+        """
+        生成子代理
+        
+        Args:
+            task: 任务描述
+            runtime: 运行时类型 (subagent/acp)
+            agent_id: 代理 ID（可选，自动选择）
+            mode: 模式 (run/session)
+            thread: 是否绑定线程（仅 ACP + Discord）
+            timeout_seconds: 超时时间（秒）
+            label: 会话标签
+            
+        Returns:
+            子代理配置信息
+        """
+        try:
+            config = self.subagent_manager.create_subagent(
+                task=task,
+                runtime=runtime,
+                agent_id=agent_id,
+                mode=mode,
+                thread=thread,
+                timeout_seconds=timeout_seconds,
+                label=label
+            )
+            
+            return {
+                'success': True,
+                'subagent_id': config.id,
+                'name': config.name,
+                'agent_id': config.agent_id,
+                'runtime': config.runtime.value,
+                'mode': config.mode.value,
+                'task': config.task,
+                'created_at': config.created_at
+            }
+        except ValueError as e:
+            return {
+                'success': False,
+                'error': str(e)
+            }
+        except Exception as e:
+            return {
+                'success': False,
+                'error': f'创建失败：{str(e)}'
+            }
+    
+    def execute_subagent(self, subagent_id: str) -> dict:
+        """
+        执行子代理
+        
+        Args:
+            subagent_id: 子代理 ID
+            
+        Returns:
+            执行结果
+        """
+        result = self.subagent_manager.execute_subagent(subagent_id)
+        return result
+    
+    def list_subagents(self, active_only: bool = False) -> dict:
+        """
+        列出子代理
+        
+        Args:
+            active_only: 是否只列出活跃的
+            
+        Returns:
+            子代理列表
+        """
+        subagents = self.subagent_manager.list_subagents(active_only)
+        return {
+            'count': len(subagents),
+            'active_only': active_only,
+            'subagents': subagents
+        }
+    
+    def cleanup_subagents(self, older_than_hours: int = 24) -> dict:
+        """清理已完成的子代理"""
+        cleaned = self.subagent_manager.cleanup_completed(older_than_hours)
+        return {
+            'cleaned': cleaned,
+            'older_than_hours': older_than_hours
+        }
+    
+    # ========== Phase 8: 业务代理 ==========
+    
+    def generate_prd(self, requirement: str) -> dict:
+        """使用产品经理生成 PRD"""
+        result = self.product_manager.execute(requirement)
+        return {
+            'success': True,
+            'project_name': result['project_name'],
+            'prd_path': result['prd_path'],
+            'message': result['message']
+        }
+    
+    def generate_design(self, prd_path: str) -> dict:
+        """使用 UI 设计师生成设计"""
+        result = self.ui_designer.execute(prd_path)
+        return {
+            'success': True,
+            'project_name': result['project_name'],
+            'design_path': result['design_path'],
+            'color_scheme': result['color_scheme'],
+            'message': result['message']
+        }
+    
+    def generate_architecture(self, prd_path: str) -> dict:
+        """使用架构师生成技术方案"""
+        result = self.architect.execute(prd_path)
+        return {
+            'success': True,
+            'project_name': result['project_name'],
+            'design_path': result['design_path'],
+            'message': result['message']
+        }
+    
+    def implement_code(self, tech_design_path: str, ui_design_path: str = None) -> dict:
+        """使用开发工程师实现代码"""
+        result = self.senior_dev.implement(tech_design_path, ui_design_path)
+        return {
+            'success': True,
+            'code_path': result['code_path'],
+            'message': result['message']
+        }
+    
+    def full_workflow(self, requirement: str) -> dict:
+        """完整软件开发流程"""
+        # 1. PRD
+        pm_result = self.generate_prd(requirement)
+        
+        # 2. 设计
+        ui_result = self.generate_design(pm_result['prd_path'])
+        
+        # 3. 架构
+        arch_result = self.generate_architecture(pm_result['prd_path'])
+        
+        # 4. 代码
+        dev_result = self.implement_code(arch_result['design_path'], ui_result['design_path'])
+        
+        return {
+            'success': True,
+            'requirement': requirement,
+            'prd_path': pm_result['prd_path'],
+            'design_path': ui_result['design_path'],
+            'architecture_path': arch_result['design_path'],
+            'code_path': dev_result['code_path']
+        }
+    
     # ========== 系统状态 ==========
     
     def get_status(self) -> dict:
@@ -498,7 +689,9 @@ class GuijiWorld2:
                 'reporter': {
                     'output_dir': str(self.reporter.output_dir),
                     'reports_count': len(self.reporter.list_reports())
-                }
+                },
+                # Phase 7: Subagent
+                'subagent': self.subagent_manager.get_statistics()
             }
         }
     
@@ -792,6 +985,149 @@ def main():
         elif command == 'interactive':
             system.interactive_mode()
         
+        elif command == 'webui':
+            # 启动 Web UI
+            host = sys.argv[2] if len(sys.argv) > 2 else '127.0.0.1'
+            port = int(sys.argv[3]) if len(sys.argv) > 3 else 5000
+            debug = '--debug' in sys.argv
+            
+            print(f"\n🌐 启动 Web UI...")
+            print(f"   地址：http://{host}:{port}")
+            print(f"   调试：{'开启' if debug else '关闭'}")
+            print(f"\n按 Ctrl+C 停止服务\n")
+            
+            from web_ui.app import run_dashboard
+            run_dashboard(host=host, port=port, debug=debug, system_instance=system)
+        
+        # Phase 7: 子代理管理
+        elif command == 'spawn':
+            # 用法：spawn <任务描述> [--runtime subagent|acp] [--agent-id <id>] [--mode run|session] [--thread] [--timeout <秒>] [--label <标签>]
+            import shlex
+            
+            task = None
+            runtime = 'subagent'
+            agent_id = None
+            mode = 'session'
+            thread = False
+            timeout = None
+            label = None
+            
+            # 解析命令行参数
+            args = sys.argv[2:] if len(sys.argv) > 2 else []
+            
+            # 首先获取第一个参数作为任务描述
+            if args and not args[0].startswith('--'):
+                task = args[0]
+                args = args[1:]
+            
+            # 解析选项参数
+            i = 0
+            while i < len(args):
+                if args[i] == '--runtime' and i + 1 < len(args):
+                    runtime = args[i + 1]
+                    i += 2
+                elif args[i] == '--agent-id' and i + 1 < len(args):
+                    agent_id = args[i + 1]
+                    i += 2
+                elif args[i] == '--mode' and i + 1 < len(args):
+                    mode = args[i + 1]
+                    i += 2
+                elif args[i] == '--thread':
+                    thread = True
+                    i += 1
+                elif args[i] == '--timeout' and i + 1 < len(args):
+                    timeout = int(args[i + 1])
+                    i += 2
+                elif args[i] == '--label' and i + 1 < len(args):
+                    label = args[i + 1]
+                    i += 2
+                else:
+                    i += 1
+            
+            if not task:
+                print("用法：python main.py spawn <任务描述> [选项]")
+                print("选项:")
+                print("  --runtime subagent|acp  (默认：subagent)")
+                print("  --agent-id <代理 ID>     (可选，自动选择)")
+                print("  --mode run|session      (默认：session)")
+                print("  --thread                (仅 ACP + Discord)")
+                print("  --timeout <秒>          (超时时间)")
+                print("  --label <标签>          (会话标签)")
+            else:
+                result = system.spawn_subagent(
+                    task=task,
+                    runtime=runtime,
+                    agent_id=agent_id,
+                    mode=mode,
+                    thread=thread,
+                    timeout_seconds=timeout,
+                    label=label
+                )
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+        
+        elif command == 'subagents':
+            # 列出子代理
+            active_only = '--active' in sys.argv
+            json_output = '--json' in sys.argv
+            
+            result = system.list_subagents(active_only)
+            
+            if json_output:
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(f"\n子代理列表 ({result['count']} 个):\n")
+                if result['subagents']:
+                    print(f"{'ID':<30} {'名称':<20} {'状态':<12} {'代理':<15} {'运行时':<10}")
+                    print("-" * 90)
+                    for sa in result['subagents'][:20]:  # 限制显示 20 个
+                        print(f"{sa['id']:<30} {sa['name']:<20} {sa['status']:<12} {sa['agent_id']:<15} {sa['runtime']:<10}")
+                else:
+                    print("  没有子代理")
+                print()
+        
+        elif command == 'execute-subagent' and len(sys.argv) > 2:
+            # 执行子代理
+            subagent_id = sys.argv[2]
+            result = system.execute_subagent(subagent_id)
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+        
+        elif command == 'cleanup-subagents':
+            hours = int(sys.argv[2]) if len(sys.argv) > 2 else 24
+            result = system.cleanup_subagents(older_than_hours=hours)
+            print(f"已清理 {result['cleaned']} 个超过 {result['older_than_hours']} 小时的已完成子代理")
+        
+        # Phase 8: 业务代理
+        elif command == 'prd' and len(sys.argv) > 2:
+            # 生成 PRD
+            requirement = ' '.join(sys.argv[2:])
+            result = system.generate_prd(requirement)
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+        
+        elif command == 'design' and len(sys.argv) > 2:
+            # 生成设计
+            prd_path = sys.argv[2]
+            result = system.generate_design(prd_path)
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+        
+        elif command == 'architecture' and len(sys.argv) > 2:
+            # 生成架构
+            prd_path = sys.argv[2]
+            result = system.generate_architecture(prd_path)
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+        
+        elif command == 'code' and len(sys.argv) > 2:
+            # 生成代码
+            tech_path = sys.argv[2]
+            ui_path = sys.argv[3] if len(sys.argv) > 3 else None
+            result = system.implement_code(tech_path, ui_path)
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+        
+        elif command == 'full-dev' and len(sys.argv) > 2:
+            # 完整开发流程
+            requirement = ' '.join(sys.argv[2:])
+            result = system.full_workflow(requirement)
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+        
         else:
             print("用法:")
             print("  python main.py task <任务描述>")
@@ -806,6 +1142,20 @@ def main():
             print("  python main.py research-report <主题> [格式]")
             print("  python main.py reports")
             print("  python main.py interactive")
+            print("  python main.py webui [主机] [端口] [--debug]  # 启动 Web UI")
+            print("")
+            print("子代理管理 (Phase 7):")
+            print("  python main.py spawn <任务描述> [--runtime subagent|acp] [--agent-id <id>] [--mode run|session] [--thread] [--timeout <秒>] [--label <标签>]")
+            print("  python main.py subagents [--active] [--json]")
+            print("  python main.py execute-subagent <子代理 ID>")
+            print("  python main.py cleanup-subagents [小时数]")
+            print("")
+            print("业务代理 (Phase 8):")
+            print("  python main.py prd <需求描述>              # 生成 PRD")
+            print("  python main.py design <PRD 路径>            # 生成 UI 设计")
+            print("  python main.py architecture <PRD 路径>      # 生成技术方案")
+            print("  python main.py code <技术路径> [UI 路径]     # 生成代码")
+            print("  python main.py full-dev <需求描述>          # 完整开发流程")
     else:
         # 默认交互模式
         system.interactive_mode()

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统日志 - 硅基世界 2</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        h1 { color: #667eea; font-size: 28px; }
+        .nav { margin-top: 15px; }
+        .nav a {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #f3f4f6;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+        .nav a:hover, .nav a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .log-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-btn {
+            padding: 6px 12px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover { border-color: #667eea; }
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .log-container {
+            background: #1f2937;
+            border-radius: 10px;
+            padding: 15px;
+            height: 600px;
+            overflow-y: auto;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid #374151;
+            display: flex;
+            gap: 10px;
+        }
+        .log-entry:last-child { border-bottom: none; }
+        .log-time {
+            color: #6b7280;
+            min-width: 80px;
+        }
+        .log-level {
+            min-width: 60px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .log-level.info { color: #10b981; }
+        .log-level.warning { color: #f59e0b; }
+        .log-level.error { color: #ef4444; }
+        .log-level.debug { color: #3b82f6; }
+        .log-message { color: #e5e7eb; flex: 1; }
+        .log-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .stat-box {
+            background: #f3f4f6;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-value { font-size: 24px; font-weight: 700; color: #667eea; }
+        .stat-label { font-size: 11px; color: #666; margin-top: 4px; }
+        .auto-scroll-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #666;
+        }
+        .toggle-switch {
+            width: 40px;
+            height: 20px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle-switch.on { background: #10b981; }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+        .toggle-switch.on::after { transform: translateX(20px); }
+        .clear-btn {
+            padding: 6px 12px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .export-btn {
+            padding: 6px 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+        .loading { text-align: center; padding: 40px; color: white; }
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>📜 系统日志</h1>
+                <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                    WebSocket: <span id="ws-indicator" style="color: #f59e0b;">⚪ 未连接</span>
+                </div>
+            </div>
+            <div class="nav">
+                <a href="index.html">📊 仪表板</a>
+                <a href="agents.html">🤖 代理管理</a>
+                <a href="tasks.html">📋 任务队列</a>
+                <a href="graph.html">🕸️ 知识图谱</a>
+                <a href="logs.html" class="active">📜 系统日志</a>
+            </div>
+        </header>
+        
+        <div class="card">
+            <div class="log-stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="stat-total">0</div>
+                    <div class="stat-label">总日志数</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="stat-info">0</div>
+                    <div class="stat-label">INFO</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="stat-warning">0</div>
+                    <div class="stat-label">WARNING</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="stat-error">0</div>
+                    <div class="stat-label">ERROR</div>
+                </div>
+            </div>
+            
+            <div class="log-controls">
+                <button class="filter-btn active" data-level="all">全部</button>
+                <button class="filter-btn" data-level="info">INFO</button>
+                <button class="filter-btn" data-level="warning">WARNING</button>
+                <button class="filter-btn" data-level="error">ERROR</button>
+                <button class="filter-btn" data-level="debug">DEBUG</button>
+                
+                <div class="auto-scroll-toggle" style="margin-left: auto;">
+                    <span>自动滚动</span>
+                    <div class="toggle-switch on" id="auto-scroll" onclick="toggleAutoScroll()"></div>
+                </div>
+                
+                <button class="clear-btn" onclick="clearLogs()">🗑️ 清空</button>
+                <button class="export-btn" onclick="exportLogs()">💾 导出</button>
+            </div>
+            
+            <div class="log-container" id="log-container">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    正在加载日志...
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let logs = [];
+        let currentFilter = 'all';
+        let autoScroll = true;
+        let logInterval = null;
+        let socket = null;
+        let wsConnected = false;
+        
+        // 初始化 WebSocket 连接
+        function initWebSocket() {
+            const indicator = document.getElementById('ws-indicator');
+            
+            if (typeof io === 'undefined') {
+                indicator.textContent = '⚠️ Socket.IO 不可用';
+                indicator.style.color = '#f59e0b';
+                console.log('⚠️ Socket.IO 不可用，使用轮询模式');
+                return;
+            }
+            
+            socket = io();
+            
+            socket.on('connect', () => {
+                wsConnected = true;
+                indicator.textContent = '🟢 已连接';
+                indicator.style.color = '#22c55e';
+                console.log('✅ WebSocket 已连接');
+                socket.emit('subscribe', { topic: 'logs' });
+            });
+            
+            socket.on('disconnect', () => {
+                wsConnected = false;
+                indicator.textContent = '🔴 已断开';
+                indicator.style.color = '#ef4444';
+                console.log('❌ WebSocket 已断开');
+            });
+            
+            socket.on('connect_error', (error) => {
+                wsConnected = false;
+                indicator.textContent = '🟡 连接失败';
+                indicator.style.color = '#f59e0b';
+                console.error('WebSocket 连接错误:', error);
+            });
+            
+            // 监听日志更新
+            socket.on('log_entry', (data) => {
+                console.log('📜 收到日志:', data);
+                addLogEntry(data);
+            });
+            
+            console.log('🔌 正在连接 WebSocket...');
+        }
+        
+        // 添加日志条目
+        function addLogEntry(log) {
+            const newLog = {
+                id: logs.length,
+                time: log.time || new Date().toLocaleTimeString('zh-CN'),
+                level: log.level || 'info',
+                message: log.message || log.msg || ''
+            };
+            
+            logs.push(newLog);
+            if (logs.length > 200) logs.shift();
+            updateStats();
+            renderLogs();
+        }
+        
+        // 模拟日志数据（实际应从 API 获取）
+        function generateSampleLogs() {
+            const levels = ['info', 'info', 'info', 'warning', 'info', 'error', 'info', 'debug'];
+            const messages = [
+                '系统初始化完成',
+                '已加载知识图谱：5 节点，4 关系',
+                '任务已提交：task_001',
+                'API 请求超时，正在重试...',
+                '配置已保存',
+                '连接失败：无法连接到数据库',
+                '用户登录成功',
+                '缓存命中：knowledge_graph',
+                '代理注册：coordinator',
+                '心跳检查正常',
+                '任务完成：task_001',
+                '内存使用率：45%',
+                '磁盘空间检查：充足',
+                '网络延迟：23ms',
+                '报告生成完成：report_001.md'
+            ];
+            
+            const now = Date.now();
+            const sampleLogs = [];
+            
+            for (let i = 0; i < 50; i++) {
+                const level = levels[Math.floor(Math.random() * levels.length)];
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                const time = new Date(now - (50 - i) * 1000).toLocaleTimeString('zh-CN');
+                
+                sampleLogs.push({
+                    id: i,
+                    time: time,
+                    level: level,
+                    message: message
+                });
+            }
+            
+            return sampleLogs;
+        }
+        
+        // 加载日志
+        function loadLogs() {
+            logs = generateSampleLogs();
+            updateStats();
+            renderLogs();
+        }
+        
+        // 更新统计
+        function updateStats() {
+            document.getElementById('stat-total').textContent = logs.length;
+            document.getElementById('stat-info').textContent = logs.filter(l => l.level === 'info').length;
+            document.getElementById('stat-warning').textContent = logs.filter(l => l.level === 'warning').length;
+            document.getElementById('stat-error').textContent = logs.filter(l => l.level === 'error').length;
+        }
+        
+        // 渲染日志
+        function renderLogs() {
+            const container = document.getElementById('log-container');
+            const filteredLogs = currentFilter === 'all' 
+                ? logs 
+                : logs.filter(l => l.level === currentFilter);
+            
+            if (filteredLogs.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>📭 暂无日志</h3>
+                        <p>没有符合条件的日志记录</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filteredLogs.map(log => `
+                <div class="log-entry">
+                    <span class="log-time">${log.time}</span>
+                    <span class="log-level ${log.level}">${log.level}</span>
+                    <span class="log-message">${log.message}</span>
+                </div>
+            `).join('');
+            
+            if (autoScroll) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+        
+        // 切换自动滚动
+        function toggleAutoScroll() {
+            autoScroll = !autoScroll;
+            document.getElementById('auto-scroll').classList.toggle('on', autoScroll);
+        }
+        
+        // 清空日志
+        function clearLogs() {
+            logs = [];
+            updateStats();
+            renderLogs();
+        }
+        
+        // 导出日志
+        function exportLogs() {
+            const content = logs.map(l => 
+                `[${l.time}] [${l.level.toUpperCase()}] ${l.message}`
+            ).join('\n');
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `system-logs-${new Date().toISOString().slice(0,10)}.txt`;
+            a.click();
+        }
+        
+        // 筛选日志
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.level;
+                renderLogs();
+            });
+        });
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLogs();
+            initWebSocket();
+            
+            // 备用：如果没有 WebSocket，使用模拟日志（每 2 秒添加一条）
+            setTimeout(() => {
+                if (!wsConnected) {
+                    console.log('⚠️ WebSocket 未连接，使用模拟日志');
+                    logInterval = setInterval(() => {
+                        const levels = ['info', 'warning', 'error', 'debug'];
+                        const messages = [
+                            '定时任务执行中...',
+                            '内存检查正常',
+                            '网络连接稳定',
+                            '缓存更新完成',
+                            '代理状态检查通过'
+                        ];
+                        
+                        const newLog = {
+                            id: logs.length,
+                            time: new Date().toLocaleTimeString('zh-CN'),
+                            level: levels[Math.floor(Math.random() * levels.length)],
+                            message: messages[Math.floor(Math.random() * messages.length)]
+                        };
+                        
+                        logs.push(newLog);
+                        if (logs.length > 200) logs.shift();
+                        updateStats();
+                        renderLogs();
+                    }, 2000);
+                }
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

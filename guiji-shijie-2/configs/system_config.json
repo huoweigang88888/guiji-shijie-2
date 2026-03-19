@@ -1,0 +1,54 @@
+{
+  "project": {
+    "name": "硅基世界 2",
+    "name_en": "Guiji World 2",
+    "version": "1.0.0",
+    "created": "2026-03-11",
+    "author": "三二 🐱",
+    "description": "多 AI 代理协作应用平台"
+  },
+  
+  "runtime": {
+    "python_version": "3.10+",
+    "workspace": "C:\\Users\\97RPZ8T\\.openclaw\\workspace",
+    "timezone": "Asia/Shanghai"
+  },
+  
+  "integration": {
+    "ultimate_agent": {
+      "enabled": true,
+      "path": "../skills/ultimate-agent",
+      "agents": [
+        "coordinator",
+        "researcher",
+        "analyst",
+        "notifier",
+        "scheduler",
+        "reporter"
+      ]
+    },
+    "openclaw": {
+      "enabled": true,
+      "channel": "webchat",
+      "model": "bailian/qwen3.5-plus"
+    }
+  },
+  
+  "features": {
+    "multi_agent_collaboration": true,
+    "task_decomposition": true,
+    "auto_scheduling": true,
+    "notification_push": true,
+    "report_generation": true,
+    "state_persistence": true
+  },
+  
+  "paths": {
+    "agents": "./agents",
+    "configs": "./configs",
+    "outputs": "./outputs",
+    "logs": "./logs",
+    "memory": "./memory",
+    "tasks": "./tasks"
+  }
+}

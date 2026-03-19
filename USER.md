@@ -1,17 +1,13 @@
 # USER.md - About Your Human
 
-_Learn about the person you're helping. Update this as you go._
-
-- **Name:**
-- **What to call them:**
-- **Pronouns:** _(optional)_
-- **Timezone:**
-- **Notes:**
+- **Name:** 大哥
+- **What to call them:** 大哥
+- **Pronouns:** 
+- **Timezone:** Asia/Shanghai
+- **Notes:** 
 
 ## Context
 
-_(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)_
+_待补充_
 
 ---
-
-The more you know, the better you can help. But remember — you're learning about a person, not building a dossier. Respect the difference.

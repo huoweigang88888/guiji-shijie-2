@@ -1,0 +1,44 @@
+{
+  "wttr_weather": {
+    "name": "wttr_weather",
+    "base_url": "https://wttr.in",
+    "api_key": null,
+    "timeout": 10,
+    "rate_limit": 60,
+    "retry_count": 3,
+    "retry_delay": 1.0,
+    "headers": {
+      "User-Agent": "curl/7.68.0"
+    }
+  },
+  "openweather": {
+    "name": "openweather",
+    "base_url": "https://api.openweathermap.org/data/2.5",
+    "api_key": null,
+    "timeout": 10,
+    "rate_limit": 60,
+    "retry_count": 3,
+    "retry_delay": 1.0,
+    "headers": {}
+  },
+  "newsapi": {
+    "name": "newsapi",
+    "base_url": "https://newsapi.org/v2",
+    "api_key": null,
+    "timeout": 15,
+    "rate_limit": 30,
+    "retry_count": 3,
+    "retry_delay": 1.0,
+    "headers": {}
+  },
+  "deepl_translate": {
+    "name": "deepl_translate",
+    "base_url": "https://api.deepl.com/v2",
+    "api_key": null,
+    "timeout": 20,
+    "rate_limit": 50,
+    "retry_count": 3,
+    "retry_delay": 1.0,
+    "headers": {}
+  }
+}

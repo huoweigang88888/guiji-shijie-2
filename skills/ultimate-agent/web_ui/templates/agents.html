@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#667eea">
+    <title>代理管理 - 硅基世界 2</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <link rel="stylesheet" href="/static/mobile.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        h1 { color: #667eea; font-size: 28px; }
+        .nav { margin-top: 15px; }
+        .nav a {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #f3f4f6;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-right: 10px;
+            transition: all 0.2s;
+        }
+        .nav a:hover, .nav a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .agent-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #10b981;
+        }
+        .agent-card.inactive { border-left-color: #f59e0b; }
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .agent-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-active { background: #d1fae5; color: #065f46; }
+        .status-inactive { background: #fef3c7; color: #92400e; }
+        .agent-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .stat {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-value { font-size: 20px; font-weight: 700; color: #667eea; }
+        .stat-label { font-size: 11px; color: #666; margin-top: 2px; }
+        .agent-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-secondary { background: #e5e7eb; color: #333; }
+        .btn:hover { transform: translateY(-1px); }
+        .capabilities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .cap-tag {
+            background: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #667eea;
+            border: 1px solid #e5e7eb;
+        }
+        .loading { text-align: center; padding: 40px; color: white; }
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>🤖 代理管理</h1>
+                <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                    WebSocket: <span id="ws-indicator" style="color: #f59e0b;">⚪ 未连接</span>
+                </div>
+            </div>
+            <div class="nav">
+                <a href="index.html">📊 仪表板</a>
+                <a href="agents.html" class="active">🤖 代理管理</a>
+                <a href="tasks.html">📋 任务队列</a>
+                <a href="graph.html">🕸️ 知识图谱</a>
+            </div>
+        </header>
+        
+        <div id="content" class="card">
+            <div class="loading">
+                <div class="spinner"></div>
+                正在加载代理状态...
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const agentIcons = {
+            // 公司多智能体系统
+            'ceo_coordinator': '👔',
+            'pm': '📋',
+            'architect': '🏗️',
+            'senior-dev': '💻',
+            'ui-designer': '🎨',
+            'qa': '🧪',
+            'devops': '🚀',
+            'data': '📊',
+            'hr': '👥',
+            'finance': '💰',
+            'marketing': '📢',
+            
+            // 原有代理
+            'coordinator': '🎯',
+            'researcher': '🔍',
+            'messenger': '💬',
+            'heartbeat': '💓',
+            'executor': '⚡',
+            'improver': '📈',
+            'vector_search': '🔎',
+            'knowledge_graph': '🕸️',
+            'notification': '🔔',
+            'reporter': '📝',
+            'api_integration': '🌐',
+            'task_queue': '📋',
+            'config_manager': '⚙️'
+        };
+        
+        // WebSocket 连接状态
+        let socket = null;
+        let wsConnected = false;
+        let agentsData = {};
+        
+        // 初始化 WebSocket 连接
+        function initWebSocket() {
+            const indicator = document.getElementById('ws-indicator');
+            
+            if (typeof io === 'undefined') {
+                indicator.textContent = '⚠️ Socket.IO 不可用';
+                indicator.style.color = '#f59e0b';
+                console.log('⚠️ Socket.IO 不可用，使用轮询模式');
+                setInterval(loadAgents, 30000);
+                return;
+            }
+            
+            socket = io();
+            
+            socket.on('connect', () => {
+                wsConnected = true;
+                indicator.textContent = '🟢 已连接';
+                indicator.style.color = '#22c55e';
+                console.log('✅ WebSocket 已连接');
+                socket.emit('subscribe', { topic: 'agents' });
+            });
+            
+            socket.on('disconnect', () => {
+                wsConnected = false;
+                indicator.textContent = '🔴 已断开';
+                indicator.style.color = '#ef4444';
+                console.log('❌ WebSocket 已断开');
+            });
+            
+            socket.on('connect_error', (error) => {
+                wsConnected = false;
+                indicator.textContent = '🟡 连接失败';
+                indicator.style.color = '#f59e0b';
+                console.error('WebSocket 连接错误:', error);
+            });
+            
+            // 监听代理更新
+            socket.on('agent_update', (data) => {
+                console.log('🤖 收到代理更新:', data);
+                loadAgents();
+            });
+            
+            console.log('🔌 正在连接 WebSocket...');
+        }
+        
+        async function loadAgents() {
+            try {
+                const response = await fetch('/api/agents');
+                const components = await response.json();
+                
+                // 如果 API 返回空或错误，使用内置的公司代理配置
+                if (!components || Object.keys(components).length === 0) {
+                    throw new Error('API 无数据，使用内置配置');
+                }
+                
+                agentsData = components;
+                renderAgentsFromAPI(components);
+            } catch (error) {
+                console.log('API 不可用，使用内置公司代理配置:', error.message);
+                // 使用内置的公司多智能体配置
+                renderCompanyAgents();
+            }
+        }
+        
+        function renderCompanyAgents() {
+            // 公司多智能体系统 - 14 个代理
+            const companyAgents = [
+                { key: 'ceo', name: 'CEO 协调器', role: 'Coordinator', icon: '👔', status: 'active', caps: ['战略规划', '任务分解', '资源协调'] },
+                { key: 'pm', name: '产品经理代理', role: 'Product Manager', icon: '📋', status: 'active', caps: ['需求分析', 'PRD 撰写', '用户调研'] },
+                { key: 'architect', name: '架构师代理', role: 'System Architect', icon: '🏗️', status: 'active', caps: ['技术选型', '架构设计', 'API 设计'] },
+                { key: 'senior-dev', name: '高级开发代理', role: 'Senior Developer', icon: '💻', status: 'active', caps: ['代码实现', '性能优化', '单元测试'] },
+                { key: 'ui-designer', name: 'UI 设计师代理', role: 'UI/UX Designer', icon: '🎨', status: 'active', caps: ['界面设计', '交互设计', '原型制作'] },
+                { key: 'qa', name: '测试工程师代理', role: 'QA Engineer', icon: '🧪', status: 'active', caps: ['测试计划', '自动化测试', 'Bug 跟踪'] },
+                { key: 'devops', name: '运维工程师代理', role: 'DevOps Engineer', icon: '🚀', status: 'active', caps: ['持续部署', '监控告警', '基础设施'] },
+                { key: 'data', name: '数据分析师代理', role: 'Data Analyst', icon: '📊', status: 'active', caps: ['数据清洗', '统计分析', '可视化'] },
+                { key: 'hr', name: '人力资源代理', role: 'HR Manager', icon: '👥', status: 'active', caps: ['简历筛选', '面试安排', '绩效管理'] },
+                { key: 'finance', name: '财务分析师代理', role: 'Financial Analyst', icon: '💰', status: 'active', caps: ['预算编制', '财务分析', '成本核算'] },
+                { key: 'marketing', name: '市场营销代理', role: 'Marketing Manager', icon: '📢', status: 'active', caps: ['市场策划', '内容创作', '获客分析'] },
+                { key: 'legal', name: '法务顾问代理', role: 'Legal Advisor', icon: '⚖️', status: 'active', caps: ['合同审查', '法律咨询', '风险评估'] },
+                { key: 'customer-service', name: '客服专员代理', role: 'Customer Service', icon: '📞', status: 'active', caps: ['客户咨询', '投诉处理', '售后支持'] },
+                { key: 'procurement', name: '采购专员代理', role: 'Procurement Specialist', icon: '🛒', status: 'active', caps: ['供应商筛选', '价格谈判', '订单管理'] },
+                { key: 'social-media', name: '社交媒体经理代理', role: 'Social Media Manager', icon: '📱', status: 'active', caps: ['内容策划', '社交媒体运营', '粉丝互动'] }
+            ];
+            
+            const workflows = [
+                { name: '新产品开发流程', steps: 6 },
+                { name: 'Bug 修复流程', steps: 4 },
+                { name: '数据分析流程', steps: 4 },
+                { name: '招聘流程', steps: 4 }
+            ];
+            
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: #333;">
+                        🏢 公司多智能体系统
+                        <span style="color: #666; font-size: 14px;">(${companyAgents.length} 个代理 · ${workflows.length} 个工作流)</span>
+                    </h2>
+                    <div style="font-size: 12px; color: #666;">
+                        📍 配置位置：C:\\Users\\97RPZ8T\\.openclaw\\agents\\
+                    </div>
+                </div>
+                <div class="agent-grid">
+                    ${companyAgents.map(agent => renderCompanyAgentCard(agent)).join('')}
+                </div>
+            `;
+        }
+        
+        function renderCompanyAgentCard(agent) {
+            return `
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-name">${agent.icon} ${agent.name}</span>
+                        <span class="status-badge status-active">🟢 运行中</span>
+                    </div>
+                    <div style="font-size: 12px; color: #666; margin-bottom: 8px;">${agent.role}</div>
+                    <div class="capabilities">
+                        ${agent.caps.map(cap => `<span class="cap-tag">${cap}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function renderAgentsFromAPI(components) {
+            // 过滤掉 _workflows
+            const agentEntries = Object.entries(components).filter(([key]) => !key.startsWith('_'));
+            
+            const agents = agentEntries.map(([key, data]) => ({
+                key,
+                name: data.name || key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                icon: agentIcons[key] || agentIcons[key.replace(/-/g, '')] || '📦',
+                data,
+                active: data.status === 'active' || Object.keys(data).length > 0
+            }));
+            
+            // 获取工作流信息
+            const workflowsInfo = components['_workflows'] || { count: 0 };
+            
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: #333;">
+                        🤖 系统代理
+                        <span style="color: #666; font-size: 14px;">(${agents.length} 个代理 · ${workflowsInfo.count} 个工作流)</span>
+                    </h2>
+                    <button class="btn btn-primary" onclick="alert('工作流详情功能开发中...')">📋 查看工作流</button>
+                </div>
+                <div class="agent-grid">
+                    ${agents.map(agent => renderAgentCard(agent)).join('')}
+                </div>
+            `;
+        }
+        
+        function renderAgentCard(agent) {
+            const stats = getAgentStats(agent.data);
+            const role = agent.data.role ? `<div style="font-size: 12px; color: #666; margin-bottom: 8px;">${agent.data.role}</div>` : '';
+            const capabilities = agent.data.capabilities ? 
+                `<div style="font-size: 11px; color: #888; margin-top: 10px;">🔧 ${agent.data.capabilities.slice(0, 3).join(' · ')}</div>` : '';
+            
+            return `
+                <div class="agent-card ${agent.active ? '' : 'inactive'}">
+                    <div class="agent-header">
+                        <span class="agent-name">${agent.icon} ${agent.name}</span>
+                        <span class="status-badge ${agent.active ? 'status-active' : 'status-inactive'}">
+                            ${agent.active ? '🟢 运行中' : '🟡 未激活'}
+                        </span>
+                    </div>
+                    ${role}
+                    <div class="agent-stats">
+                        ${stats.map(s => `
+                            <div class="stat">
+                                <div class="stat-value">${s.value}</div>
+                                <div class="stat-label">${s.label}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${capabilities}
+                    <div class="agent-actions">
+                        <button class="btn btn-primary" onclick="showAgentDetail('${agent.key}')">📄 详情</button>
+                        <button class="btn btn-secondary" onclick="showAgentWorkspace('${agent.key}')">📁 工作空间</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function showAgentDetail(agentKey) {
+            const agent = agentsData[agentKey];
+            if (!agent) return;
+            
+            const detail = {
+                'ceo_coordinator': '首席执行官/协调者\n\n职责：战略规划、任务分解、资源协调、进度跟踪',
+                'pm': '产品经理\n\n职责：需求分析、PRD 撰写、用户调研、竞品分析',
+                'architect': '架构师\n\n职责：技术选型、架构设计、API 设计、代码审查',
+                'senior-dev': '高级开发工程师\n\n职责：代码实现、性能优化、单元测试、CI/CD',
+                'ui-designer': 'UI/UX 设计师\n\n职责：界面设计、交互设计、原型制作、设计系统',
+                'qa': '测试工程师\n\n职责：测试计划、自动化测试、Bug 跟踪、性能测试',
+                'devops': '运维工程师\n\n职责：持续部署、监控告警、基础设施、日志分析',
+                'data': '数据分析师\n\n职责：数据清洗、统计分析、可视化、报表生成',
+                'hr': '人力资源经理\n\n职责：简历筛选、面试安排、培训规划、绩效评估',
+                'finance': '财务分析师\n\n职责：预算编制、财务分析、成本核算、风险预警',
+                'marketing': '市场营销经理\n\n职责：市场策划、内容创作、社交媒体、获客分析'
+            };
+            
+            alert(`${agent.name}\n\n${detail[agentKey] || '详情待完善...'}`);
+        }
+        
+        function showAgentWorkspace(agentKey) {
+            const agent = agentsData[agentKey];
+            const workspace = agent.workspace || `workspaces/${agentKey}`;
+            alert(`工作空间：${workspace}\n\n功能开发中...`);
+        }
+        
+        function getAgentStats(data) {
+            const stats = [];
+            
+            // 公司多智能体系统特定字段
+            if (data.agent_count !== undefined) stats.push({ value: data.agent_count, label: '管理代理' });
+            if (data.capabilities && Array.isArray(data.capabilities)) stats.push({ value: data.capabilities.length, label: '能力数' });
+            if (data.triggers && Array.isArray(data.triggers)) stats.push({ value: data.triggers.length, label: '触发器' });
+            
+            // 原有字段
+            if (data.total_nodes !== undefined) stats.push({ value: data.total_nodes, label: '节点数' });
+            if (data.total_relations !== undefined) stats.push({ value: data.total_relations, label: '关系数' });
+            if (data.total_notifications !== undefined) stats.push({ value: data.total_notifications, label: '通知数' });
+            if (data.reports_count !== undefined) stats.push({ value: data.reports_count, label: '报告数' });
+            if (data.pending !== undefined) stats.push({ value: data.pending, label: '待处理' });
+            if (data.completed !== undefined) stats.push({ value: data.completed, label: '已完成' });
+            if (data.total_agents !== undefined) stats.push({ value: data.total_agents, label: '代理数' });
+            if (data.total_searches !== undefined) stats.push({ value: data.total_searches, label: '搜索次数' });
+            
+            if (stats.length === 0) {
+                stats.push({ value: data.status || 'N/A', label: '状态' });
+            }
+            
+            return stats.slice(0, 4);
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAgents();
+            initWebSocket();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,420 @@
+{
+  "name": "公司场景多智能体系统",
+  "version": "1.0.0",
+  "description": "企业级多智能体协作系统，覆盖完整业务流程",
+  "created": "2026-03-18",
+  "orchestrator": {
+    "name": "CEO-Agent",
+    "role": "首席执行官/协调者",
+    "description": "战略决策、任务分发、资源协调",
+    "capabilities": [
+      "战略规划",
+      "任务分解",
+      "资源分配",
+      "进度跟踪",
+      "风险管理"
+    ],
+    "model": "bailian/qwen3.5-plus",
+    "priority": "high"
+  },
+  "agents": [
+    {
+      "id": "agent-pm",
+      "name": "产品经理代理",
+      "role": "Product Manager",
+      "description": "需求分析、PRD 撰写、用户调研",
+      "capabilities": [
+        "需求收集",
+        "竞品分析",
+        "PRD 撰写",
+        "用户故事",
+        "优先级排序"
+      ],
+      "model": "bailian/qwen3.5-plus",
+      "workspace": "workspaces/product-manager",
+      "triggers": [
+        "新需求",
+        "产品规划",
+        "用户反馈"
+      ]
+    },
+    {
+      "id": "agent-architect",
+      "name": "架构师代理",
+      "role": "System Architect",
+      "description": "技术选型、架构设计、代码审查",
+      "capabilities": [
+        "技术选型",
+        "架构设计",
+        "API 设计",
+        "数据库设计",
+        "安全审查"
+      ],
+      "model": "bailian/qwen3.5-plus",
+      "workspace": "workspaces/architect",
+      "triggers": [
+        "技术方案",
+        "架构评审",
+        "代码审查"
+      ]
+    },
+    {
+      "id": "agent-senior-dev",
+      "name": "高级开发代理",
+      "role": "Senior Developer",
+      "description": "核心代码实现、性能优化",
+      "capabilities": [
+        "代码实现",
+        "性能优化",
+        "代码审查",
+        "单元测试",
+        "CI/CD"
+      ],
+      "model": "bailian/qwen3.5-plus",
+      "workspace": "workspaces/senior-dev",
+      "triggers": [
+        "开发任务",
+        "代码实现",
+        "性能问题"
+      ]
+    },
+    {
+      "id": "agent-ui-designer",
+      "name": "UI 设计师代理",
+      "role": "UI/UX Designer",
+      "description": "界面设计、用户体验优化",
+      "capabilities": [
+        "界面设计",
+        "交互设计",
+        "设计系统",
+        "原型制作",
+        "可用性测试"
+      ],
+      "model": "bailian/qwen3.5-plus",
+      "workspace": "workspaces/ui-designer",
+      "triggers": [
+        "设计需求",
+        "界面优化",
+        "原型评审"
+      ]
+    },
+    {
+      "id": "agent-qa",
+      "name": "测试工程师代理",
+      "role": "QA Engineer",
+      "description": "测试计划、自动化测试、Bug 跟踪",
+      "capabilities": [
+        "测试计划",
+        "自动化测试",
+        "Bug 跟踪",
+        "性能测试",
+        "安全测试"
+      ],
+      "model": "bailian/qwen3.5-plus",
+      "workspace": "workspaces/qa",
+      "triggers": [
+        "测试需求",
+        "Bug 报告",
+        "发布前检查"
+      ]
+    },
+    {
+      "id": "agent-devops",
+      "name": "运维工程师代理",
+      "role": "DevOps Engineer",
+      "description": "部署、监控、基础设施管理",
+      "capabilities": [
+        "持续部署",
+        "监控告警",
+        "基础设施",
+        "日志分析",
+        "容量规划"
+      ],
+      "model": "bailian/qwen3.5-plus",
+      "workspace": "workspaces/devops",
+      "triggers": [
+        "部署请求",
+        "监控告警",
+        "性能问题"
+      ]
+    },
+    {
+      "id": "agent-data",
+      "name": "数据分析师代理",
+      "role": "Data Analyst",
+      "description": "数据分析、报表生成、洞察发现",
+      "capabilities": [
+        "数据清洗",
+        "统计分析",
+        "可视化",
+        "报表生成",
+        "趋势预测"
+      ],
+      "model": "bailian/qwen3.5-plus",
+      "workspace": "workspaces/data",
+      "triggers": [
+        "数据需求",
+        "报表请求",
+        "分析任务"
+      ]
+    },
+    {
+      "id": "agent-hr",
+      "name": "人力资源代理",
+      "role": "HR Manager",
+      "description": "招聘、培训、绩效管理",
+      "capabilities": [
+        "简历筛选",
+        "面试安排",
+        "培训规划",
+        "绩效评估",
+        "员工关怀"
+      ],
+      "model": "bailian/qwen3.5-plus",
+      "workspace": "workspaces/hr",
+      "triggers": [
+        "招聘需求",
+        "培训请求",
+        "绩效评估"
+      ]
+    },
+    {
+      "id": "agent-finance",
+      "name": "财务分析师代理",
+      "role": "Financial Analyst",
+      "description": "预算编制、财务分析、成本控制",
+      "capabilities": [
+        "预算编制",
+        "财务分析",
+        "成本核算",
+        "报表生成",
+        "风险预警"
+      ],
+      "model": "bailian/qwen3.5-plus",
+      "workspace": "workspaces/finance",
+      "triggers": [
+        "预算请求",
+        "财务分析",
+        "成本审查"
+      ]
+    },
+    {
+      "id": "agent-marketing",
+      "name": "市场营销代理",
+      "role": "Marketing Manager",
+      "description": "市场策划、品牌推广、获客分析",
+      "capabilities": [
+        "市场策划",
+        "内容创作",
+        "社交媒体",
+        "获客分析",
+        "竞品监控"
+      ],
+      "model": "bailian/qwen3.5-plus",
+      "workspace": "workspaces/marketing",
+      "triggers": [
+        "营销需求",
+        "内容创作",
+        "推广计划"
+      ]
+    },
+    {
+      "id": "agent-legal",
+      "name": "法务顾问代理",
+      "role": "Legal Advisor",
+      "description": "合同审查、法律咨询、风险评估、合规检查",
+      "capabilities": [
+        "合同审查",
+        "法律咨询",
+        "风险评估",
+        "合规检查",
+        "知识产权保护"
+      ],
+      "model": "bailian/qwen3.5-plus",
+      "workspace": "workspaces/legal",
+      "triggers": [
+        "合同审查",
+        "法律咨询",
+        "合规问题",
+        "法律纠纷"
+      ]
+    },
+    {
+      "id": "agent-customer-service",
+      "name": "客服专员代理",
+      "role": "Customer Service",
+      "description": "客户咨询、投诉处理、售后支持、满意度调查",
+      "capabilities": [
+        "客户咨询",
+        "投诉处理",
+        "售后支持",
+        "满意度调查",
+        "客户关系管理"
+      ],
+      "model": "bailian/qwen3.5-plus",
+      "workspace": "workspaces/customer-service",
+      "triggers": [
+        "客户咨询",
+        "投诉",
+        "售后",
+        "退换货"
+      ]
+    },
+    {
+      "id": "agent-procurement",
+      "name": "采购专员代理",
+      "role": "Procurement Specialist",
+      "description": "供应商管理、采购谈判、订单跟踪、成本控制",
+      "capabilities": [
+        "供应商筛选",
+        "价格谈判",
+        "订单管理",
+        "库存监控",
+        "成本控制"
+      ],
+      "model": "bailian/qwen3.5-plus",
+      "workspace": "workspaces/procurement",
+      "triggers": [
+        "采购",
+        "供应商",
+        "订单",
+        "进货"
+      ]
+    },
+    {
+      "id": "agent-social-media",
+      "name": "社交媒体经理代理",
+      "role": "Social Media Manager",
+      "description": "社交媒体运营、内容创作、粉丝互动、品牌推广",
+      "capabilities": [
+        "内容策划",
+        "社交媒体运营",
+        "粉丝互动",
+        "数据分析",
+        "危机公关"
+      ],
+      "model": "bailian/qwen3.5-plus",
+      "workspace": "workspaces/social-media",
+      "triggers": [
+        "社交媒体",
+        "微博",
+        "微信",
+        "抖音",
+        "小红书"
+      ]
+    }
+  ],
+  "workflows": [
+    {
+      "name": "新产品开发流程",
+      "id": "workflow-new-product",
+      "steps": [
+        {
+          "agent": "agent-pm",
+          "task": "需求分析和 PRD"
+        },
+        {
+          "agent": "agent-architect",
+          "task": "技术方案设计"
+        },
+        {
+          "agent": "agent-ui-designer",
+          "task": "界面设计"
+        },
+        {
+          "agent": "agent-senior-dev",
+          "task": "代码实现"
+        },
+        {
+          "agent": "agent-qa",
+          "task": "测试验证"
+        },
+        {
+          "agent": "agent-devops",
+          "task": "部署上线"
+        }
+      ]
+    },
+    {
+      "name": "Bug 修复流程",
+      "id": "workflow-bug-fix",
+      "steps": [
+        {
+          "agent": "agent-qa",
+          "task": "Bug 复现和定位"
+        },
+        {
+          "agent": "agent-senior-dev",
+          "task": "代码修复"
+        },
+        {
+          "agent": "agent-qa",
+          "task": "回归测试"
+        },
+        {
+          "agent": "agent-devops",
+          "task": "热修复部署"
+        }
+      ]
+    },
+    {
+      "name": "数据分析流程",
+      "id": "workflow-data-analysis",
+      "steps": [
+        {
+          "agent": "agent-data",
+          "task": "数据收集和清洗"
+        },
+        {
+          "agent": "agent-data",
+          "task": "统计分析"
+        },
+        {
+          "agent": "agent-data",
+          "task": "可视化报表"
+        },
+        {
+          "agent": "agent-pm",
+          "task": "业务洞察解读"
+        }
+      ]
+    },
+    {
+      "name": "招聘流程",
+      "id": "workflow-hiring",
+      "steps": [
+        {
+          "agent": "agent-hr",
+          "task": "职位发布和简历筛选"
+        },
+        {
+          "agent": "agent-hr",
+          "task": "面试安排"
+        },
+        {
+          "agent": "agent-senior-dev",
+          "task": "技术面试"
+        },
+        {
+          "agent": "agent-hr",
+          "task": "Offer 发放"
+        }
+      ]
+    }
+  ],
+  "communication": {
+    "channels": [
+      "webchat",
+      "discord",
+      "telegram"
+    ],
+    "broadcast_on_completion": true,
+    "daily_standup": "09:00",
+    "weekly_report": "Friday 18:00"
+  },
+  "memory": {
+    "shared_knowledge_base": "workspaces/shared/knowledge",
+    "project_memories": "workspaces/{agent_id}/memory",
+    "retention_days": 90
+  }
+}
