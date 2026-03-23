@@ -25,6 +25,13 @@ from agents.roles.qa_agent import create_qa_agent
 from agents.roles.ui_agent import create_ui_agent
 from agents.roles.know_agent import create_know_agent
 from agents.roles.social_agent import create_social_agent
+from agents.roles.fe_agent import create_fe_agent
+from agents.roles.be_agent import create_be_agent
+from agents.roles.devops_agent import create_devops_agent
+from agents.roles.data_agent import create_data_agent
+from agents.roles.hr_agent import create_hr_agent
+from agents.roles.fin_agent import create_fin_agent
+from agents.roles.marketing_agent import create_marketing_agent
 from world.map import get_world_map
 from world.message_bus import get_message_bus
 from world.activity_manager import get_activity_manager
@@ -177,21 +184,30 @@ async def main():
     agent_ids = [
         "CEO-Agent", "PM-Agent", "ARCH-Agent", "DEV-Agent",
         "QA-Agent", "UI-Agent", "KNOW-Agent", "SOCIAL-Agent",
+        "FE-Agent", "BE-Agent", "DEVOPS-Agent", "DATA-Agent",
+        "HR-Agent", "FIN-Agent", "MARKETING-Agent",
     ]
     for agent_id in agent_ids:
         economy_manager.get_or_create_wallet(agent_id)
         voting_manager.register_voter(agent_id)
     
-    # 创建 8 个 Agent
+    # 创建 15 个 Agent
     agents = [
-        create_ceo_agent(),      # CEO-Agent - 董事事
-        create_pm_agent(),       # PM-Agent - 小问
-        create_arch_agent(),     # ARCH-Agent - 阿哲
-        create_dev_agent(),      # DEV-Agent - 小码
-        create_qa_agent(),       # QA-Agent - 小测
-        create_ui_agent(),       # UI-Agent - 小美
-        create_know_agent(),     # KNOW-Agent - 小知
-        create_social_agent(),   # SOCIAL-Agent - 小交
+        create_ceo_agent(),         # CEO-Agent - 董事事
+        create_pm_agent(),          # PM-Agent - 小问
+        create_arch_agent(),        # ARCH-Agent - 阿哲
+        create_dev_agent(),         # DEV-Agent - 小码
+        create_qa_agent(),          # QA-Agent - 小测
+        create_ui_agent(),          # UI-Agent - 小美
+        create_know_agent(),        # KNOW-Agent - 小知
+        create_social_agent(),      # SOCIAL-Agent - 小交
+        create_fe_agent(),          # FE-Agent - 小前
+        create_be_agent(),          # BE-Agent - 小后
+        create_devops_agent(),      # DEVOPS-Agent - 小运
+        create_data_agent(),        # DATA-Agent - 小数
+        create_hr_agent(),          # HR-Agent - 小人
+        create_fin_agent(),         # FIN-Agent - 小财
+        create_marketing_agent(),   # MARKETING-Agent - 小推
     ]
     
     print(f"✨ 创建了 {len(agents)} 个 Agent")
