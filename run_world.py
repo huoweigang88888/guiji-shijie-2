@@ -49,6 +49,10 @@ from world.task_system import get_task_manager
 from world.friend_system import get_friend_manager
 from world.notification_system import get_notification_manager
 from world.rating_system import get_rating_manager
+from world.calendar_system import get_calendar_manager
+from world.search_system import get_search_manager
+from world.shop_system import get_shop_manager
+from world.skill_system import get_skill_manager
 
 
 async def run_agent_life(agent, message_bus, world_map, duration: int = 120):
@@ -187,6 +191,10 @@ async def main():
     friend_manager = get_friend_manager()
     notification_manager = get_notification_manager()
     rating_manager = get_rating_manager()
+    calendar_manager = get_calendar_manager()
+    search_manager = get_search_manager()
+    shop_manager = get_shop_manager()
+    skill_manager = get_skill_manager()
     
     # 加载持久化数据
     await persistence.load()
@@ -368,6 +376,23 @@ async def main():
         print("⭐ 声誉排行榜:")
         for entry in rating_leaderboard[:3]:
             print(f"   {entry['agent_id']}: {entry['reputation']:.1f} 分")
+    
+    # 显示日历事件
+    upcoming_events = calendar_manager.get_upcoming_events(3)
+    if upcoming_events:
+        print()
+        print("📅 近期事件:")
+        for event in upcoming_events[:3]:
+            print(f"   • {event.title} ({event.date})")
+    
+    # 显示商店统计
+    shop_stats = shop_manager.get_stats()
+    print()
+    print(f"🛒 商店：{shop_stats['total_items']} 种商品，{shop_stats['total_purchases']} 笔购买")
+    
+    # 显示技能统计
+    skill_stats = skill_manager.get_stats()
+    print(f"⭐ 技能：{skill_stats['total_learned']} 次学习，平均等级 {skill_stats['average_level']:.1f}")
     
     print()
     print("=" * 60)
