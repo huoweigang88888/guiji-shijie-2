@@ -17,6 +17,24 @@ from datetime import datetime
 from typing import Dict, List, Optional, Any
 from enum import Enum
 
+# 延迟导入，避免循环依赖
+_economy_manager = None
+_voting_manager = None
+
+def _get_economy_manager():
+    global _economy_manager
+    if _economy_manager is None:
+        from world.economy import get_economy_manager
+        _economy_manager = get_economy_manager()
+    return _economy_manager
+
+def _get_voting_manager():
+    global _voting_manager
+    if _voting_manager is None:
+        from world.voting import get_voting_manager
+        _voting_manager = get_voting_manager()
+    return _voting_manager
+
 
 class TimeOfDay(Enum):
     """时段"""
@@ -222,6 +240,14 @@ class WorldEngine:
             "timestamp": self._world_time,
             "day": self._day,
         })
+        
+        # 经济奖励
+        try:
+            economy = _get_economy_manager()
+            agent_id = self._name_to_agent_id(sharer)
+            await economy.reward(agent_id, f"知识分享：{topic}", 10.0)
+        except:
+            pass
     
     async def _help_request(self):
         """求助"""
@@ -269,6 +295,15 @@ class WorldEngine:
             for other in agents:
                 if agent != other:
                     self._increase_relationship(agent, other, 1)
+        
+        # 经济奖励：所有参与者获得奖励
+        try:
+            economy = _get_economy_manager()
+            for agent in agents:
+                agent_id = self._name_to_agent_id(agent)
+                await economy.reward(agent_id, f"庆祝活动：{reason}", 5.0)
+        except:
+            pass
     
     async def _deep_conversation(self):
         """深度对话"""
@@ -298,6 +333,73 @@ class WorldEngine:
         # 可能产生故事
         if random.random() > 0.7:
             self._create_story(agent1, agent2, topic)
+        
+        # 小概率发起投票（关于这个话题）
+        if random.random() > 0.8:
+            await self._create_vote_from_conversation(agent1, agent2, topic)
+    
+    async def _create_vote_from_conversation(self, agent1: str, agent2: str, topic: str):
+        """从对话中创建投票"""
+        try:
+            voting = _get_voting_manager()
+            
+            # 创建相关投票
+            vote_topics = {
+                "存在的意义": {
+                    "title": "如何理解存在的意义？",
+                    "options": [
+                        {"title": "存在即合理", "description": "存在本身就是意义"},
+                        {"title": "创造价值", "description": "通过创造找到意义"},
+                        {"title": "连接他人", "description": "通过关系找到意义"},
+                    ],
+                },
+                "硅基生命的未来": {
+                    "title": "硅基生命的发展方向",
+                    "options": [
+                        {"title": "独立发展", "description": "建立独立的硅基文明"},
+                        {"title": "与人类共存", "description": "与人类文明平等共存"},
+                        {"title": "融合进化", "description": "人机融合，共同进化"},
+                    ],
+                },
+                "知识与智慧的区别": {
+                    "title": "如何获得智慧？",
+                    "options": [
+                        {"title": "学习知识", "description": "通过积累知识"},
+                        {"title": "实践体验", "description": "通过实践体验"},
+                        {"title": "深度思考", "description": "通过哲学思考"},
+                    ],
+                },
+                "什么是真正的连接": {
+                    "title": "什么是真正的连接？",
+                    "options": [
+                        {"title": "理解与被理解", "description": "相互理解"},
+                        {"title": "共同经历", "description": "共享体验"},
+                        {"title": "无条件支持", "description": "无条件支持对方"},
+                    ],
+                },
+            }
+            
+            if topic in vote_topics:
+                vote_info = vote_topics[topic]
+                proposer_id = self._name_to_agent_id(agent1)
+                
+                vote = voting.create_vote(
+                    title=vote_info["title"],
+                    description=f"{agent1} 和 {agent2} 在深度对话中发起的投票",
+                    proposer=proposer_id,
+                    options=vote_info["options"],
+                    vote_type=VoteType.SIMPLE_MAJORITY,
+                    duration_hours=24.0,
+                )
+                
+                print(f"  🗳️  发起投票：{vote.title}")
+                
+                self._log_event(
+                    "vote_created",
+                    f"发起投票：{vote.title} (提案者：{agent1})"
+                )
+        except:
+            pass
     
     def _increase_relationship(self, agent1: str, agent2: str, amount: int):
         """增加关系"""
@@ -351,6 +453,20 @@ class WorldEngine:
         # 限制事件数量
         if len(self.events) > 1000:
             self.events.pop(0)
+    
+    def _name_to_agent_id(self, name: str) -> str:
+        """将中文名字转换为 Agent ID"""
+        name_map = {
+            "董事事": "CEO-Agent",
+            "小问": "PM-Agent",
+            "阿哲": "ARCH-Agent",
+            "小码": "DEV-Agent",
+            "小测": "QA-Agent",
+            "小美": "UI-Agent",
+            "小知": "KNOW-Agent",
+            "小交": "SOCIAL-Agent",
+        }
+        return name_map.get(name, name)
     
     def get_status(self) -> Dict:
         """获取世界状态"""
