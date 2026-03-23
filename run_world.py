@@ -45,6 +45,10 @@ from world.daily_report import get_daily_report
 from world.persistence import get_persistence
 from world.economy import get_economy_manager
 from world.voting import get_voting_manager
+from world.task_system import get_task_manager
+from world.friend_system import get_friend_manager
+from world.notification_system import get_notification_manager
+from world.rating_system import get_rating_manager
 
 
 async def run_agent_life(agent, message_bus, world_map, duration: int = 120):
@@ -179,6 +183,10 @@ async def main():
     persistence = get_persistence()
     economy_manager = get_economy_manager()
     voting_manager = get_voting_manager()
+    task_manager = get_task_manager()
+    friend_manager = get_friend_manager()
+    notification_manager = get_notification_manager()
+    rating_manager = get_rating_manager()
     
     # 加载持久化数据
     await persistence.load()
@@ -339,6 +347,27 @@ async def main():
         print("🗳️  投票历史:")
         for vote in past_votes[:3]:  # 显示前 3 个
             print(f"   • {vote.title}: {vote.result}")
+    
+    # 显示任务统计
+    task_stats = task_manager.get_stats()
+    print()
+    print(f"📋 任务：{task_stats['completed']} 完成，{task_stats['open']} 开放")
+    
+    # 显示好友统计
+    friend_stats = friend_manager.get_stats()
+    print(f"🤝 好友：{friend_stats['accepted']} 对好友关系")
+    
+    # 显示通知统计
+    notif_stats = notification_manager.get_stats()
+    print(f"🔔 通知：{notif_stats['unread']} 未读")
+    
+    # 显示声誉排行榜
+    rating_leaderboard = rating_manager.get_leaderboard()
+    if rating_leaderboard:
+        print()
+        print("⭐ 声誉排行榜:")
+        for entry in rating_leaderboard[:3]:
+            print(f"   {entry['agent_id']}: {entry['reputation']:.1f} 分")
     
     print()
     print("=" * 60)
