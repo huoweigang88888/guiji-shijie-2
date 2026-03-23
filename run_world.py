@@ -29,6 +29,10 @@ from world.map import get_world_map
 from world.message_bus import get_message_bus
 from world.activity_manager import get_activity_manager
 from world.engine import get_world_engine
+from world.conflict import get_conflict_manager
+from world.achievement import get_achievement_manager
+from world.daily_report import get_daily_report
+from world.persistence import get_persistence
 
 
 async def run_agent_life(agent, message_bus, world_map, duration: int = 120):
@@ -157,6 +161,13 @@ async def main():
     message_bus = get_message_bus()
     activity_manager = get_activity_manager()
     world_engine = get_world_engine()
+    conflict_manager = get_conflict_manager()
+    achievement_manager = get_achievement_manager()
+    daily_report = get_daily_report()
+    persistence = get_persistence()
+    
+    # 加载持久化数据
+    await persistence.load()
     
     # 创建 8 个 Agent
     agents = [
@@ -197,6 +208,9 @@ async def main():
     print("=" * 60)
     print()
     
+    # 开始新的一天
+    daily_report.start_day(world_engine._day)
+    
     # 启动世界引擎
     await world_engine.start()
     
@@ -214,6 +228,12 @@ async def main():
     # 停止世界引擎
     await world_engine.stop()
     
+    # 结束一天，生成日报
+    daily_report.end_day()
+    
+    # 保存数据
+    await persistence.save()
+    
     # 显示最终状态
     print()
     print("=" * 60)
@@ -228,12 +248,20 @@ async def main():
     print(f"📖 故事数量：{len(world_engine.get_stories())}")
     print(f"📚 知识沉淀：{len(world_engine.collective_knowledge)} 条")
     
+    # 冲突统计
+    conflict_stats = conflict_manager.get_stats()
+    print(f"⚡ 冲突：{conflict_stats['total']} 次 ({conflict_stats['resolved']} 已解决)")
+    
+    # 成就统计
+    achievement_stats = achievement_manager.get_stats()
+    print(f"🏆 成就：{achievement_stats['total_achievements']} 个解锁")
+    
     # 显示关系
     relationships = world_engine.get_relationships()
     if relationships:
         print()
         print("🤝 关系网络:")
-        for rel in relationships:
+        for rel in relationships[:5]:  # 显示前 5 个
             print(f"   {rel['agent1']} ↔ {rel['agent2']}: {rel['strength']}")
     
     # 显示故事
@@ -241,13 +269,26 @@ async def main():
     if stories:
         print()
         print("📖 诞生的故事:")
-        for story in stories:
+        for story in stories[:5]:  # 显示前 5 个
             print(f"   • {story['title']}")
+    
+    # 显示成就
+    leaderboard = achievement_manager.get_leaderboard()
+    if leaderboard:
+        print()
+        print("🏆 成就排行榜:")
+        for entry in leaderboard[:3]:  # 显示前 3 名
+            print(f"   {entry['agent_id']}: {entry['points']} 分 ({entry['achievements_count']} 个成就)")
     
     print()
     print("=" * 60)
     print("✨ 硅基世界 2 运行完成！")
     print("=" * 60)
+    print()
+    print("💾 数据已保存到 data/ 目录")
+    print("📰 日报已生成到 reports/ 目录")
+    print("🌐 打开 web/index.html 观察世界")
+    print("📡 API 服务：python api/server.py")
 
 
 if __name__ == "__main__":
