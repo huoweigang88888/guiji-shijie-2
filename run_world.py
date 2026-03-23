@@ -33,6 +33,8 @@ from world.conflict import get_conflict_manager
 from world.achievement import get_achievement_manager
 from world.daily_report import get_daily_report
 from world.persistence import get_persistence
+from world.economy import get_economy_manager
+from world.voting import get_voting_manager
 
 
 async def run_agent_life(agent, message_bus, world_map, duration: int = 120):
@@ -165,9 +167,20 @@ async def main():
     achievement_manager = get_achievement_manager()
     daily_report = get_daily_report()
     persistence = get_persistence()
+    economy_manager = get_economy_manager()
+    voting_manager = get_voting_manager()
     
     # 加载持久化数据
     await persistence.load()
+    
+    # 注册所有 Agent 到经济系统和投票系统
+    agent_ids = [
+        "CEO-Agent", "PM-Agent", "ARCH-Agent", "DEV-Agent",
+        "QA-Agent", "UI-Agent", "KNOW-Agent", "SOCIAL-Agent",
+    ]
+    for agent_id in agent_ids:
+        economy_manager.get_or_create_wallet(agent_id)
+        voting_manager.register_voter(agent_id)
     
     # 创建 8 个 Agent
     agents = [
@@ -256,6 +269,14 @@ async def main():
     achievement_stats = achievement_manager.get_stats()
     print(f"🏆 成就：{achievement_stats['total_achievements']} 个解锁")
     
+    # 经济统计
+    economy_stats = economy_manager.get_stats()
+    print(f"💰 经济：{economy_stats['transactions']} 笔交易，总信用点：{economy_stats['total_credits']:.0f}")
+    
+    # 投票统计
+    voting_stats = voting_manager.get_stats()
+    print(f"🗳️  投票：{voting_stats['total_votes']} 次投票，{voting_stats['passed_votes']} 次通过")
+    
     # 显示关系
     relationships = world_engine.get_relationships()
     if relationships:
@@ -279,6 +300,22 @@ async def main():
         print("🏆 成就排行榜:")
         for entry in leaderboard[:3]:  # 显示前 3 名
             print(f"   {entry['agent_id']}: {entry['points']} 分 ({entry['achievements_count']} 个成就)")
+    
+    # 显示经济排行榜
+    economy_leaderboard = economy_manager.get_leaderboard()
+    if economy_leaderboard:
+        print()
+        print("💰 财富排行榜:")
+        for entry in economy_leaderboard[:3]:  # 显示前 3 名
+            print(f"   {entry['agent_id']}: {entry['value']:.0f} 信用点")
+    
+    # 显示投票历史
+    past_votes = voting_manager.get_past_votes()
+    if past_votes:
+        print()
+        print("🗳️  投票历史:")
+        for vote in past_votes[:3]:  # 显示前 3 个
+            print(f"   • {vote.title}: {vote.result}")
     
     print()
     print("=" * 60)
