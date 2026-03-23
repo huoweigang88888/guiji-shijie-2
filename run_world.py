@@ -32,6 +32,9 @@ from agents.roles.data_agent import create_data_agent
 from agents.roles.hr_agent import create_hr_agent
 from agents.roles.fin_agent import create_fin_agent
 from agents.roles.marketing_agent import create_marketing_agent
+from agents.roles.ml_agent import create_ml_agent
+from agents.roles.ba_agent import create_ba_agent
+from agents.roles.pmo_agent import create_pmo_agent
 from world.map import get_world_map
 from world.message_bus import get_message_bus
 from world.activity_manager import get_activity_manager
@@ -186,12 +189,13 @@ async def main():
         "QA-Agent", "UI-Agent", "KNOW-Agent", "SOCIAL-Agent",
         "FE-Agent", "BE-Agent", "DEVOPS-Agent", "DATA-Agent",
         "HR-Agent", "FIN-Agent", "MARKETING-Agent",
+        "ML-Agent", "BA-Agent", "PMO-Agent",
     ]
     for agent_id in agent_ids:
         economy_manager.get_or_create_wallet(agent_id)
         voting_manager.register_voter(agent_id)
     
-    # 创建 15 个 Agent
+    # 创建 18 个 Agent
     agents = [
         create_ceo_agent(),         # CEO-Agent - 董事事
         create_pm_agent(),          # PM-Agent - 小问
@@ -208,6 +212,9 @@ async def main():
         create_hr_agent(),          # HR-Agent - 小人
         create_fin_agent(),         # FIN-Agent - 小财
         create_marketing_agent(),   # MARKETING-Agent - 小推
+        create_ml_agent(),          # ML-Agent - 小智
+        create_ba_agent(),          # BA-Agent - 小商
+        create_pmo_agent(),         # PMO-Agent - 小项
     ]
     
     print(f"✨ 创建了 {len(agents)} 个 Agent")
