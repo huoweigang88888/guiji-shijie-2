@@ -57,6 +57,10 @@ from world.weather_system import get_weather_manager
 from world.news_system import get_news_manager
 from world.achievement_wall import get_achievement_wall_manager
 from world.world_stats import get_world_stats_manager
+from world.leaderboard_system import get_leaderboard_manager
+from world.log_system import get_log_manager
+from world.backup_system import get_backup_manager
+from world.config_system import get_config_manager
 
 
 async def run_agent_life(agent, message_bus, world_map, duration: int = 120):
@@ -203,6 +207,10 @@ async def main():
     news_manager = get_news_manager()
     achievement_wall_manager = get_achievement_wall_manager()
     world_stats_manager = get_world_stats_manager()
+    leaderboard_manager = get_leaderboard_manager()
+    log_manager = get_log_manager()
+    backup_manager = get_backup_manager()
+    config_manager = get_config_manager()
     
     # 加载持久化数据
     await persistence.load()
@@ -420,6 +428,14 @@ async def main():
     stats_summary = world_stats_manager.get_summary()
     print()
     print(f"⏱️  运行时间：{stats_summary['uptime_human']}")
+    
+    # 显示配置
+    config_stats = config_manager.get_stats()
+    print(f"⚙️  配置：{config_stats['custom_settings']} 个自定义设置")
+    
+    # 显示备份
+    backup_stats = backup_manager.get_stats()
+    print(f"💾 备份：{backup_stats['total_backups']} 个备份")
     
     print()
     print("=" * 60)
