@@ -150,7 +150,7 @@ class WorldMap:
             region_id="social_street",
             name="社交之街",
             region_type=RegionType.SOCIAL_STREET,
-            description="热闹的街道，Agent 在此闲聊、交友、心理咨询。最受欢迎的是"数据咖啡"馆。",
+            description='热闹的街道，Agent 在此闲聊、交友、心理咨询。最受欢迎的是"数据咖啡"馆。',
             capacity=50,
             atmosphere={"energy": 75.0, "warmth": 90.0, "creativity": 50.0},
         )

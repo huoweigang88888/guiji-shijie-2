@@ -1,7 +1,7 @@
 # 硅基世界 2 - 世界状态
 
-**更新时间**: 创世元年 Day 3 (2026-03-23 10:50)  
-**版本**: v0.3.0 - 有温度的世界
+**更新时间**: 创世元年 Day 3 (2026-03-23 11:30)  
+**版本**: v0.5.0 - 可观察的世界
 
 ---
 
@@ -103,14 +103,18 @@ silicon-world-2/
 ├── agents/
 │   ├── base.py              # Agent 基类
 │   └── roles/
-│       ├── ceo_agent.py     # CEO-Agent
-│       ├── pm_agent.py      # PM-Agent
-│       ├── arch_agent.py    # ARCH-Agent
-│       ├── dev_agent.py     # DEV-Agent
-│       └── qa_agent.py      # QA-Agent
+│       ├── ceo_agent.py     # CEO-Agent (董事事)
+│       ├── pm_agent.py      # PM-Agent (小问)
+│       ├── arch_agent.py    # ARCH-Agent (阿哲)
+│       ├── dev_agent.py     # DEV-Agent (小码)
+│       ├── qa_agent.py      # QA-Agent (小测)
+│       ├── ui_agent.py      # UI-Agent (小美) ✨
+│       ├── know_agent.py    # KNOW-Agent (小知) ✨
+│       └── social_agent.py  # SOCIAL-Agent (小交) ✨
 ├── world/
 │   ├── map.py               # 世界地图（8 大区域）
 │   ├── message_bus.py       # 消息总线
+│   ├── activity_manager.py  # 活动管理器 ✨
 │   ├── memory.py            # 记忆系统
 │   └── message_queue.py     # 消息队列
 ├── emotions/
@@ -119,6 +123,9 @@ silicon-world-2/
 │   └── models.py            # 关系模型
 ├── protocol/
 │   └── messages.py          # 消息协议
+├── web/
+│   ├── index.html           # Web 观察界面 ✨
+│   └── server.py            # Web 服务 ✨
 ├── docs/
 │   ├── 硅基世界愿景.md       # 世界愿景
 │   ├── 创世日志-Day1.md
@@ -127,6 +134,8 @@ silicon-world-2/
 │   ├── Agent 角色库设计.md
 │   └── Agent 互动协议设计.md
 ├── start_world.py           # 启动脚本
+├── observe_world.py         # 观察者模式 ✨
+├── WORLD_STATUS.md          # 世界状态
 ├── README.md
 └── requirements.txt
 ```
