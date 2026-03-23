@@ -61,6 +61,10 @@ from world.leaderboard_system import get_leaderboard_manager
 from world.log_system import get_log_manager
 from world.backup_system import get_backup_manager
 from world.config_system import get_config_manager
+from world.world_event_system import get_world_event_manager
+from world.group_system import get_group_manager
+from world.mail_system import get_mail_manager
+from world.achievement_expansion import get_achievement_expansion_manager
 
 
 async def run_agent_life(agent, message_bus, world_map, duration: int = 120):
@@ -211,6 +215,10 @@ async def main():
     log_manager = get_log_manager()
     backup_manager = get_backup_manager()
     config_manager = get_config_manager()
+    world_event_manager = get_world_event_manager()
+    group_manager = get_group_manager()
+    mail_manager = get_mail_manager()
+    achievement_expansion_manager = get_achievement_expansion_manager()
     
     # 加载持久化数据
     await persistence.load()
@@ -436,6 +444,22 @@ async def main():
     # 显示备份
     backup_stats = backup_manager.get_stats()
     print(f"💾 备份：{backup_stats['total_backups']} 个备份")
+    
+    # 显示事件
+    event_stats = world_event_manager.get_stats()
+    print(f"🎪 世界事件：{event_stats['active']} 个进行中")
+    
+    # 显示群组
+    group_stats = group_manager.get_stats()
+    print(f"👥 群组：{group_stats['total_groups']} 个群组")
+    
+    # 显示邮件
+    mail_stats = mail_manager.get_stats()
+    print(f"📧 邮件：{mail_stats['total_mails']} 封")
+    
+    # 显示成就扩展
+    ach_ext_stats = achievement_expansion_manager.get_stats()
+    print(f"🏆 成就链：{ach_ext_stats['total_chains']} 条")
     
     print()
     print("=" * 60)
