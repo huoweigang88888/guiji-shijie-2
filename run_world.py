@@ -53,6 +53,10 @@ from world.calendar_system import get_calendar_manager
 from world.search_system import get_search_manager
 from world.shop_system import get_shop_manager
 from world.skill_system import get_skill_manager
+from world.weather_system import get_weather_manager
+from world.news_system import get_news_manager
+from world.achievement_wall import get_achievement_wall_manager
+from world.world_stats import get_world_stats_manager
 
 
 async def run_agent_life(agent, message_bus, world_map, duration: int = 120):
@@ -195,6 +199,10 @@ async def main():
     search_manager = get_search_manager()
     shop_manager = get_shop_manager()
     skill_manager = get_skill_manager()
+    weather_manager = get_weather_manager()
+    news_manager = get_news_manager()
+    achievement_wall_manager = get_achievement_wall_manager()
+    world_stats_manager = get_world_stats_manager()
     
     # 加载持久化数据
     await persistence.load()
@@ -393,6 +401,25 @@ async def main():
     # 显示技能统计
     skill_stats = skill_manager.get_stats()
     print(f"⭐ 技能：{skill_stats['total_learned']} 次学习，平均等级 {skill_stats['average_level']:.1f}")
+    
+    # 显示天气
+    weather_manager.update_all_weather()
+    weather_stats = weather_manager.get_stats()
+    print()
+    print(f"🌤️  天气：{weather_stats['regions_with_weather']} 个区域已更新")
+    
+    # 显示新闻
+    news_stats = news_manager.get_stats()
+    print(f"📰 新闻：{news_stats['total_news']} 篇，{news_stats['total_views']} 次阅读")
+    
+    # 显示成就墙
+    wall_stats = achievement_wall_manager.get_stats()
+    print(f"🏆 成就墙：{wall_stats['total_achievements']} 个成就")
+    
+    # 显示世界统计
+    stats_summary = world_stats_manager.get_summary()
+    print()
+    print(f"⏱️  运行时间：{stats_summary['uptime_human']}")
     
     print()
     print("=" * 60)
