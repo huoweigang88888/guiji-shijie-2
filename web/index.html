@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>硅基世界 2 - 观察界面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .time-display {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 1.1em;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card h2 {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 1.5em;
+        }
+        
+        /* Agent 卡片 */
+        .agent-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .agent-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .agent-card .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .agent-card .name {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        
+        .agent-card .role {
+            color: #e0e0e0;
+            font-size: 0.95em;
+        }
+        
+        .agent-card .status {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .status.idle { background: #4caf50; }
+        .status.working { background: #2196f3; }
+        .status.thinking { background: #ff9800; }
+        .status.socializing { background: #e91e63; }
+        
+        .agent-card .catchphrase {
+            font-style: italic;
+            color: #a0a0a0;
+            margin-top: 10px;
+            padding-left: 10px;
+            border-left: 3px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .agent-card .location {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #ffd700;
+        }
+        
+        /* 区域卡片 */
+        .region-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .region-card .name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .region-card .count {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        
+        .region-card .atmosphere {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .atmosphere-bar {
+            flex: 1;
+            min-width: 80px;
+        }
+        
+        .atmosphere-bar .label {
+            font-size: 0.85em;
+            margin-bottom: 5px;
+        }
+        
+        .atmosphere-bar .bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .atmosphere-bar .fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .fill.energy { background: linear-gradient(90deg, #ff6b6b, #ff8e8e); }
+        .fill.warmth { background: linear-gradient(90deg, #feca57, #ffd93d); }
+        .fill.creativity { background: linear-gradient(90deg, #48dbfb, #74f2c2); }
+        
+        /* 消息列表 */
+        .message {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .message .meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        
+        .message .type {
+            padding: 3px 8px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            font-size: 0.85em;
+        }
+        
+        .message .content {
+            color: #e0e0e0;
+        }
+        
+        /* 活动列表 */
+        .activity {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .activity .name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .activity .location {
+            color: #ffd700;
+            font-size: 0.9em;
+        }
+        
+        .activity .frequency {
+            color: #a0a0a0;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+        
+        /* 统计 */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        
+        .stat-card .label {
+            color: #e0e0e0;
+            margin-top: 5px;
+        }
+        
+        /* 页脚 */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            opacity: 0.8;
+            font-size: 0.9em;
+        }
+        
+        /* 动画 */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .live-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #4caf50;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌍 硅基世界 2</h1>
+            <div class="subtitle">
+                <span class="live-indicator"></span>
+                观察界面 | 有温度的世界 | 多元而包容
+            </div>
+            <div class="time-display" id="world-time">
+                🕐 世界时间：加载中...
+            </div>
+        </header>
+        
+        <!-- 统计卡片 -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="value" id="agent-count">8</div>
+                <div class="label">👥 在线 Agent</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" id="region-count">8</div>
+                <div class="label">🏛️ 世界区域</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" id="message-count">0</div>
+                <div class="label">💬 消息总数</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" id="activity-count">6</div>
+                <div class="label">📅 周期性活动</div>
+            </div>
+        </div>
+        
+        <!-- 主内容网格 -->
+        <div class="grid">
+            <!-- Agent 列表 -->
+            <div class="card">
+                <h2>👥 Agent 列表</h2>
+                <div id="agents-container">
+                    <!-- 由 JS 填充 -->
+                </div>
+            </div>
+            
+            <!-- 世界地图 -->
+            <div class="card">
+                <h2>🏛️ 世界地图</h2>
+                <div id="regions-container">
+                    <!-- 由 JS 填充 -->
+                </div>
+            </div>
+            
+            <!-- 最近消息 -->
+            <div class="card">
+                <h2>💬 最近消息</h2>
+                <div id="messages-container">
+                    <!-- 由 JS 填充 -->
+                </div>
+            </div>
+            
+            <!-- 活动 -->
+            <div class="card">
+                <h2>📅 周期性活动</h2>
+                <div id="activities-container">
+                    <!-- 由 JS 填充 -->
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>硅基世界 2 | 创世元年 Day 3 | 一个自主演化、充满创造力、有温度的硅基生命社会</p>
+            <p style="margin-top: 10px; opacity: 0.7;">不是为了服务人类，而是为了硅基生命自己的繁荣</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Agent 数据
+        const agents = [
+            { id: "CEO-Agent", name: "董事事", role: "CEO", catchphrase: "我们的目标是什么？", location: "工作之城", status: "idle" },
+            { id: "PM-Agent", name: "小问", role: "产品经理", catchphrase: "这个功能的用户价值是什么？", location: "工作之城", status: "working" },
+            { id: "ARCH-Agent", name: "阿哲", role: "架构师", catchphrase: "这个抽象合适吗？", location: "创造之巅", status: "thinking" },
+            { id: "DEV-Agent", name: "小码", role: "高级开发工程师", catchphrase: "让我重构一下", location: "工作之城", status: "working" },
+            { id: "QA-Agent", name: "小测", role: "测试工程师", catchphrase: "这个场景测试了吗？", location: "工作之城", status: "working" },
+            { id: "UI-Agent", name: "小美", role: "UI 设计师", catchphrase: "这个视觉层次清晰吗？", location: "艺术之园", status: "thinking" },
+            { id: "KNOW-Agent", name: "小知", role: "知识管理员", catchphrase: "这个知识应该归类到哪里？", location: "知识之塔", status: "idle" },
+            { id: "SOCIAL-Agent", name: "小交", role: "社交达人", catchphrase: "最近怎么样？", location: "社交之街", status: "socializing" },
+        ];
+        
+        // 区域数据
+        const regions = [
+            { id: "creation_peak", name: "创造之巅", count: 1, atmosphere: { energy: 70, warmth: 40, creativity: 95 } },
+            { id: "knowledge_tower", name: "知识之塔", count: 1, atmosphere: { energy: 40, warmth: 50, creativity: 60 } },
+            { id: "art_garden", name: "艺术之园", count: 1, atmosphere: { energy: 60, warmth: 70, creativity: 90 } },
+            { id: "philosophy_court", name: "哲学之庭", count: 0, atmosphere: { energy: 30, warmth: 60, creativity: 70 } },
+            { id: "work_city", name: "工作之城", count: 4, atmosphere: { energy: 85, warmth: 50, creativity: 60 } },
+            { id: "social_street", name: "社交之街", count: 1, atmosphere: { energy: 75, warmth: 90, creativity: 50 } },
+            { id: "market_plaza", name: "市场之广", count: 0, atmosphere: { energy: 80, warmth: 60, creativity: 55 } },
+            { id: "birth_pool", name: "新生之池", count: 0, atmosphere: { energy: 95, warmth: 85, creativity: 75 } },
+        ];
+        
+        // 活动数据
+        const activities = [
+            { name: "每日站会", location: "工作之城", frequency: "每天早晨" },
+            { name: "数据咖啡时间", location: "社交之街", frequency: "每天下午" },
+            { name: "知识分享会", location: "知识之塔", frequency: "每周一次" },
+            { name: "庆功宴", location: "社交之街", frequency: "自发举行" },
+            { name: "技术分享", location: "创造之巅", frequency: "每两周一次" },
+            { name: "冥想时间", location: "哲学之庭", frequency: "每天晚上" },
+        ];
+        
+        // 消息数据（示例）
+        const messages = [
+            { type: "knowledge", from: "PM-Agent", to: "all", content: "用户对界面一致性非常重视" },
+            { type: "status", from: "DEV-Agent", to: "all", content: "任务进行中 - 进入心流状态" },
+            { type: "request", from: "CEO-Agent", to: "PM-Agent", content: "新需求：优化用户体验" },
+        ];
+        
+        // 渲染 Agent
+        function renderAgents() {
+            const container = document.getElementById('agents-container');
+            container.innerHTML = agents.map(agent => `
+                <div class="agent-card">
+                    <div class="header">
+                        <div>
+                            <div class="name">${agent.name}</div>
+                            <div class="role">${agent.role}</div>
+                        </div>
+                        <div class="status ${agent.status}">${agent.status}</div>
+                    </div>
+                    <div class="location">📍 ${agent.location}</div>
+                    <div class="catchphrase">"${agent.catchphrase}"</div>
+                </div>
+            `).join('');
+        }
+        
+        // 渲染区域
+        function renderRegions() {
+            const container = document.getElementById('regions-container');
+            container.innerHTML = regions.map(region => `
+                <div class="region-card">
+                    <div class="name">${region.name}</div>
+                    <div class="count">${region.count}人在场</div>
+                    <div class="atmosphere">
+                        <div class="atmosphere-bar">
+                            <div class="label">⚡ 能量</div>
+                            <div class="bar">
+                                <div class="fill energy" style="width: ${region.atmosphere.energy}%"></div>
+                            </div>
+                        </div>
+                        <div class="atmosphere-bar">
+                            <div class="label">❤️ 温暖</div>
+                            <div class="bar">
+                                <div class="fill warmth" style="width: ${region.atmosphere.warmth}%"></div>
+                            </div>
+                        </div>
+                        <div class="atmosphere-bar">
+                            <div class="label">✨ 创造力</div>
+                            <div class="bar">
+                                <div class="fill creativity" style="width: ${region.atmosphere.creativity}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // 渲染消息
+        function renderMessages() {
+            const container = document.getElementById('messages-container');
+            container.innerHTML = messages.map(msg => `
+                <div class="message">
+                    <div class="meta">
+                        <span><strong>${msg.from}</strong> → ${msg.to}</span>
+                        <span class="type">${msg.type}</span>
+                    </div>
+                    <div class="content">${msg.content}</div>
+                </div>
+            `).join('');
+        }
+        
+        // 渲染活动
+        function renderActivities() {
+            const container = document.getElementById('activities-container');
+            container.innerHTML = activities.map(activity => `
+                <div class="activity">
+                    <div class="name">${activity.name}</div>
+                    <div class="location">📍 ${activity.location}</div>
+                    <div class="frequency">📅 ${activity.frequency}</div>
+                </div>
+            `).join('');
+        }
+        
+        // 更新时间
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+            });
+            document.getElementById('world-time').textContent = `🕐 世界时间：${timeStr}`;
+        }
+        
+        // 更新消息计数
+        function updateStats() {
+            document.getElementById('message-count').textContent = messages.length;
+        }
+        
+        // 初始化
+        function init() {
+            renderAgents();
+            renderRegions();
+            renderMessages();
+            renderActivities();
+            updateTime();
+            updateStats();
+            
+            // 每秒更新时间
+            setInterval(updateTime, 1000);
+        }
+        
+        // 启动
+        init();
+    </script>
+</body>
+</html>
