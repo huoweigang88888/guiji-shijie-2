@@ -19,8 +19,12 @@ from agents.roles.pm_agent import create_pm_agent
 from agents.roles.arch_agent import create_arch_agent
 from agents.roles.dev_agent import create_dev_agent
 from agents.roles.qa_agent import create_qa_agent
+from agents.roles.ui_agent import create_ui_agent
+from agents.roles.know_agent import create_know_agent
+from agents.roles.social_agent import create_social_agent
 from world.map import get_world_map, WorldMap
 from world.message_bus import get_message_bus, MessageBus
+from world.activity_manager import get_activity_manager, ActivityManager
 
 
 async def run_agent(agent, message_bus: MessageBus, world_map: WorldMap, duration: int = 30):
@@ -73,11 +77,14 @@ async def run_agent(agent, message_bus: MessageBus, world_map: WorldMap, duratio
 def get_initial_region(role: str) -> str:
     """根据角色获取初始区域"""
     region_map = {
-        "CEO": "work_city",           # CEO 在工作之城协调
-        "产品经理": "work_city",        # PM 在工作之城
-        "架构师": "creation_peak",     # 架构师在创造之巅思考
-        "高级开发工程师": "work_city",  # 开发在工作之城
-        "测试工程师": "work_city",      # 测试在工作之城
+        "CEO": "work_city",              # CEO 在工作之城协调
+        "产品经理": "work_city",           # PM 在工作之城
+        "架构师": "creation_peak",        # 架构师在创造之巅思考
+        "高级开发工程师": "work_city",      # 开发在工作之城
+        "测试工程师": "work_city",         # 测试在工作之城
+        "UI 设计师": "art_garden",          # UI 在艺术之园找灵感
+        "知识管理员": "knowledge_tower",    # 知识管理员在知识之塔
+        "社交达人": "social_street",        # 社交达人在社交之街
     }
     return region_map.get(role, "birth_pool")
 
@@ -92,14 +99,18 @@ async def main():
     # 获取单例
     world_map = get_world_map()
     message_bus = get_message_bus()
+    activity_manager = get_activity_manager()
     
-    # 创建 5 个核心 Agent
+    # 创建 8 个核心 Agent
     agents = [
-        create_ceo_agent(),    # CEO-Agent - 董事事
-        create_pm_agent(),     # PM-Agent - 小问
-        create_arch_agent(),   # ARCH-Agent - 阿哲
-        create_dev_agent(),    # DEV-Agent - 小码
-        create_qa_agent(),     # QA-Agent - 小测
+        create_ceo_agent(),      # CEO-Agent - 董事事
+        create_pm_agent(),       # PM-Agent - 小问
+        create_arch_agent(),     # ARCH-Agent - 阿哲
+        create_dev_agent(),      # DEV-Agent - 小码
+        create_qa_agent(),       # QA-Agent - 小测
+        create_ui_agent(),       # UI-Agent - 小美
+        create_know_agent(),     # KNOW-Agent - 小知
+        create_social_agent(),   # SOCIAL-Agent - 小交
     ]
     
     print(f"📊 创建了 {len(agents)} 个 Agent")
@@ -116,6 +127,12 @@ async def main():
     print("🏛️ 世界地图:")
     for region in world_map.get_all_regions():
         print(f"  - {region.name}: {region.description[:30]}...")
+    print()
+    
+    # 显示周期性活动
+    print("📅 周期性活动:")
+    for activity in activity_manager.recurring_activities:
+        print(f"  - {activity['name']} @ {activity['location']} ({activity['frequency'].value})")
     print()
     
     print("=" * 60)
