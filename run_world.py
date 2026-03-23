@@ -65,6 +65,10 @@ from world.world_event_system import get_world_event_manager
 from world.group_system import get_group_manager
 from world.mail_system import get_mail_manager
 from world.achievement_expansion import get_achievement_expansion_manager
+from world.pet_system import get_pet_manager
+from world.house_system import get_house_manager
+from world.game_system import get_game_manager
+from world.achievement_more import get_achievement_more_manager
 
 
 async def run_agent_life(agent, message_bus, world_map, duration: int = 120):
@@ -219,6 +223,10 @@ async def main():
     group_manager = get_group_manager()
     mail_manager = get_mail_manager()
     achievement_expansion_manager = get_achievement_expansion_manager()
+    pet_manager = get_pet_manager()
+    house_manager = get_house_manager()
+    game_manager = get_game_manager()
+    achievement_more_manager = get_achievement_more_manager()
     
     # 加载持久化数据
     await persistence.load()
@@ -460,6 +468,22 @@ async def main():
     # 显示成就扩展
     ach_ext_stats = achievement_expansion_manager.get_stats()
     print(f"🏆 成就链：{ach_ext_stats['total_chains']} 条")
+    
+    # 显示宠物
+    pet_stats = pet_manager.get_stats()
+    print(f"🐾 宠物：{pet_stats['total_pets']} 只")
+    
+    # 显示房屋
+    house_stats = house_manager.get_stats()
+    print(f"🏠 房屋：{house_stats['total_houses']} 套")
+    
+    # 显示游戏
+    game_stats = game_manager.get_stats()
+    print(f"🎮 游戏：{game_stats['total_games']} 个")
+    
+    # 显示更多成就
+    ach_more_stats = achievement_more_manager.get_stats()
+    print(f"🏆 特殊成就：{ach_more_stats['total_achievements']} 个")
     
     print()
     print("=" * 60)
