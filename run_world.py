@@ -69,6 +69,10 @@ from world.pet_system import get_pet_manager
 from world.house_system import get_house_manager
 from world.game_system import get_game_manager
 from world.achievement_more import get_achievement_more_manager
+from world.ai_chat_system import get_ai_chat_manager
+from world.memory_expansion import get_memory_expansion_manager
+from world.emotion_expansion import get_emotion_expansion_manager
+from world.announcement_system import get_announcement_manager
 
 
 async def run_agent_life(agent, message_bus, world_map, duration: int = 120):
@@ -227,6 +231,10 @@ async def main():
     house_manager = get_house_manager()
     game_manager = get_game_manager()
     achievement_more_manager = get_achievement_more_manager()
+    ai_chat_manager = get_ai_chat_manager()
+    memory_expansion_manager = get_memory_expansion_manager()
+    emotion_expansion_manager = get_emotion_expansion_manager()
+    announcement_manager = get_announcement_manager()
     
     # 加载持久化数据
     await persistence.load()
@@ -484,6 +492,22 @@ async def main():
     # 显示更多成就
     ach_more_stats = achievement_more_manager.get_stats()
     print(f"🏆 特殊成就：{ach_more_stats['total_achievements']} 个")
+    
+    # 显示 AI 对话
+    ai_chat_stats = ai_chat_manager.get_stats()
+    print(f"💬 AI 对话：{ai_chat_stats['total_conversations']} 次")
+    
+    # 显示记忆
+    memory_stats = memory_expansion_manager.get_stats()
+    print(f"🧠 记忆：{memory_stats['total_memories']} 条")
+    
+    # 显示情感
+    emotion_stats = emotion_expansion_manager.get_stats()
+    print(f"❤️  情感：{emotion_stats['total_agents']} 个 Agent")
+    
+    # 显示公告
+    announce_stats = announcement_manager.get_stats()
+    print(f"📢 公告：{announce_stats['active']} 个活跃")
     
     print()
     print("=" * 60)
