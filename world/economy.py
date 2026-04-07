@@ -91,6 +91,10 @@ class EconomyManager:
         
         print("💰 经济系统已初始化")
     
+    def get_total_credits(self) -> float:
+        """获取总信用点"""
+        return sum(w.credits for w in self.wallets.values())
+    
     def get_or_create_wallet(self, agent_id: str) -> Wallet:
         """获取或创建钱包"""
         if agent_id not in self.wallets:

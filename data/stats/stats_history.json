@@ -1,0 +1,72 @@
+{
+  "exported_at": "2026-04-03T18:56:58.621626",
+  "summary": {
+    "total_snapshots": 3,
+    "first_recorded": "2026-04-03T18:55:28.477835",
+    "last_recorded": "2026-04-03T18:56:28.573863",
+    "current": {
+      "timestamp": "2026-04-03T18:56:28.573863",
+      "world_day": 2,
+      "time_of_day": "dawn",
+      "total_messages": 0,
+      "total_stories": 0,
+      "total_knowledge_nodes": 0,
+      "total_relationships": 28,
+      "deep_relationships": 0,
+      "total_agents": 18,
+      "active_agents": 0,
+      "total_credits": 900.0,
+      "events_count": 0
+    },
+    "growth": {
+      "messages": 0,
+      "stories": 0,
+      "knowledge": 0,
+      "relationships": 27
+    }
+  },
+  "snapshots": [
+    {
+      "timestamp": "2026-04-03T18:55:28.477835",
+      "world_day": 1,
+      "time_of_day": "morning",
+      "total_messages": 0,
+      "total_stories": 0,
+      "total_knowledge_nodes": 0,
+      "total_relationships": 1,
+      "deep_relationships": 0,
+      "total_agents": 18,
+      "active_agents": 0,
+      "total_credits": 0,
+      "events_count": 0
+    },
+    {
+      "timestamp": "2026-04-03T18:55:58.520678",
+      "world_day": 1,
+      "time_of_day": "evening",
+      "total_messages": 0,
+      "total_stories": 0,
+      "total_knowledge_nodes": 0,
+      "total_relationships": 28,
+      "deep_relationships": 0,
+      "total_agents": 18,
+      "active_agents": 0,
+      "total_credits": 900.0,
+      "events_count": 0
+    },
+    {
+      "timestamp": "2026-04-03T18:56:28.573863",
+      "world_day": 2,
+      "time_of_day": "dawn",
+      "total_messages": 0,
+      "total_stories": 0,
+      "total_knowledge_nodes": 0,
+      "total_relationships": 28,
+      "deep_relationships": 0,
+      "total_agents": 18,
+      "active_agents": 0,
+      "total_credits": 900.0,
+      "events_count": 0
+    }
+  ]
+}
