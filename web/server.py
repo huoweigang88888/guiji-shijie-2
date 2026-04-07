@@ -338,7 +338,7 @@ class APIHandler(SimpleHTTPRequestHandler):
                     "id": 2,
                     "type": "deep_conversation",
                     "type_display": "🤔 深度对话",
-                    "description": "阿哲 和 小交 探讨"什么是真正的连接"",
+                    "description": "阿哲 和 小交 探讨什么是真正的连接",
                     "agents": ["阿哲", "小交"],
                     "timestamp": datetime.now().isoformat(),
                     "time_display": "10:08"
