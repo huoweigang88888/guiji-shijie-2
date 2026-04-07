@@ -943,6 +943,10 @@
                     <div class="value" id="statRelationships">-</div>
                     <div class="label">🤝 关系</div>
                 </div>
+                <div class="status-item">
+                    <div class="value" id="wsStatus" style="font-size:0.9em;">🔴 未连接</div>
+                    <div class="label">📡 实时推送</div>
+                </div>
             </div>
         </header>
 
@@ -1100,6 +1104,7 @@
         // 配置
         const API_BASE = '/api';
         const REFRESH_INTERVAL = 5000; // 5 秒刷新
+        const WS_URL = `ws://${window.location.hostname}:8765`;
 
         // 状态
         let worldState = null;
@@ -1107,6 +1112,8 @@
         let filteredAgents = [];
         let currentFilter = { search: '', status: '', region: '', sort: 'name' };
         let selectedAgent = null;
+        let websocket = null;
+        let wsConnected = false;
 
         // 初始化
         document.addEventListener('DOMContentLoaded', () => {
@@ -1114,7 +1121,98 @@
             setInterval(refreshData, REFRESH_INTERVAL);
             updateClock();
             setInterval(updateClock, 1000);
+            connectWebSocket();
         });
+
+        // 连接 WebSocket
+        function connectWebSocket() {
+            if (!window.WebSocket) {
+                console.log('⚠️  浏览器不支持 WebSocket');
+                return;
+            }
+
+            try {
+                websocket = new WebSocket(WS_URL);
+
+                websocket.onopen = () => {
+                    console.log('✅ WebSocket 已连接');
+                    wsConnected = true;
+                    updateWebSocketStatus(true);
+                };
+
+                websocket.onmessage = (event) => {
+                    try {
+                        const message = JSON.parse(event.data);
+                        handleWebSocketMessage(message);
+                    } catch (e) {
+                        console.error('WebSocket 消息解析失败:', e);
+                    }
+                };
+
+                websocket.onclose = () => {
+                    console.log('❌ WebSocket 已断开');
+                    wsConnected = false;
+                    updateWebSocketStatus(false);
+                    // 3 秒后尝试重连
+                    setTimeout(connectWebSocket, 3000);
+                };
+
+                websocket.onerror = (error) => {
+                    console.error('WebSocket 错误:', error);
+                };
+            } catch (e) {
+                console.log('⚠️  WebSocket 连接失败:', e.message);
+            }
+        }
+
+        // 处理 WebSocket 消息
+        function handleWebSocketMessage(message) {
+            console.log('📨 WebSocket 消息:', message);
+
+            switch (message.type) {
+                case 'connected':
+                    console.log('已连接到硅基世界 2，事件数:', message.data.events_count);
+                    break;
+
+                case 'new_event':
+                    // 实时添加新事件
+                    if (worldState && worldState.events) {
+                        worldState.events.unshift(message.data);
+                        if (worldState.events.length > 50) {
+                            worldState.events.pop();
+                        }
+                        updateEventsList(worldState.events);
+                        showToast(`🎉 新事件：${message.data.description}`, 'info');
+                    }
+                    break;
+
+                case 'pong':
+                    // 心跳响应
+                    break;
+
+                default:
+                    console.log('未知消息类型:', message.type);
+            }
+        }
+
+        // 更新 WebSocket 状态显示
+        function updateWebSocketStatus(connected) {
+            const statusEl = document.getElementById('wsStatus');
+            if (statusEl) {
+                statusEl.textContent = connected ? '🟢 实时推送' : '🔴 未连接';
+                statusEl.style.color = connected ? '#48bb78' : '#f56565';
+            }
+        }
+
+        // 发送心跳
+        function sendHeartbeat() {
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                websocket.send(JSON.stringify({ action: 'ping' }));
+            }
+        }
+
+        // 定期发送心跳
+        setInterval(sendHeartbeat, 30000);
 
         // 更新时钟
         function updateClock() {

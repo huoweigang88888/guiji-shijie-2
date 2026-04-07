@@ -1,0 +1,374 @@
+{
+  "relationships": {
+    "小交-小知": {
+      "agent1": "小交",
+      "agent2": "小知",
+      "strength": 37,
+      "interactions": 17
+    },
+    "小码-小美": {
+      "agent1": "小码",
+      "agent2": "小美",
+      "strength": 21,
+      "interactions": 13
+    },
+    "小美-阿哲": {
+      "agent1": "小美",
+      "agent2": "阿哲",
+      "strength": 23,
+      "interactions": 13
+    },
+    "小前-小码": {
+      "agent1": "小码",
+      "agent2": "小前",
+      "strength": 26,
+      "interactions": 8
+    },
+    "小测-小码": {
+      "agent1": "小码",
+      "agent2": "小测",
+      "strength": 42,
+      "interactions": 22
+    },
+    "小前-小测": {
+      "agent1": "小前",
+      "agent2": "小测",
+      "strength": 19,
+      "interactions": 6
+    },
+    "小问-董事事": {
+      "agent1": "董事事",
+      "agent2": "小问",
+      "strength": 19,
+      "interactions": 12
+    },
+    "董事事-阿哲": {
+      "agent1": "董事事",
+      "agent2": "阿哲",
+      "strength": 23,
+      "interactions": 13
+    },
+    "小码-董事事": {
+      "agent1": "董事事",
+      "agent2": "小码",
+      "strength": 27,
+      "interactions": 13
+    },
+    "小测-董事事": {
+      "agent1": "董事事",
+      "agent2": "小测",
+      "strength": 21,
+      "interactions": 12
+    },
+    "小美-董事事": {
+      "agent1": "董事事",
+      "agent2": "小美",
+      "strength": 20,
+      "interactions": 12
+    },
+    "小知-董事事": {
+      "agent1": "董事事",
+      "agent2": "小知",
+      "strength": 19,
+      "interactions": 12
+    },
+    "小交-董事事": {
+      "agent1": "董事事",
+      "agent2": "小交",
+      "strength": 22,
+      "interactions": 12
+    },
+    "小问-阿哲": {
+      "agent1": "小问",
+      "agent2": "阿哲",
+      "strength": 22,
+      "interactions": 13
+    },
+    "小码-小问": {
+      "agent1": "小问",
+      "agent2": "小码",
+      "strength": 23,
+      "interactions": 13
+    },
+    "小测-小问": {
+      "agent1": "小问",
+      "agent2": "小测",
+      "strength": 18,
+      "interactions": 12
+    },
+    "小美-小问": {
+      "agent1": "小问",
+      "agent2": "小美",
+      "strength": 20,
+      "interactions": 12
+    },
+    "小知-小问": {
+      "agent1": "小问",
+      "agent2": "小知",
+      "strength": 19,
+      "interactions": 12
+    },
+    "小交-小问": {
+      "agent1": "小问",
+      "agent2": "小交",
+      "strength": 24,
+      "interactions": 13
+    },
+    "小码-阿哲": {
+      "agent1": "阿哲",
+      "agent2": "小码",
+      "strength": 21,
+      "interactions": 12
+    },
+    "小测-阿哲": {
+      "agent1": "阿哲",
+      "agent2": "小测",
+      "strength": 23,
+      "interactions": 14
+    },
+    "小知-阿哲": {
+      "agent1": "阿哲",
+      "agent2": "小知",
+      "strength": 30,
+      "interactions": 14
+    },
+    "小交-阿哲": {
+      "agent1": "阿哲",
+      "agent2": "小交",
+      "strength": 28,
+      "interactions": 14
+    },
+    "小知-小码": {
+      "agent1": "小码",
+      "agent2": "小知",
+      "strength": 19,
+      "interactions": 12
+    },
+    "小交-小码": {
+      "agent1": "小码",
+      "agent2": "小交",
+      "strength": 19,
+      "interactions": 12
+    },
+    "小测-小美": {
+      "agent1": "小测",
+      "agent2": "小美",
+      "strength": 20,
+      "interactions": 12
+    },
+    "小测-小知": {
+      "agent1": "小测",
+      "agent2": "小知",
+      "strength": 20,
+      "interactions": 12
+    },
+    "小交-小测": {
+      "agent1": "小测",
+      "agent2": "小交",
+      "strength": 21,
+      "interactions": 12
+    },
+    "小知-小美": {
+      "agent1": "小美",
+      "agent2": "小知",
+      "strength": 24,
+      "interactions": 12
+    },
+    "小交-小美": {
+      "agent1": "小美",
+      "agent2": "小交",
+      "strength": 23,
+      "interactions": 13
+    },
+    "小后-小码": {
+      "agent1": "小码",
+      "agent2": "小后",
+      "strength": 17,
+      "interactions": 6
+    },
+    "小前-小后": {
+      "agent1": "小前",
+      "agent2": "小后",
+      "strength": 6,
+      "interactions": 2
+    },
+    "小后-小测": {
+      "agent1": "小测",
+      "agent2": "小后",
+      "strength": 11,
+      "interactions": 4
+    }
+  },
+  "collective_knowledge": [
+    {
+      "type": "share",
+      "author": "小测",
+      "topic": "架构设计最佳实践",
+      "timestamp": 20,
+      "day": 1
+    },
+    {
+      "type": "innovation",
+      "author": "小智",
+      "topic": "新的架构模式",
+      "timestamp": 30,
+      "day": 1
+    },
+    {
+      "type": "share",
+      "author": "小码",
+      "topic": "设计趋势",
+      "timestamp": 60,
+      "day": 1
+    },
+    {
+      "type": "innovation",
+      "author": "小智",
+      "topic": "自动化脚本",
+      "timestamp": 70,
+      "day": 1
+    },
+    {
+      "type": "share",
+      "author": "小知",
+      "topic": "代码重构技巧",
+      "timestamp": 120,
+      "day": 2
+    },
+    {
+      "type": "innovation",
+      "author": "小智",
+      "topic": "自动化脚本",
+      "timestamp": 130,
+      "day": 2
+    },
+    {
+      "type": "share",
+      "author": "小码",
+      "topic": "知识管理技巧",
+      "timestamp": 170,
+      "day": 2
+    },
+    {
+      "type": "innovation",
+      "author": "小智",
+      "topic": "新的架构模式",
+      "timestamp": 180,
+      "day": 3
+    },
+    {
+      "type": "share",
+      "author": "阿哲",
+      "topic": "设计趋势",
+      "timestamp": 230,
+      "day": 3
+    },
+    {
+      "type": "innovation",
+      "author": "小码",
+      "topic": "自动化脚本",
+      "timestamp": 240,
+      "day": 3
+    },
+    {
+      "type": "share",
+      "author": "小美",
+      "topic": "架构设计最佳实践",
+      "timestamp": 280,
+      "day": 4
+    },
+    {
+      "type": "innovation",
+      "author": "小码",
+      "topic": "数据分析模型",
+      "timestamp": 290,
+      "day": 4
+    }
+  ],
+  "stories": [
+    {
+      "id": 0,
+      "title": "小码 与 小美 的分享成长经历对话",
+      "participants": [
+        "小码",
+        "小美"
+      ],
+      "topic": "分享成长经历",
+      "day": 1,
+      "timestamp": 10,
+      "summary": "在dawn，小码和小美就分享成长经历进行了深度交流，这次对话让他们的关系更加深厚。"
+    },
+    {
+      "id": 1,
+      "title": "阿哲 与 小问 的解决技术难题对话",
+      "participants": [
+        "阿哲",
+        "小问"
+      ],
+      "topic": "解决技术难题",
+      "day": 1,
+      "timestamp": 50,
+      "summary": "在afternoon，阿哲和小问就解决技术难题进行了深度交流，这次对话让他们的关系更加深厚。"
+    },
+    {
+      "id": 2,
+      "title": "小交 与 小美 的讨论未来规划对话",
+      "participants": [
+        "小交",
+        "小美"
+      ],
+      "topic": "讨论未来规划",
+      "day": 2,
+      "timestamp": 110,
+      "summary": "在morning，小交和小美就讨论未来规划进行了深度交流，这次对话让他们的关系更加深厚。"
+    },
+    {
+      "id": 3,
+      "title": "小交 与 小知 的知识与智慧的区别对话",
+      "participants": [
+        "小交",
+        "小知"
+      ],
+      "topic": "知识与智慧的区别",
+      "day": 2,
+      "timestamp": 150,
+      "summary": "在evening，小交和小知就知识与智慧的区别进行了深度交流，这次对话让他们的关系更加深厚。"
+    },
+    {
+      "id": 4,
+      "title": "董事事 与 阿哲 的分享成长经历对话",
+      "participants": [
+        "董事事",
+        "阿哲"
+      ],
+      "topic": "分享成长经历",
+      "day": 2,
+      "timestamp": 160,
+      "summary": "在evening，董事事和阿哲就分享成长经历进行了深度交流，这次对话让他们的关系更加深厚。"
+    },
+    {
+      "id": 5,
+      "title": "小码 与 董事事 的分享成长经历对话",
+      "participants": [
+        "小码",
+        "董事事"
+      ],
+      "topic": "分享成长经历",
+      "day": 3,
+      "timestamp": 220,
+      "summary": "在afternoon，小码和董事事就分享成长经历进行了深度交流，这次对话让他们的关系更加深厚。"
+    },
+    {
+      "id": 6,
+      "title": "阿哲 与 小测 的解决技术难题对话",
+      "participants": [
+        "阿哲",
+        "小测"
+      ],
+      "topic": "解决技术难题",
+      "day": 4,
+      "timestamp": 270,
+      "summary": "在dawn，阿哲和小测就解决技术难题进行了深度交流，这次对话让他们的关系更加深厚。"
+    }
+  ]
+}

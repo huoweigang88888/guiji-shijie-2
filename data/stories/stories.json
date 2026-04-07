@@ -1,4 +1,38 @@
 {
-  "stories": [],
-  "saved_at": "2026-04-07T11:33:40.201833"
+  "stories": [
+    {
+      "id": "d67289295e98",
+      "title": "Bug 修复测试故事",
+      "story_type": "deep_conversation",
+      "tone": "thoughtful",
+      "characters": [
+        {
+          "agent_id": "Test-Agent-1",
+          "name": "测试员 A",
+          "role": "测试工程师",
+          "emotion": "好奇",
+          "growth": ""
+        },
+        {
+          "agent_id": "Test-Agent-2",
+          "name": "测试员 B",
+          "role": "QA",
+          "emotion": "专注",
+          "growth": ""
+        }
+      ],
+      "summary": "测试故事生成机制",
+      "content": "在morning的测试实验室，某人和某人进行了一场关于Bug 修复与优化的深度对话。\n\n某人问道：\"一个问题\"，某人沉思片刻，回答：\"一个回答\"。\n\n这次对话让某人对Bug 修复与优化有了新的理解，他们的关系也因此深化。",
+      "location": "测试实验室",
+      "world_day": 1,
+      "world_time": "morning",
+      "created_at": "2026-04-07T17:26:07.606233",
+      "tags": [],
+      "significance": 60,
+      "quotes": [
+        "关于Bug 修复与优化，他们达成了新的理解。"
+      ]
+    }
+  ],
+  "saved_at": "2026-04-07T17:26:07.606287"
 }

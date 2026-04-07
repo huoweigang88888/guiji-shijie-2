@@ -1,0 +1,621 @@
+{
+  "world_time": 260,
+  "day": 4,
+  "time_of_day": "dawn",
+  "events": [
+    {
+      "id": 0,
+      "type": "time_change",
+      "description": "morning → dawn",
+      "timestamp": 10,
+      "day": 1,
+      "time_of_day": "dawn"
+    },
+    {
+      "id": 1,
+      "type": "deep_conversation",
+      "description": "小交 和 小知 探讨了 什么是真正的连接",
+      "timestamp": 10,
+      "day": 1,
+      "time_of_day": "dawn"
+    },
+    {
+      "id": 2,
+      "type": "story_created",
+      "description": "小码 和 小美 的故事：分享成长经历",
+      "timestamp": 10,
+      "day": 1,
+      "time_of_day": "dawn"
+    },
+    {
+      "id": 3,
+      "type": "story_created",
+      "description": "新故事：小码 与 小美 的分享成长经历对话",
+      "timestamp": 10,
+      "day": 1,
+      "time_of_day": "dawn"
+    },
+    {
+      "id": 4,
+      "type": "time_change",
+      "description": "dawn → morning",
+      "timestamp": 20,
+      "day": 1,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 5,
+      "type": "casual_chat",
+      "description": "小美 和 阿哲 聊了聊 新学到的知识",
+      "timestamp": 20,
+      "day": 1,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 6,
+      "type": "knowledge_share",
+      "description": "小测 分享了关于 架构设计最佳实践 的知识",
+      "timestamp": 20,
+      "day": 1,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 7,
+      "type": "innovation",
+      "description": "小智 创新：新的架构模式",
+      "timestamp": 30,
+      "day": 1,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 8,
+      "type": "collaboration",
+      "description": "小码 + 小前 + 小测 协作完成 代码重构",
+      "timestamp": 30,
+      "day": 1,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 9,
+      "type": "help_request",
+      "description": "小问 寻求帮助：需要技术建议",
+      "timestamp": 40,
+      "day": 1,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 10,
+      "type": "celebration",
+      "description": "大家庆祝：度过了美好的一天",
+      "timestamp": 40,
+      "day": 1,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 11,
+      "type": "time_change",
+      "description": "morning → afternoon",
+      "timestamp": 50,
+      "day": 1,
+      "time_of_day": "afternoon"
+    },
+    {
+      "id": 12,
+      "type": "deep_conversation",
+      "description": "小知 和 小交 探讨了 什么是真正的连接",
+      "timestamp": 50,
+      "day": 1,
+      "time_of_day": "afternoon"
+    },
+    {
+      "id": 13,
+      "type": "story_created",
+      "description": "阿哲 和 小问 的故事：解决技术难题",
+      "timestamp": 50,
+      "day": 1,
+      "time_of_day": "afternoon"
+    },
+    {
+      "id": 14,
+      "type": "story_created",
+      "description": "新故事：阿哲 与 小问 的解决技术难题对话",
+      "timestamp": 50,
+      "day": 1,
+      "time_of_day": "afternoon"
+    },
+    {
+      "id": 15,
+      "type": "time_change",
+      "description": "afternoon → evening",
+      "timestamp": 60,
+      "day": 1,
+      "time_of_day": "evening"
+    },
+    {
+      "id": 16,
+      "type": "casual_chat",
+      "description": "小知 和 小交 聊了聊 周末计划",
+      "timestamp": 60,
+      "day": 1,
+      "time_of_day": "evening"
+    },
+    {
+      "id": 17,
+      "type": "knowledge_share",
+      "description": "小码 分享了关于 设计趋势 的知识",
+      "timestamp": 60,
+      "day": 1,
+      "time_of_day": "evening"
+    },
+    {
+      "id": 18,
+      "type": "collaboration",
+      "description": "小前 + 小码 + 小测 协作完成 Bug 修复",
+      "timestamp": 70,
+      "day": 1,
+      "time_of_day": "evening"
+    },
+    {
+      "id": 19,
+      "type": "innovation",
+      "description": "小智 创新：自动化脚本",
+      "timestamp": 70,
+      "day": 1,
+      "time_of_day": "evening"
+    },
+    {
+      "id": 20,
+      "type": "time_change",
+      "description": "evening → night",
+      "timestamp": 80,
+      "day": 1,
+      "time_of_day": "night"
+    },
+    {
+      "id": 21,
+      "type": "help_request",
+      "description": "小码 寻求帮助：需要技术建议",
+      "timestamp": 80,
+      "day": 1,
+      "time_of_day": "night"
+    },
+    {
+      "id": 22,
+      "type": "celebration",
+      "description": "大家庆祝：完成了一个重要功能",
+      "timestamp": 80,
+      "day": 1,
+      "time_of_day": "night"
+    },
+    {
+      "id": 23,
+      "type": "day_start",
+      "description": "Day 2 开始",
+      "timestamp": 90,
+      "day": 2,
+      "time_of_day": "night"
+    },
+    {
+      "id": 24,
+      "type": "time_change",
+      "description": "night → dawn",
+      "timestamp": 90,
+      "day": 2,
+      "time_of_day": "dawn"
+    },
+    {
+      "id": 25,
+      "type": "deep_conversation",
+      "description": "阿哲 和 小知 探讨了 知识与智慧的区别",
+      "timestamp": 100,
+      "day": 2,
+      "time_of_day": "dawn"
+    },
+    {
+      "id": 26,
+      "type": "time_change",
+      "description": "dawn → morning",
+      "timestamp": 110,
+      "day": 2,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 27,
+      "type": "story_created",
+      "description": "小交 和 小美 的故事：讨论未来规划",
+      "timestamp": 110,
+      "day": 2,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 28,
+      "type": "story_created",
+      "description": "新故事：小交 与 小美 的讨论未来规划对话",
+      "timestamp": 110,
+      "day": 2,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 29,
+      "type": "casual_chat",
+      "description": "小问 和 小交 聊了聊 周末计划",
+      "timestamp": 110,
+      "day": 2,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 30,
+      "type": "knowledge_share",
+      "description": "小知 分享了关于 代码重构技巧 的知识",
+      "timestamp": 120,
+      "day": 2,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 31,
+      "type": "relationship_growth",
+      "description": "小交 与 小知 的关系深化到 20",
+      "timestamp": 120,
+      "day": 2,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 32,
+      "type": "relationship_growth",
+      "description": "小码 与 小美 的关系深化到 10",
+      "timestamp": 120,
+      "day": 2,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 33,
+      "type": "relationship_growth",
+      "description": "董事事 与 小码 的关系深化到 10",
+      "timestamp": 120,
+      "day": 2,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 34,
+      "type": "relationship_growth",
+      "description": "董事事 与 小交 的关系深化到 10",
+      "timestamp": 120,
+      "day": 2,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 35,
+      "type": "relationship_growth",
+      "description": "阿哲 与 小交 的关系深化到 10",
+      "timestamp": 120,
+      "day": 2,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 36,
+      "type": "relationship_growth",
+      "description": "小美 与 小知 的关系深化到 10",
+      "timestamp": 120,
+      "day": 2,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 37,
+      "type": "time_change",
+      "description": "morning → afternoon",
+      "timestamp": 130,
+      "day": 2,
+      "time_of_day": "afternoon"
+    },
+    {
+      "id": 38,
+      "type": "collaboration",
+      "description": "小码 + 小前 + 小后 协作完成 新功能开发",
+      "timestamp": 130,
+      "day": 2,
+      "time_of_day": "afternoon"
+    },
+    {
+      "id": 39,
+      "type": "innovation",
+      "description": "小智 创新：自动化脚本",
+      "timestamp": 130,
+      "day": 2,
+      "time_of_day": "afternoon"
+    },
+    {
+      "id": 40,
+      "type": "help_request",
+      "description": "小问 寻求帮助：需要设计反馈",
+      "timestamp": 140,
+      "day": 2,
+      "time_of_day": "afternoon"
+    },
+    {
+      "id": 41,
+      "type": "celebration",
+      "description": "大家庆祝：解决了一个棘手问题",
+      "timestamp": 140,
+      "day": 2,
+      "time_of_day": "afternoon"
+    },
+    {
+      "id": 42,
+      "type": "time_change",
+      "description": "afternoon → evening",
+      "timestamp": 150,
+      "day": 2,
+      "time_of_day": "evening"
+    },
+    {
+      "id": 43,
+      "type": "deep_conversation",
+      "description": "小交 和 小知 探讨了 知识与智慧的区别",
+      "timestamp": 150,
+      "day": 2,
+      "time_of_day": "evening"
+    },
+    {
+      "id": 44,
+      "type": "story_created",
+      "description": "新故事：小交 与 小知 的知识与智慧的区别对话",
+      "timestamp": 150,
+      "day": 2,
+      "time_of_day": "evening"
+    },
+    {
+      "id": 45,
+      "type": "casual_chat",
+      "description": "小问 和 小码 聊了聊 周末计划",
+      "timestamp": 150,
+      "day": 2,
+      "time_of_day": "evening"
+    },
+    {
+      "id": 46,
+      "type": "story_created",
+      "description": "董事事 和 阿哲 的故事：分享成长经历",
+      "timestamp": 160,
+      "day": 2,
+      "time_of_day": "evening"
+    },
+    {
+      "id": 47,
+      "type": "story_created",
+      "description": "新故事：董事事 与 阿哲 的分享成长经历对话",
+      "timestamp": 160,
+      "day": 2,
+      "time_of_day": "evening"
+    },
+    {
+      "id": 48,
+      "type": "time_change",
+      "description": "evening → night",
+      "timestamp": 170,
+      "day": 2,
+      "time_of_day": "night"
+    },
+    {
+      "id": 49,
+      "type": "knowledge_share",
+      "description": "小码 分享了关于 知识管理技巧 的知识",
+      "timestamp": 170,
+      "day": 2,
+      "time_of_day": "night"
+    },
+    {
+      "id": 50,
+      "type": "collaboration",
+      "description": "小码 + 小测 + 小后 协作完成 新功能开发",
+      "timestamp": 170,
+      "day": 2,
+      "time_of_day": "night"
+    },
+    {
+      "id": 51,
+      "type": "day_start",
+      "description": "Day 3 开始",
+      "timestamp": 180,
+      "day": 3,
+      "time_of_day": "night"
+    },
+    {
+      "id": 52,
+      "type": "time_change",
+      "description": "night → dawn",
+      "timestamp": 180,
+      "day": 3,
+      "time_of_day": "dawn"
+    },
+    {
+      "id": 53,
+      "type": "innovation",
+      "description": "小智 创新：新的架构模式",
+      "timestamp": 180,
+      "day": 3,
+      "time_of_day": "dawn"
+    },
+    {
+      "id": 54,
+      "type": "help_request",
+      "description": "小码 寻求帮助：需要技术建议",
+      "timestamp": 180,
+      "day": 3,
+      "time_of_day": "dawn"
+    },
+    {
+      "id": 55,
+      "type": "relationship_growth",
+      "description": "董事事 与 小问 的关系深化到 10",
+      "timestamp": 180,
+      "day": 3,
+      "time_of_day": "dawn"
+    },
+    {
+      "id": 56,
+      "type": "relationship_growth",
+      "description": "董事事 与 小知 的关系深化到 10",
+      "timestamp": 180,
+      "day": 3,
+      "time_of_day": "dawn"
+    },
+    {
+      "id": 57,
+      "type": "relationship_growth",
+      "description": "阿哲 与 小测 的关系深化到 10",
+      "timestamp": 180,
+      "day": 3,
+      "time_of_day": "dawn"
+    },
+    {
+      "id": 58,
+      "type": "time_change",
+      "description": "dawn → morning",
+      "timestamp": 190,
+      "day": 3,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 59,
+      "type": "celebration",
+      "description": "大家庆祝：度过了美好的一天",
+      "timestamp": 210,
+      "day": 3,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 60,
+      "type": "casual_chat",
+      "description": "阿哲 和 小交 聊了聊 遇到的挑战",
+      "timestamp": 210,
+      "day": 3,
+      "time_of_day": "morning"
+    },
+    {
+      "id": 61,
+      "type": "time_change",
+      "description": "morning → afternoon",
+      "timestamp": 220,
+      "day": 3,
+      "time_of_day": "afternoon"
+    },
+    {
+      "id": 62,
+      "type": "deep_conversation",
+      "description": "小交 和 阿哲 探讨了 什么是真正的连接",
+      "timestamp": 220,
+      "day": 3,
+      "time_of_day": "afternoon"
+    },
+    {
+      "id": 63,
+      "type": "story_created",
+      "description": "小码 和 董事事 的故事：分享成长经历",
+      "timestamp": 220,
+      "day": 3,
+      "time_of_day": "afternoon"
+    },
+    {
+      "id": 64,
+      "type": "story_created",
+      "description": "新故事：小码 与 董事事 的分享成长经历对话",
+      "timestamp": 220,
+      "day": 3,
+      "time_of_day": "afternoon"
+    },
+    {
+      "id": 65,
+      "type": "knowledge_share",
+      "description": "阿哲 分享了关于 设计趋势 的知识",
+      "timestamp": 230,
+      "day": 3,
+      "time_of_day": "afternoon"
+    },
+    {
+      "id": 66,
+      "type": "collaboration",
+      "description": "小码 + 小前 + 小测 协作完成 Bug 修复",
+      "timestamp": 230,
+      "day": 3,
+      "time_of_day": "afternoon"
+    },
+    {
+      "id": 67,
+      "type": "time_change",
+      "description": "afternoon → evening",
+      "timestamp": 240,
+      "day": 3,
+      "time_of_day": "evening"
+    },
+    {
+      "id": 68,
+      "type": "help_request",
+      "description": "小码 寻求帮助：需要技术建议",
+      "timestamp": 240,
+      "day": 3,
+      "time_of_day": "evening"
+    },
+    {
+      "id": 69,
+      "type": "innovation",
+      "description": "小码 创新：自动化脚本",
+      "timestamp": 240,
+      "day": 3,
+      "time_of_day": "evening"
+    },
+    {
+      "id": 70,
+      "type": "relationship_growth",
+      "description": "小问 与 小交 的关系深化到 20",
+      "timestamp": 240,
+      "day": 3,
+      "time_of_day": "evening"
+    },
+    {
+      "id": 71,
+      "type": "relationship_growth",
+      "description": "小美 与 小知 的关系深化到 20",
+      "timestamp": 240,
+      "day": 3,
+      "time_of_day": "evening"
+    },
+    {
+      "id": 72,
+      "type": "time_change",
+      "description": "evening → night",
+      "timestamp": 250,
+      "day": 3,
+      "time_of_day": "night"
+    },
+    {
+      "id": 73,
+      "type": "casual_chat",
+      "description": "阿哲 和 小测 聊了聊 最近的工作进展",
+      "timestamp": 250,
+      "day": 3,
+      "time_of_day": "night"
+    },
+    {
+      "id": 74,
+      "type": "day_start",
+      "description": "Day 4 开始",
+      "timestamp": 260,
+      "day": 4,
+      "time_of_day": "night"
+    },
+    {
+      "id": 75,
+      "type": "time_change",
+      "description": "night → dawn",
+      "timestamp": 260,
+      "day": 4,
+      "time_of_day": "dawn"
+    }
+  ],
+  "stats": {
+    "total_interactions": 0,
+    "total_knowledge_created": 0,
+    "total_stories_created": 0,
+    "total_votes_created": 0
+  }
+}

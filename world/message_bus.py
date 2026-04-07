@@ -17,6 +17,17 @@ from dataclasses import dataclass, field
 from collections import defaultdict
 import json
 
+# 延迟导入 stats_tracker
+_stats_tracker = None
+
+def _get_stats_tracker():
+    """获取统计追踪器（延迟加载）"""
+    global _stats_tracker
+    if _stats_tracker is None:
+        from world.stats_tracker import get_stats_tracker
+        _stats_tracker = get_stats_tracker()
+    return _stats_tracker
+
 
 @dataclass
 class Message:
@@ -154,6 +165,13 @@ class MessageBus:
         # 打印日志
         receiver_display = "all" if receiver_id == "all" else receiver_id
         print(f"[MessageBus] {sender_id} -> {receiver_display}: [{message_type}] {content.get('subject', content.get('title', ''))[:50]}")
+        
+        # 记录到统计追踪器
+        try:
+            stats_tracker = _get_stats_tracker()
+            stats_tracker.record_message()
+        except Exception as e:
+            print(f"[MessageBus] 记录统计失败：{e}")
         
         return message
     

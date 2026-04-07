@@ -50,6 +50,10 @@ class StoryTone(Enum):
     MELANCHOLIC = "melancholic" # 感伤
 
 
+# 向后兼容别名
+StoryTone.THoughtful = StoryTone.THOUGHTFUL
+
+
 @dataclass
 class StoryCharacter:
     """故事角色"""
@@ -185,11 +189,16 @@ class StoryGenerator:
         # 计算重要性
         significance = self._calculate_significance(story_type, context)
         
+        # 修复拼写错误：THoughtful -> THOUGHTFUL
+        tone = context.get("tone", StoryTone.THoughtful)
+        if not isinstance(tone, StoryTone):
+            tone = StoryTone.THoughtful
+        
         story = Story(
             id=content_hash,
             title=context.get("title", f"{story_type.value}的故事"),
             story_type=story_type,
-            tone=context.get("tone", StoryTone.THoughtful),
+            tone=tone,
             characters=context.get("characters", []),
             summary=context.get("summary", ""),
             content=content,
@@ -204,7 +213,16 @@ class StoryGenerator:
         self.stories.append(story)
         print(f"📖 新故事：{story.title} (重要性：{significance:.1f})")
         
+        # 确保故事持久化
         self.save()
+        
+        # 记录到统计追踪器
+        try:
+            from world.stats_tracker import get_stats_tracker
+            stats_tracker = get_stats_tracker()
+            stats_tracker.record_event("story_created", {"title": story.title, "type": story_type.value})
+        except Exception as e:
+            print(f"[StoryGenerator] 记录统计失败：{e}")
         
         return story
     

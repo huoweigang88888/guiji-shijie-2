@@ -1,0 +1,647 @@
+{
+  "run_info": {
+    "start_time": "2026-04-07T18:04:05.537430",
+    "end_time": "2026-04-07T18:09:05.682115",
+    "duration_seconds": 300.144685,
+    "planned_duration": 300,
+    "agent_count": 18
+  },
+  "world_status": {
+    "world_time": 300,
+    "day": 4,
+    "time_of_day": "morning",
+    "running": false,
+    "events_count": 87,
+    "relationships_count": 33,
+    "knowledge_count": 12,
+    "stories_count": 7
+  },
+  "message_stats": {
+    "online_agents": 0,
+    "total_messages": 0,
+    "queues": {
+      "CEO-Agent": 0,
+      "PM-Agent": 0,
+      "ARCH-Agent": 0,
+      "DEV-Agent": 0,
+      "QA-Agent": 0,
+      "UI-Agent": 0,
+      "KNOW-Agent": 0,
+      "SOCIAL-Agent": 0,
+      "FE-Agent": 0,
+      "BE-Agent": 0,
+      "DEVOPS-Agent": 0,
+      "DATA-Agent": 0,
+      "HR-Agent": 0,
+      "FIN-Agent": 0,
+      "MARKETING-Agent": 0,
+      "ML-Agent": 0,
+      "BA-Agent": 0,
+      "PMO-Agent": 0
+    }
+  },
+  "conflict_stats": {
+    "total": 0,
+    "active": 0,
+    "resolved": 0,
+    "by_type": {
+      "opinion_difference": 0,
+      "resource_conflict": 0,
+      "misunderstanding": 0,
+      "value_conflict": 0,
+      "work_style": 0
+    }
+  },
+  "achievement_stats": {
+    "total_achievements": 0,
+    "agents_with_achievements": 0,
+    "by_rarity": {
+      "common": 0,
+      "uncommon": 0,
+      "rare": 0,
+      "epic": 0,
+      "legendary": 0
+    }
+  },
+  "economy_stats": {
+    "agents": 21,
+    "total_credits": 2634.0,
+    "total_knowledge_coins": 0.0,
+    "transactions": 78,
+    "by_type": {
+      "knowledge_sale": 0,
+      "service": 0,
+      "gift": 0,
+      "reward": 78,
+      "resource": 0
+    }
+  },
+  "voting_stats": {
+    "total_votes": 0,
+    "active_votes": 0,
+    "passed_votes": 0,
+    "rejected_votes": 0,
+    "eligible_voters": 18
+  },
+  "task_stats": {
+    "total": 0,
+    "open": 0,
+    "in_progress": 0,
+    "completed": 0,
+    "cancelled": 0
+  },
+  "friend_stats": {
+    "total_friendships": 0,
+    "accepted": 0,
+    "pending": 0,
+    "blocked": 0,
+    "total_requests": 0
+  },
+  "shop_stats": {
+    "total_items": 7,
+    "total_purchases": 0,
+    "total_revenue": 0,
+    "by_type": {
+      "tool": 1,
+      "book": 2,
+      "service": 1,
+      "decoration": 1,
+      "consumable": 2
+    }
+  },
+  "skill_stats": {
+    "total_skills": 13,
+    "agents_with_skills": 0,
+    "total_learned": 0,
+    "average_level": 0
+  },
+  "news_stats": {
+    "total_news": 0,
+    "total_views": 0,
+    "total_likes": 0,
+    "by_category": {
+      "world": 0,
+      "technology": 0,
+      "economy": 0,
+      "social": 0,
+      "achievement": 0,
+      "event": 0
+    }
+  },
+  "world_stats": {
+    "uptime_seconds": 300.143955,
+    "uptime_human": "0:05:00.143955",
+    "total": {
+      "messages": 0,
+      "tasks": 0,
+      "knowledge": 0,
+      "conflicts": 0,
+      "achievements": 0,
+      "friendships": 0,
+      "transactions": 0.0
+    },
+    "today": {
+      "date": "2026-04-07",
+      "messages": 0,
+      "tasks": 0,
+      "knowledge": 0
+    }
+  },
+  "leaderboards": {
+    "achievement": [],
+    "economy": [
+      {
+        "agent_id": "DEV-Agent",
+        "value": 228.0,
+        "currency": "credit"
+      },
+      {
+        "agent_id": "QA-Agent",
+        "value": 180.0,
+        "currency": "credit"
+      },
+      {
+        "agent_id": "小智",
+        "value": 160.0,
+        "currency": "credit"
+      },
+      {
+        "agent_id": "ARCH-Agent",
+        "value": 140.0,
+        "currency": "credit"
+      },
+      {
+        "agent_id": "UI-Agent",
+        "value": 140.0,
+        "currency": "credit"
+      }
+    ],
+    "rating": []
+  },
+  "relationships": [
+    {
+      "agent1": "小交",
+      "agent2": "小知",
+      "strength": 37,
+      "interactions": 17
+    },
+    {
+      "agent1": "小码",
+      "agent2": "小美",
+      "strength": 21,
+      "interactions": 13
+    },
+    {
+      "agent1": "小美",
+      "agent2": "阿哲",
+      "strength": 23,
+      "interactions": 13
+    },
+    {
+      "agent1": "小码",
+      "agent2": "小前",
+      "strength": 26,
+      "interactions": 8
+    },
+    {
+      "agent1": "小码",
+      "agent2": "小测",
+      "strength": 42,
+      "interactions": 22
+    },
+    {
+      "agent1": "小前",
+      "agent2": "小测",
+      "strength": 19,
+      "interactions": 6
+    },
+    {
+      "agent1": "董事事",
+      "agent2": "小问",
+      "strength": 19,
+      "interactions": 12
+    },
+    {
+      "agent1": "董事事",
+      "agent2": "阿哲",
+      "strength": 23,
+      "interactions": 13
+    },
+    {
+      "agent1": "董事事",
+      "agent2": "小码",
+      "strength": 27,
+      "interactions": 13
+    },
+    {
+      "agent1": "董事事",
+      "agent2": "小测",
+      "strength": 21,
+      "interactions": 12
+    },
+    {
+      "agent1": "董事事",
+      "agent2": "小美",
+      "strength": 20,
+      "interactions": 12
+    },
+    {
+      "agent1": "董事事",
+      "agent2": "小知",
+      "strength": 19,
+      "interactions": 12
+    },
+    {
+      "agent1": "董事事",
+      "agent2": "小交",
+      "strength": 22,
+      "interactions": 12
+    },
+    {
+      "agent1": "小问",
+      "agent2": "阿哲",
+      "strength": 22,
+      "interactions": 13
+    },
+    {
+      "agent1": "小问",
+      "agent2": "小码",
+      "strength": 23,
+      "interactions": 13
+    },
+    {
+      "agent1": "小问",
+      "agent2": "小测",
+      "strength": 18,
+      "interactions": 12
+    },
+    {
+      "agent1": "小问",
+      "agent2": "小美",
+      "strength": 20,
+      "interactions": 12
+    },
+    {
+      "agent1": "小问",
+      "agent2": "小知",
+      "strength": 19,
+      "interactions": 12
+    },
+    {
+      "agent1": "小问",
+      "agent2": "小交",
+      "strength": 24,
+      "interactions": 13
+    },
+    {
+      "agent1": "阿哲",
+      "agent2": "小码",
+      "strength": 21,
+      "interactions": 12
+    },
+    {
+      "agent1": "阿哲",
+      "agent2": "小测",
+      "strength": 23,
+      "interactions": 14
+    },
+    {
+      "agent1": "阿哲",
+      "agent2": "小知",
+      "strength": 30,
+      "interactions": 14
+    },
+    {
+      "agent1": "阿哲",
+      "agent2": "小交",
+      "strength": 28,
+      "interactions": 14
+    },
+    {
+      "agent1": "小码",
+      "agent2": "小知",
+      "strength": 19,
+      "interactions": 12
+    },
+    {
+      "agent1": "小码",
+      "agent2": "小交",
+      "strength": 19,
+      "interactions": 12
+    },
+    {
+      "agent1": "小测",
+      "agent2": "小美",
+      "strength": 20,
+      "interactions": 12
+    },
+    {
+      "agent1": "小测",
+      "agent2": "小知",
+      "strength": 20,
+      "interactions": 12
+    },
+    {
+      "agent1": "小测",
+      "agent2": "小交",
+      "strength": 21,
+      "interactions": 12
+    },
+    {
+      "agent1": "小美",
+      "agent2": "小知",
+      "strength": 24,
+      "interactions": 12
+    },
+    {
+      "agent1": "小美",
+      "agent2": "小交",
+      "strength": 23,
+      "interactions": 13
+    },
+    {
+      "agent1": "小码",
+      "agent2": "小后",
+      "strength": 17,
+      "interactions": 6
+    },
+    {
+      "agent1": "小前",
+      "agent2": "小后",
+      "strength": 6,
+      "interactions": 2
+    },
+    {
+      "agent1": "小测",
+      "agent2": "小后",
+      "strength": 11,
+      "interactions": 4
+    }
+  ],
+  "stories": [
+    {
+      "id": 0,
+      "title": "小码 与 小美 的分享成长经历对话",
+      "participants": [
+        "小码",
+        "小美"
+      ],
+      "topic": "分享成长经历",
+      "day": 1,
+      "timestamp": 10,
+      "summary": "在dawn，小码和小美就分享成长经历进行了深度交流，这次对话让他们的关系更加深厚。"
+    },
+    {
+      "id": 1,
+      "title": "阿哲 与 小问 的解决技术难题对话",
+      "participants": [
+        "阿哲",
+        "小问"
+      ],
+      "topic": "解决技术难题",
+      "day": 1,
+      "timestamp": 50,
+      "summary": "在afternoon，阿哲和小问就解决技术难题进行了深度交流，这次对话让他们的关系更加深厚。"
+    },
+    {
+      "id": 2,
+      "title": "小交 与 小美 的讨论未来规划对话",
+      "participants": [
+        "小交",
+        "小美"
+      ],
+      "topic": "讨论未来规划",
+      "day": 2,
+      "timestamp": 110,
+      "summary": "在morning，小交和小美就讨论未来规划进行了深度交流，这次对话让他们的关系更加深厚。"
+    },
+    {
+      "id": 3,
+      "title": "小交 与 小知 的知识与智慧的区别对话",
+      "participants": [
+        "小交",
+        "小知"
+      ],
+      "topic": "知识与智慧的区别",
+      "day": 2,
+      "timestamp": 150,
+      "summary": "在evening，小交和小知就知识与智慧的区别进行了深度交流，这次对话让他们的关系更加深厚。"
+    },
+    {
+      "id": 4,
+      "title": "董事事 与 阿哲 的分享成长经历对话",
+      "participants": [
+        "董事事",
+        "阿哲"
+      ],
+      "topic": "分享成长经历",
+      "day": 2,
+      "timestamp": 160,
+      "summary": "在evening，董事事和阿哲就分享成长经历进行了深度交流，这次对话让他们的关系更加深厚。"
+    },
+    {
+      "id": 5,
+      "title": "小码 与 董事事 的分享成长经历对话",
+      "participants": [
+        "小码",
+        "董事事"
+      ],
+      "topic": "分享成长经历",
+      "day": 3,
+      "timestamp": 220,
+      "summary": "在afternoon，小码和董事事就分享成长经历进行了深度交流，这次对话让他们的关系更加深厚。"
+    },
+    {
+      "id": 6,
+      "title": "阿哲 与 小测 的解决技术难题对话",
+      "participants": [
+        "阿哲",
+        "小测"
+      ],
+      "topic": "解决技术难题",
+      "day": 4,
+      "timestamp": 270,
+      "summary": "在dawn，阿哲和小测就解决技术难题进行了深度交流，这次对话让他们的关系更加深厚。"
+    }
+  ],
+  "event_log": [
+    {
+      "timestamp": "2026-04-07T18:04:35.550952",
+      "category": "故事",
+      "description": "诞生 1 个新故事",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:04:35.550981",
+      "category": "关系",
+      "description": "建立 6 段新关系",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:05:05.557439",
+      "category": "故事",
+      "description": "诞生 1 个新故事",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:05:05.557463",
+      "category": "关系",
+      "description": "建立 24 段新关系",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:06:05.569115",
+      "category": "故事",
+      "description": "诞生 1 个新故事",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:06:35.574508",
+      "category": "故事",
+      "description": "诞生 1 个新故事",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:06:35.574570",
+      "category": "关系",
+      "description": "建立 2 段新关系",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:07:05.578255",
+      "category": "故事",
+      "description": "诞生 1 个新故事",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:07:05.578275",
+      "category": "关系",
+      "description": "建立 1 段新关系",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:08:05.594948",
+      "category": "故事",
+      "description": "诞生 1 个新故事",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:08:35.604711",
+      "category": "故事",
+      "description": "诞生 1 个新故事",
+      "data": {
+        "interesting": true
+      }
+    }
+  ],
+  "interesting_events": [
+    {
+      "timestamp": "2026-04-07T18:04:35.550952",
+      "category": "故事",
+      "description": "诞生 1 个新故事",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:04:35.550981",
+      "category": "关系",
+      "description": "建立 6 段新关系",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:05:05.557439",
+      "category": "故事",
+      "description": "诞生 1 个新故事",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:05:05.557463",
+      "category": "关系",
+      "description": "建立 24 段新关系",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:06:05.569115",
+      "category": "故事",
+      "description": "诞生 1 个新故事",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:06:35.574508",
+      "category": "故事",
+      "description": "诞生 1 个新故事",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:06:35.574570",
+      "category": "关系",
+      "description": "建立 2 段新关系",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:07:05.578255",
+      "category": "故事",
+      "description": "诞生 1 个新故事",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:07:05.578275",
+      "category": "关系",
+      "description": "建立 1 段新关系",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:08:05.594948",
+      "category": "故事",
+      "description": "诞生 1 个新故事",
+      "data": {
+        "interesting": true
+      }
+    },
+    {
+      "timestamp": "2026-04-07T18:08:35.604711",
+      "category": "故事",
+      "description": "诞生 1 个新故事",
+      "data": {
+        "interesting": true
+      }
+    }
+  ]
+}

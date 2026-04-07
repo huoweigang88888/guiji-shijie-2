@@ -12,16 +12,10 @@
 """
 
 import asyncio
-import json
-import os
 import random
-import threading
 from datetime import datetime
 from typing import Dict, List, Optional, Any
 from enum import Enum
-
-# 存档目录
-SAVES_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'saves')
 
 # 延迟导入，避免循环依赖
 _economy_manager = None
@@ -72,22 +66,6 @@ class WorldEngine:
         
         # 故事
         self.stories: List[Dict] = []
-        
-        # 统计数据
-        self.stats: Dict[str, Any] = {
-            'total_interactions': 0,
-            'total_knowledge_created': 0,
-            'total_stories_created': 0,
-            'total_votes_created': 0,
-        }
-        
-        # 自动保存
-        self._auto_save_interval = 60  # 自动保存间隔（秒）
-        self._auto_save_thread: Optional[threading.Thread] = None
-        self._stop_auto_save = False
-        
-        # 确保存档目录存在
-        os.makedirs(SAVES_DIR, exist_ok=True)
     
     async def start(self):
         """启动世界引擎"""
@@ -102,22 +80,10 @@ class WorldEngine:
         
         # 启动关系演化循环
         asyncio.create_task(self._relationship_loop())
-        
-        # 启动自动保存线程
-        self._start_auto_save()
     
     async def stop(self):
         """停止世界引擎"""
         self._running = False
-        
-        # 停止自动保存
-        self._stop_auto_save = True
-        if self._auto_save_thread and self._auto_save_thread.is_alive():
-            self._auto_save_thread.join(timeout=2)
-        
-        # 停止前保存一次
-        self.save_state()
-        
         print("🌍 世界引擎停止")
     
     async def _time_loop(self):
@@ -160,23 +126,19 @@ class WorldEngine:
     
     async def _interaction_loop(self):
         """互动循环 - Agent 自发互动"""
-        # 场景冷却时间追踪
-        scenario_cooldowns: Dict[str, float] = {}
-        scenario_cooldown_seconds = 120  # 场景冷却时间（秒）
-        
         while self._running:
             try:
-                # 根据时段决定互动概率（提高基础概率）
+                # 根据时段决定互动概率
                 interaction_chance = {
-                    TimeOfDay.DAWN: 0.5,       # 提高：0.3 -> 0.5
-                    TimeOfDay.MORNING: 0.8,    # 提高：0.7 -> 0.8
-                    TimeOfDay.AFTERNOON: 0.9,  # 提高：0.8 -> 0.9
-                    TimeOfDay.EVENING: 0.7,    # 提高：0.5 -> 0.7
-                    TimeOfDay.NIGHT: 0.4,      # 提高：0.2 -> 0.4
+                    TimeOfDay.DAWN: 0.3,
+                    TimeOfDay.MORNING: 0.7,
+                    TimeOfDay.AFTERNOON: 0.8,
+                    TimeOfDay.EVENING: 0.5,
+                    TimeOfDay.NIGHT: 0.2,
                 }
                 
                 if random.random() < interaction_chance[self._current_time_of_day]:
-                    await self._trigger_interaction(scenario_cooldowns, scenario_cooldown_seconds)
+                    await self._trigger_interaction()
                 
                 await asyncio.sleep(5)
             except asyncio.CancelledError:
@@ -207,49 +169,18 @@ class WorldEngine:
             except Exception as e:
                 print(f"[WorldEngine] 关系循环错误：{e}")
     
-    async def _trigger_interaction(self, scenario_cooldowns: Dict[str, float] = None, cooldown_seconds: int = 120):
-        """
-        触发互动
-        
-        Args:
-            scenario_cooldowns: 场景冷却时间字典
-            cooldown_seconds: 冷却时间（秒）
-        """
-        if scenario_cooldowns is None:
-            scenario_cooldowns = {}
-        
-        # 可能的互动类型（8 个场景）
+    async def _trigger_interaction(self):
+        """触发互动"""
+        # 可能的互动类型
         interactions = [
-            ("casual_chat", self._casual_chat),
-            ("knowledge_share", self._knowledge_share),
-            ("help_request", self._help_request),
-            ("celebration", self._celebration),
-            ("deep_conversation", self._deep_conversation),
-            ("story_creation", self._create_story_interaction),
-            ("collaboration", self._collaboration),
-            ("innovation", self._innovation),
+            self._casual_chat,
+            self._knowledge_share,
+            self._help_request,
+            self._celebration,
+            self._deep_conversation,
         ]
         
-        # 过滤掉冷却中的场景
-        current_time = self._world_time
-        available_interactions = [
-            (name, func) for name, func in interactions
-            if name not in scenario_cooldowns or current_time - scenario_cooldowns[name] >= cooldown_seconds
-        ]
-        
-        # 如果所有场景都在冷却中，选择一个最早冷却的
-        if not available_interactions:
-            earliest = min(interactions, key=lambda x: scenario_cooldowns.get(x[0], 0))
-            available_interactions = [earliest]
-        
-        # 随机选择一个可用的互动
-        scenario_name, interaction = random.choice(available_interactions)
-        
-        # 设置冷却时间
-        scenario_cooldowns[scenario_name] = current_time
-        
-        print(f"[WorldEngine] 触发场景：{scenario_name}")
-        
+        interaction = random.choice(interactions)
         await interaction()
     
     async def _casual_chat(self):
@@ -403,115 +334,9 @@ class WorldEngine:
         if random.random() > 0.7:
             self._create_story(agent1, agent2, topic)
         
-        # 提高故事触发概率：从 0.7 改为 0.5（大于 0.5 即触发，50% 概率）
-        if random.random() > 0.5:
-            self._create_story(agent1, agent2, topic)
-        
         # 小概率发起投票（关于这个话题）
         if random.random() > 0.8:
             await self._create_vote_from_conversation(agent1, agent2, topic)
-    
-    async def _create_story_interaction(self):
-        """创建故事互动"""
-        agents = ["董事事", "小问", "阿哲", "小码", "小测", "小美", "小知", "小交"]
-        agent1 = random.choice(agents)
-        agent2 = random.choice([a for a in agents if a != agent1])
-        
-        topics = [
-            "合作完成项目",
-            "解决技术难题",
-            "分享成长经历",
-            "讨论未来规划",
-        ]
-        
-        topic = random.choice(topics)
-        
-        print(f"📖 {agent1} 和 {agent2} 共同创造故事：{topic}")
-        
-        self._log_event(
-            "story_created",
-            f"{agent1} 和 {agent2} 的故事：{topic}"
-        )
-        
-        # 创建故事
-        self._create_story(agent1, agent2, topic)
-        
-        # 增加关系
-        self._increase_relationship(agent1, agent2, 3)
-    
-    async def _collaboration(self):
-        """协作场景"""
-        agents = ["小码", "小测", "小前", "小后"]
-        selected = random.sample(agents, min(3, len(agents)))
-        
-        projects = [
-            "新功能开发",
-            "代码重构",
-            "性能优化",
-            "Bug 修复",
-        ]
-        
-        project = random.choice(projects)
-        
-        print(f"🤝 {', '.join(selected)} 协作：{project}")
-        
-        self._log_event(
-            "collaboration",
-            f"{' + '.join(selected)} 协作完成 {project}"
-        )
-        
-        # 增加参与者之间的关系
-        for agent in selected:
-            for other in selected:
-                if agent != other:
-                    self._increase_relationship(agent, other, 2)
-        
-        # 经济奖励
-        try:
-            economy = _get_economy_manager()
-            for agent in selected:
-                agent_id = self._name_to_agent_id(agent)
-                await economy.reward(agent_id, f"协作：{project}", 8.0)
-        except:
-            pass
-    
-    async def _innovation(self):
-        """创新场景"""
-        agents = ["阿哲", "小码", "小智", "小数"]
-        innovator = random.choice(agents)
-        
-        innovations = [
-            "新的架构模式",
-            "自动化脚本",
-            "数据分析模型",
-            "AI 辅助工具",
-        ]
-        
-        innovation = random.choice(innovations)
-        
-        print(f"💡 {innovator} 提出创新：{innovation}")
-        
-        self._log_event(
-            "innovation",
-            f"{innovator} 创新：{innovation}"
-        )
-        
-        # 沉淀知识
-        self.collective_knowledge.append({
-            "type": "innovation",
-            "author": innovator,
-            "topic": innovation,
-            "timestamp": self._world_time,
-            "day": self._day,
-        })
-        
-        # 经济奖励
-        try:
-            economy = _get_economy_manager()
-            agent_id = self._name_to_agent_id(innovator)
-            await economy.reward(agent_id, f"创新：{innovation}", 15.0)
-        except:
-            pass
     
     async def _create_vote_from_conversation(self, agent1: str, agent2: str, topic: str):
         """从对话中创建投票"""
@@ -677,259 +502,6 @@ class WorldEngine:
             "stories": self.get_stories(),
             "knowledge": self.collective_knowledge[-10:],
         }
-    
-    # ==================== 持久化系统 ====================
-    
-    def save_state(self, slot: str = "default") -> bool:
-        """
-        保存世界状态到文件
-        
-        Args:
-            slot: 存档槽位名称
-            
-        Returns:
-            是否保存成功
-        """
-        try:
-            # 确保存档目录存在
-            os.makedirs(SAVES_DIR, exist_ok=True)
-            
-            # 准备世界状态数据
-            world_state = {
-                "world_time": self._world_time,
-                "day": self._day,
-                "time_of_day": self._current_time_of_day.value,
-                "events": self.events,
-                "stats": self.stats,
-            }
-            
-            # 准备 Agent 状态（这里保存的是世界中的 Agent 互动历史）
-            agents_state = {
-                "relationships": self.relationships,
-                "collective_knowledge": self.collective_knowledge,
-                "stories": self.stories,
-            }
-            
-            # 准备元数据
-            metadata = {
-                "version": "1.0",
-                "saved_at": datetime.now().isoformat(),
-                "slot": slot,
-                "world_time": self._world_time,
-                "day": self._day,
-            }
-            
-            # 保存各个文件
-            world_state_path = os.path.join(SAVES_DIR, f"{slot}_world_state.json")
-            agents_state_path = os.path.join(SAVES_DIR, f"{slot}_agents_state.json")
-            relationships_path = os.path.join(SAVES_DIR, f"{slot}_relationships.json")
-            metadata_path = os.path.join(SAVES_DIR, f"{slot}_metadata.json")
-            
-            with open(world_state_path, 'w', encoding='utf-8') as f:
-                json.dump(world_state, f, ensure_ascii=False, indent=2)
-            
-            with open(agents_state_path, 'w', encoding='utf-8') as f:
-                json.dump(agents_state, f, ensure_ascii=False, indent=2)
-            
-            with open(relationships_path, 'w', encoding='utf-8') as f:
-                json.dump(self.relationships, f, ensure_ascii=False, indent=2)
-            
-            with open(metadata_path, 'w', encoding='utf-8') as f:
-                json.dump(metadata, f, ensure_ascii=False, indent=2)
-            
-            print(f"💾 世界状态已保存至槽位：{slot}")
-            print(f"   - 世界时间：{self._world_time}秒 (Day {self._day})")
-            print(f"   - 事件数量：{len(self.events)}")
-            print(f"   - 关系数量：{len(self.relationships)}")
-            print(f"   - 知识数量：{len(self.collective_knowledge)}")
-            print(f"   - 故事数量：{len(self.stories)}")
-            
-            return True
-            
-        except Exception as e:
-            print(f"❌ 保存世界状态失败：{e}")
-            return False
-    
-    def load_state(self, slot: str = "default") -> bool:
-        """
-        从文件加载世界状态
-        
-        Args:
-            slot: 存档槽位名称
-            
-        Returns:
-            是否加载成功
-        """
-        try:
-            # 检查文件是否存在
-            world_state_path = os.path.join(SAVES_DIR, f"{slot}_world_state.json")
-            agents_state_path = os.path.join(SAVES_DIR, f"{slot}_agents_state.json")
-            relationships_path = os.path.join(SAVES_DIR, f"{slot}_relationships.json")
-            metadata_path = os.path.join(SAVES_DIR, f"{slot}_metadata.json")
-            
-            if not all(os.path.exists(p) for p in [world_state_path, agents_state_path, relationships_path, metadata_path]):
-                print(f"⚠️  存档槽位 {slot} 不存在")
-                return False
-            
-            # 加载世界状态
-            with open(world_state_path, 'r', encoding='utf-8') as f:
-                world_state = json.load(f)
-            
-            # 加载 Agent 状态
-            with open(agents_state_path, 'r', encoding='utf-8') as f:
-                agents_state = json.load(f)
-            
-            # 加载关系
-            with open(relationships_path, 'r', encoding='utf-8') as f:
-                relationships = json.load(f)
-            
-            # 加载元数据
-            with open(metadata_path, 'r', encoding='utf-8') as f:
-                metadata = json.load(f)
-            
-            # 恢复世界状态
-            self._world_time = world_state.get("world_time", 0)
-            self._day = world_state.get("day", 1)
-            
-            # 恢复时段
-            time_of_day_value = world_state.get("time_of_day", "morning")
-            self._current_time_of_day = TimeOfDay(time_of_day_value)
-            
-            # 恢复事件日志
-            self.events = world_state.get("events", [])
-            
-            # 恢复统计数据
-            self.stats = world_state.get("stats", {
-                'total_interactions': 0,
-                'total_knowledge_created': 0,
-                'total_stories_created': 0,
-                'total_votes_created': 0,
-            })
-            
-            # 恢复 Agent 状态
-            self.relationships = agents_state.get("relationships", {})
-            self.collective_knowledge = agents_state.get("collective_knowledge", [])
-            self.stories = agents_state.get("stories", [])
-            
-            print(f"📂 世界状态已从槽位 {slot} 加载")
-            print(f"   - 世界时间：{self._world_time}秒 (Day {self._day})")
-            print(f"   - 时段：{self._current_time_of_day.value}")
-            print(f"   - 事件数量：{len(self.events)}")
-            print(f"   - 关系数量：{len(self.relationships)}")
-            print(f"   - 知识数量：{len(self.collective_knowledge)}")
-            print(f"   - 故事数量：{len(self.stories)}")
-            
-            return True
-            
-        except Exception as e:
-            print(f"❌ 加载世界状态失败：{e}")
-            return False
-    
-    def _start_auto_save(self):
-        """启动自动保存线程"""
-        self._stop_auto_save = False
-        self._auto_save_thread = threading.Thread(target=self._auto_save_loop, daemon=True)
-        self._auto_save_thread.start()
-        print(f"💾 自动保存已启动（间隔：{self._auto_save_interval}秒）")
-    
-    def _auto_save_loop(self):
-        """自动保存循环"""
-        while not self._stop_auto_save:
-            # 等待指定间隔
-            for _ in range(self._auto_save_interval * 10):
-                if self._stop_auto_save:
-                    break
-                threading.Event().wait(0.1)
-            
-            if not self._stop_auto_save and self._running:
-                self.save_state("auto")
-    
-    def set_auto_save_interval(self, seconds: int):
-        """设置自动保存间隔"""
-        self._auto_save_interval = max(10, seconds)  # 最少 10 秒
-        print(f"💾 自动保存间隔已设置为：{self._auto_save_interval}秒")
-    
-    def manual_save(self, slot: str = "manual") -> bool:
-        """
-        手动保存
-        
-        Args:
-            slot: 存档槽位名称
-            
-        Returns:
-            是否保存成功
-        """
-        return self.save_state(slot)
-    
-    def manual_load(self, slot: str = "default") -> bool:
-        """
-        手动加载
-        
-        Args:
-            slot: 存档槽位名称
-            
-        Returns:
-            是否加载成功
-        """
-        return self.load_state(slot)
-    
-    def list_saves(self) -> List[Dict]:
-        """
-        列出所有存档
-        
-        Returns:
-            存档列表
-        """
-        saves = []
-        try:
-            for filename in os.listdir(SAVES_DIR):
-                if filename.endswith("_metadata.json"):
-                    slot = filename.replace("_metadata.json", "")
-                    metadata_path = os.path.join(SAVES_DIR, filename)
-                    
-                    with open(metadata_path, 'r', encoding='utf-8') as f:
-                        metadata = json.load(f)
-                    
-                    saves.append({
-                        "slot": slot,
-                        "saved_at": metadata.get("saved_at", "未知"),
-                        "world_time": metadata.get("world_time", 0),
-                        "day": metadata.get("day", 1),
-                    })
-        except Exception as e:
-            print(f"⚠️  列出存档失败：{e}")
-        
-        return sorted(saves, key=lambda x: x.get("saved_at", ""), reverse=True)
-    
-    def delete_save(self, slot: str) -> bool:
-        """
-        删除存档
-        
-        Args:
-            slot: 存档槽位名称
-            
-        Returns:
-            是否删除成功
-        """
-        try:
-            files = [
-                f"{slot}_world_state.json",
-                f"{slot}_agents_state.json",
-                f"{slot}_relationships.json",
-                f"{slot}_metadata.json",
-            ]
-            
-            for filename in files:
-                filepath = os.path.join(SAVES_DIR, filename)
-                if os.path.exists(filepath):
-                    os.remove(filepath)
-            
-            print(f"🗑️  已删除存档：{slot}")
-            return True
-            
-        except Exception as e:
-            print(f"❌ 删除存档失败：{e}")
-            return False
 
 
 # 单例

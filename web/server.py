@@ -11,10 +11,26 @@ import json
 import os
 import sys
 from datetime import datetime
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Set
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import threading
 import webbrowser
+
+# WebSocket 支持
+try:
+    from websockets.server import serve
+    from websockets.exceptions import ConnectionClosed
+    WEBSOCKETS_AVAILABLE = True
+except ImportError:
+    WEBSOCKETS_AVAILABLE = False
+    print("⚠️  websockets 未安装，WebSocket 功能不可用")
+    print("   安装：pip install websockets")
+
+# WebSocket 客户端集合
+websocket_clients: Set = set()
+
+# 有趣事件锁
+_events_lock = threading.Lock()
 
 # 添加项目路径
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -64,7 +80,7 @@ def get_world_components():
 
 
 def add_interesting_event(event_type: str, description: str, agents: list = None):
-    """添加有趣事件到缓存"""
+    """添加有趣事件到缓存并广播给 WebSocket 客户端"""
     global _interesting_events
     event = {
         "id": len(_interesting_events) + 1,
@@ -74,10 +90,71 @@ def add_interesting_event(event_type: str, description: str, agents: list = None
         "timestamp": datetime.now().isoformat(),
         "time_display": datetime.now().strftime("%H:%M")
     }
-    _interesting_events.append(event)
-    # 只保留最近 50 条
-    if len(_interesting_events) > 50:
-        _interesting_events = _interesting_events[-50:]
+    with _events_lock:
+        _interesting_events.append(event)
+        # 只保留最近 50 条
+        if len(_interesting_events) > 50:
+            _interesting_events = _interesting_events[-50:]
+    
+    # 广播给所有 WebSocket 客户端
+    if websocket_clients:
+        asyncio.create_task(broadcast_to_websockets("new_event", event))
+
+async def broadcast_to_websockets(event_type: str, data: Any):
+    """广播消息给所有 WebSocket 客户端"""
+    if not websocket_clients:
+        return
+    
+    message = json.dumps({
+        "type": event_type,
+        "data": data,
+        "timestamp": datetime.now().isoformat(),
+    }, ensure_ascii=False)
+    
+    # 复制到列表避免迭代时修改
+    clients = list(websocket_clients)
+    for websocket in clients:
+        try:
+            await websocket.send(message)
+        except Exception as e:
+            print(f"[WebSocket] 广播失败：{e}")
+            websocket_clients.discard(websocket)
+
+async def websocket_handler(websocket):
+    """WebSocket 连接处理器"""
+    websocket_clients.add(websocket)
+    print(f"[WebSocket] 客户端连接，当前连接数：{len(websocket_clients)}")
+    
+    try:
+        # 发送欢迎消息
+        await websocket.send(json.dumps({
+            "type": "connected",
+            "data": {
+                "message": "已连接到硅基世界 2",
+                "events_count": len(_interesting_events),
+            },
+            "timestamp": datetime.now().isoformat(),
+        }, ensure_ascii=False))
+        
+        # 保持连接
+        async for message in websocket:
+            try:
+                data = json.loads(message)
+                print(f"[WebSocket] 收到消息：{data}")
+                
+                # 处理客户端消息
+                if data.get("action") == "ping":
+                    await websocket.send(json.dumps({
+                        "type": "pong",
+                        "timestamp": datetime.now().isoformat(),
+                    }))
+            except json.JSONDecodeError:
+                print(f"[WebSocket] 无效 JSON: {message}")
+    except ConnectionClosed:
+        print(f"[WebSocket] 客户端断开连接")
+    finally:
+        websocket_clients.discard(websocket)
+        print(f"[WebSocket] 客户端断开，当前连接数：{len(websocket_clients)}")
 
 
 # 模拟数据（用于演示）
@@ -443,8 +520,8 @@ class APIHandler(SimpleHTTPRequestHandler):
         print(f"[Web] {args[0]}")
 
 
-def run_server(port=8080, open_browser=True):
-    """运行 Web 服务器"""
+def run_server(port=8080, open_browser=True, websocket_port=8765):
+    """运行 Web 服务器（HTTP + WebSocket）"""
     # 切换到 web 目录
     web_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(web_dir)
@@ -454,7 +531,8 @@ def run_server(port=8080, open_browser=True):
     print("=" * 60)
     print("Silicon World 2 - Web Observation Service")
     print("=" * 60)
-    print(f" Server URL: http://localhost:{port}")
+    print(f" HTTP Server URL: http://localhost:{port}")
+    print(f" WebSocket URL: ws://localhost:{websocket_port}")
     print(f" Directory: {web_dir}")
     print()
     print("API Endpoints:")
@@ -468,6 +546,11 @@ def run_server(port=8080, open_browser=True):
     print("  GET /api/stats        - Statistics")
     print()
     
+    if WEBSOCKETS_AVAILABLE:
+        print("WebSocket Endpoints:")
+        print(f"  WS  ws://localhost:{websocket_port}  - Real-time events")
+        print()
+    
     if open_browser:
         print("Opening browser...")
         webbrowser.open(f'http://localhost:{port}')
@@ -475,6 +558,28 @@ def run_server(port=8080, open_browser=True):
     print()
     print("Press Ctrl+C to stop")
     print("=" * 60)
+    
+    # 启动 WebSocket 服务器（如果可用）
+    if WEBSOCKETS_AVAILABLE:
+        async def run_websocket_server():
+            async with serve(websocket_handler, "localhost", websocket_port):
+                print(f"[WebSocket] 服务器运行在 ws://localhost:{websocket_port}")
+                await asyncio.Future()  # 运行直到取消
+        
+        # 在后台线程运行 WebSocket
+        def run_ws_loop():
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                loop.run_until_complete(run_websocket_server())
+            except Exception as e:
+                print(f"[WebSocket] 错误：{e}")
+            finally:
+                loop.close()
+        
+        ws_thread = threading.Thread(target=run_ws_loop, daemon=True)
+        ws_thread.start()
+        print(f"[WebSocket] 后台服务已启动")
     
     try:
         server.serve_forever()

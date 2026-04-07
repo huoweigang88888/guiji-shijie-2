@@ -1,0 +1,200 @@
+{
+  "小交-小知": {
+    "agent1": "小交",
+    "agent2": "小知",
+    "strength": 31,
+    "interactions": 12
+  },
+  "小码-小美": {
+    "agent1": "小码",
+    "agent2": "小美",
+    "strength": 17,
+    "interactions": 9
+  },
+  "小美-阿哲": {
+    "agent1": "小美",
+    "agent2": "阿哲",
+    "strength": 19,
+    "interactions": 9
+  },
+  "小前-小码": {
+    "agent1": "小码",
+    "agent2": "小前",
+    "strength": 26,
+    "interactions": 8
+  },
+  "小测-小码": {
+    "agent1": "小码",
+    "agent2": "小测",
+    "strength": 34,
+    "interactions": 16
+  },
+  "小前-小测": {
+    "agent1": "小前",
+    "agent2": "小测",
+    "strength": 19,
+    "interactions": 6
+  },
+  "小问-董事事": {
+    "agent1": "董事事",
+    "agent2": "小问",
+    "strength": 15,
+    "interactions": 8
+  },
+  "董事事-阿哲": {
+    "agent1": "董事事",
+    "agent2": "阿哲",
+    "strength": 19,
+    "interactions": 9
+  },
+  "小码-董事事": {
+    "agent1": "董事事",
+    "agent2": "小码",
+    "strength": 23,
+    "interactions": 9
+  },
+  "小测-董事事": {
+    "agent1": "董事事",
+    "agent2": "小测",
+    "strength": 17,
+    "interactions": 8
+  },
+  "小美-董事事": {
+    "agent1": "董事事",
+    "agent2": "小美",
+    "strength": 16,
+    "interactions": 8
+  },
+  "小知-董事事": {
+    "agent1": "董事事",
+    "agent2": "小知",
+    "strength": 15,
+    "interactions": 8
+  },
+  "小交-董事事": {
+    "agent1": "董事事",
+    "agent2": "小交",
+    "strength": 18,
+    "interactions": 8
+  },
+  "小问-阿哲": {
+    "agent1": "小问",
+    "agent2": "阿哲",
+    "strength": 18,
+    "interactions": 9
+  },
+  "小码-小问": {
+    "agent1": "小问",
+    "agent2": "小码",
+    "strength": 19,
+    "interactions": 9
+  },
+  "小测-小问": {
+    "agent1": "小问",
+    "agent2": "小测",
+    "strength": 14,
+    "interactions": 8
+  },
+  "小美-小问": {
+    "agent1": "小问",
+    "agent2": "小美",
+    "strength": 16,
+    "interactions": 8
+  },
+  "小知-小问": {
+    "agent1": "小问",
+    "agent2": "小知",
+    "strength": 15,
+    "interactions": 8
+  },
+  "小交-小问": {
+    "agent1": "小问",
+    "agent2": "小交",
+    "strength": 20,
+    "interactions": 9
+  },
+  "小码-阿哲": {
+    "agent1": "阿哲",
+    "agent2": "小码",
+    "strength": 17,
+    "interactions": 8
+  },
+  "小测-阿哲": {
+    "agent1": "阿哲",
+    "agent2": "小测",
+    "strength": 16,
+    "interactions": 9
+  },
+  "小知-阿哲": {
+    "agent1": "阿哲",
+    "agent2": "小知",
+    "strength": 21,
+    "interactions": 9
+  },
+  "小交-阿哲": {
+    "agent1": "阿哲",
+    "agent2": "小交",
+    "strength": 24,
+    "interactions": 10
+  },
+  "小知-小码": {
+    "agent1": "小码",
+    "agent2": "小知",
+    "strength": 15,
+    "interactions": 8
+  },
+  "小交-小码": {
+    "agent1": "小码",
+    "agent2": "小交",
+    "strength": 15,
+    "interactions": 8
+  },
+  "小测-小美": {
+    "agent1": "小测",
+    "agent2": "小美",
+    "strength": 16,
+    "interactions": 8
+  },
+  "小测-小知": {
+    "agent1": "小测",
+    "agent2": "小知",
+    "strength": 16,
+    "interactions": 8
+  },
+  "小交-小测": {
+    "agent1": "小测",
+    "agent2": "小交",
+    "strength": 17,
+    "interactions": 8
+  },
+  "小知-小美": {
+    "agent1": "小美",
+    "agent2": "小知",
+    "strength": 20,
+    "interactions": 8
+  },
+  "小交-小美": {
+    "agent1": "小美",
+    "agent2": "小交",
+    "strength": 19,
+    "interactions": 9
+  },
+  "小后-小码": {
+    "agent1": "小码",
+    "agent2": "小后",
+    "strength": 13,
+    "interactions": 4
+  },
+  "小前-小后": {
+    "agent1": "小前",
+    "agent2": "小后",
+    "strength": 6,
+    "interactions": 2
+  },
+  "小后-小测": {
+    "agent1": "小测",
+    "agent2": "小后",
+    "strength": 7,
+    "interactions": 2
+  }
+}

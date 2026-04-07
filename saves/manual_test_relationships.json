@@ -1,0 +1,14 @@
+{
+  "小问 - 阿哲": {
+    "agent1": "小问",
+    "agent2": "阿哲",
+    "strength": 75,
+    "interactions": 12
+  },
+  "小码 - 小测": {
+    "agent1": "小码",
+    "agent2": "小测",
+    "strength": 60,
+    "interactions": 8
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "world_time": 3600,
+  "day": 5,
+  "time_of_day": "afternoon",
+  "events": [
+    {
+      "id": 0,
+      "type": "test_event",
+      "description": "测试事件 0",
+      "timestamp": 3600,
+      "day": 5
+    },
+    {
+      "id": 1,
+      "type": "test_event",
+      "description": "测试事件 1",
+      "timestamp": 3610,
+      "day": 5
+    },
+    {
+      "id": 2,
+      "type": "test_event",
+      "description": "测试事件 2",
+      "timestamp": 3620,
+      "day": 5
+    },
+    {
+      "id": 3,
+      "type": "test_event",
+      "description": "测试事件 3",
+      "timestamp": 3630,
+      "day": 5
+    },
+    {
+      "id": 4,
+      "type": "test_event",
+      "description": "测试事件 4",
+      "timestamp": 3640,
+      "day": 5
+    }
+  ],
+  "stats": {
+    "total_interactions": 50,
+    "total_knowledge_created": 15,
+    "total_stories_created": 8,
+    "total_votes_created": 3
+  }
+}

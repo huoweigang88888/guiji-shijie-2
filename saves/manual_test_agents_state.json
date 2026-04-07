@@ -1,0 +1,39 @@
+{
+  "relationships": {
+    "小问 - 阿哲": {
+      "agent1": "小问",
+      "agent2": "阿哲",
+      "strength": 75,
+      "interactions": 12
+    },
+    "小码 - 小测": {
+      "agent1": "小码",
+      "agent2": "小测",
+      "strength": 60,
+      "interactions": 8
+    }
+  },
+  "collective_knowledge": [
+    {
+      "type": "share",
+      "author": "小问",
+      "topic": "用户研究新发现",
+      "timestamp": 3600,
+      "day": 5
+    }
+  ],
+  "stories": [
+    {
+      "id": 0,
+      "title": "小问与阿哲的用户研究对话",
+      "participants": [
+        "小问",
+        "阿哲"
+      ],
+      "topic": "用户研究",
+      "day": 5,
+      "timestamp": 3600,
+      "summary": "一次富有成效的讨论"
+    }
+  ]
+}
