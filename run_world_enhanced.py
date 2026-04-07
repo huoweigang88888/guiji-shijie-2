@@ -118,8 +118,9 @@ async def run_world_enhanced(duration_seconds: int = 300):
                 stats_tracker.take_snapshot(
                     world_day=engine._day,
                     time_of_day=engine._current_time_of_day.value,
-                    total_stories=len(story_gen.stories),
-                    total_knowledge=len(knowledge_graph.nodes),
+                    # 修复：从引擎获取真实数据，而不是独立对象
+                    total_stories=len(engine.stories),  # 使用 engine.stories 而非 story_gen.stories
+                    total_knowledge=len(engine.collective_knowledge),  # 使用 engine.collective_knowledge 而非 knowledge_graph.nodes
                     total_relationships=len(engine.relationships),
                     deep_relationships=sum(
                         1 for r in engine.relationships.values()

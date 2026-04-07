@@ -27,6 +27,9 @@ _knowledge_graph = None
 _stats_tracker = None
 _engine = None
 
+# 有趣事件记录（内存缓存）
+_interesting_events = []
+
 def get_world_components():
     """获取世界组件（延迟加载）"""
     global _world_map, _message_bus, _story_gen, _knowledge_graph, _stats_tracker, _engine
@@ -58,6 +61,23 @@ def get_world_components():
         'knowledge_graph': _knowledge_graph,
         'stats_tracker': _stats_tracker,
     }
+
+
+def add_interesting_event(event_type: str, description: str, agents: list = None):
+    """添加有趣事件到缓存"""
+    global _interesting_events
+    event = {
+        "id": len(_interesting_events) + 1,
+        "type": event_type,
+        "description": description,
+        "agents": agents or [],
+        "timestamp": datetime.now().isoformat(),
+        "time_display": datetime.now().strftime("%H:%M")
+    }
+    _interesting_events.append(event)
+    # 只保留最近 50 条
+    if len(_interesting_events) > 50:
+        _interesting_events = _interesting_events[-50:]
 
 
 # 模拟数据（用于演示）
@@ -142,6 +162,8 @@ class APIHandler(SimpleHTTPRequestHandler):
                 data = self.get_relationships()
             elif path == 'stats':
                 data = self.get_stats()
+            elif path == 'events':
+                data = self.get_interesting_events()
             else:
                 data = {"error": "Not found"}
                 self.send_response(404)
@@ -293,6 +315,55 @@ class APIHandler(SimpleHTTPRequestHandler):
                 "knowledge": 12,
                 "relationships": 28,
             }
+    
+    def get_interesting_events(self) -> Dict:
+        """获取有趣事件"""
+        # 如果有真实事件则返回，否则返回模拟数据
+        if _interesting_events:
+            return {"events": _interesting_events, "total": len(_interesting_events)}
+        
+        # 模拟数据（演示用）
+        return {
+            "events": [
+                {
+                    "id": 1,
+                    "type": "knowledge_share",
+                    "type_display": "📚 知识分享",
+                    "description": "小码 分享了知识：测试方法论",
+                    "agents": ["小码"],
+                    "timestamp": datetime.now().isoformat(),
+                    "time_display": "10:05"
+                },
+                {
+                    "id": 2,
+                    "type": "deep_conversation",
+                    "type_display": "🤔 深度对话",
+                    "description": "阿哲 和 小交 探讨"什么是真正的连接"",
+                    "agents": ["阿哲", "小交"],
+                    "timestamp": datetime.now().isoformat(),
+                    "time_display": "10:08"
+                },
+                {
+                    "id": 3,
+                    "type": "story_created",
+                    "type_display": "📖 新故事",
+                    "description": "新故事诞生：阿哲 与 小交 的对话",
+                    "agents": ["阿哲", "小交"],
+                    "timestamp": datetime.now().isoformat(),
+                    "time_display": "10:10"
+                },
+                {
+                    "id": 4,
+                    "type": "celebration",
+                    "type_display": "🎉 庆祝",
+                    "description": "度过了美好的一天",
+                    "agents": ["全体"],
+                    "timestamp": datetime.now().isoformat(),
+                    "time_display": "10:15"
+                }
+            ],
+            "total": 4
+        }
     
     def _get_agent_status(self, agent_id: str) -> str:
         """获取 Agent 状态"""

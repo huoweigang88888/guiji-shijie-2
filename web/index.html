@@ -121,6 +121,74 @@
             gap: 10px;
         }
 
+        /* 有趣事件卡片 */
+        .events-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .event-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .event-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+
+        .event-item.type-knowledge_share { border-left-color: var(--info); }
+        .event-item.type-deep_conversation { border-left-color: var(--warning); }
+        .event-item.type-story_created { border-left-color: var(--primary); }
+        .event-item.type-celebration { border-left-color: var(--success); }
+        .event-item.type-collaboration { border-left-color: var(--success); }
+        .event-item.type-conflict { border-left-color: var(--danger); }
+        .event-item.type-innovation { border-left-color: var(--primary); }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .event-type {
+            font-size: 0.85em;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.15);
+        }
+
+        .event-time {
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+
+        .event-description {
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .event-agents {
+            font-size: 0.85em;
+            opacity: 0.8;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .event-agent-tag {
+            background: rgba(255,255,255,0.1);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
         .card h2 .icon {
             font-size: 1.2em;
         }
@@ -956,6 +1024,17 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 有趣事件 -->
+            <div class="card" style="grid-column: 1 / -1;">
+                <h2><span class="icon">✨</span> 有趣事件</h2>
+                <div class="events-list" id="eventsList">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        加载中...
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1057,9 +1136,18 @@
             btn.classList.add('spinning');
 
             try {
-                const response = await fetch(`${API_BASE}/status`);
-                if (!response.ok) throw new Error('Network error');
-                worldState = await response.json();
+                // 获取世界状态
+                const statusResponse = await fetch(`${API_BASE}/status`);
+                if (!statusResponse.ok) throw new Error('Network error');
+                worldState = await statusResponse.json();
+
+                // 获取有趣事件
+                const eventsResponse = await fetch(`${API_BASE}/events`);
+                if (eventsResponse.ok) {
+                    const eventsData = await eventsResponse.json();
+                    worldState.events = eventsData.events || [];
+                }
+
                 updateUI();
             } catch (error) {
                 console.error('刷新失败:', error);
@@ -1100,6 +1188,9 @@
 
             // 更新活动列表
             updateActivityList(worldState.activities || []);
+
+            // 更新有趣事件列表
+            updateEventsList(worldState.events || []);
         }
 
         // 更新 Agent 列表
@@ -1266,6 +1357,30 @@
                     <div class="activity-info">
                         📍 ${act.location || ''} | 📅 ${act.frequency || ''}
                     </div>
+                </div>
+            `).join('');
+        }
+
+        // 更新有趣事件列表
+        function updateEventsList(events) {
+            const container = document.getElementById('eventsList');
+            if (!events || events.length === 0) {
+                container.innerHTML = '<div class="loading">暂无有趣事件</div>';
+                return;
+            }
+
+            container.innerHTML = events.slice(0, 20).map(event => `
+                <div class="event-item type-${event.type || 'info'}">
+                    <div class="event-header">
+                        <span class="event-type">${event.type_display || event.type || '事件'}</span>
+                        <span class="event-time">⏰ ${event.time_display || ''}</span>
+                    </div>
+                    <div class="event-description">${event.description || ''}</div>
+                    ${event.agents && event.agents.length > 0 ? `
+                        <div class="event-agents">
+                            ${event.agents.map(agent => `<span class="event-agent-tag">👤 ${agent}</span>`).join('')}
+                        </div>
+                    ` : ''}
                 </div>
             `).join('');
         }
